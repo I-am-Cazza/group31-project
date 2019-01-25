@@ -1,4 +1,4 @@
-Ensure you have Python version 3.7.* installed
+Ensure you have Python version 3.7.* installed (Ideally 3.7.2)
 
 1. Run `git clone https://github.com/I-am-Cazza/group31-project.git` to clone a local copy of the repository.
 2. (Optional) Create a python virtual environment to install the required packages. This isn’t required but is strongly recommended as it avoids potential conflicts with your existing python packages. To create a virtual environment.

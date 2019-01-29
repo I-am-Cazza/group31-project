@@ -1,0 +1,33 @@
+body {
+    text-align: center;
+    font-size: 200%;
+}
+
+h1 {
+    animation-name: animeh1;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+input {
+    font-size:75%;
+}
+
+input[type="submit"], input[type="button"] {
+    background-color: lightblue;
+    border: round;
+    border-color: lightblue;
+    border-width: 1px;
+    padding-left: 100px;
+    padding-right: 100px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    border-top-left-radius: 100%;
+    border-bottom-right-radius: 100%;
+}
+
+@keyframes animeh1 {
+    0% {background-color: aliceblue;}
+    100% {background-color: white;}
+}

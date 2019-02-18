@@ -1,19 +1,25 @@
 {% extends "global/base.html" %}
 {% block content %}
+<br>
 <h2>Available Jobs</h2>
-
+<br>
 {% if job_list %}
 <div id="accordion">
-{% for job in job_list %}
-  <h3>{{job.job_title}}</h3>
-  <div>
-    <p>{{job.job_desc}}</p>
-  </div>
- {% endfor %}
+   {% for job in job_list %}
+   <h3>{{job.job_title}}</h3>
+   <div>
+      <h4> Description</h4>
+      <p>{{job.job_desc}}</p>
+      <!-- <p>{{job.organisation.organisation_name}}</p> -->
+      <h4> Type of job</h4>
+      <p>{{job.industry_type}}</p>
+      <h4>Job Deadline</h4>
+      <p id="deadline">{{job.deadline}}</p>
+   </div>
+   {% endfor %}
 </div>
 {% else %}
-    <p>No jobs are available.</p>
-
+<p>No jobs are available.</p>
 {% endif %}
 <script>
 $( "#accordion" ).accordion();

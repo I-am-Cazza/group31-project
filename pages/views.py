@@ -23,7 +23,7 @@ def signup(request):
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
             auth_login(request, user)
-            return render('global/index.html')
+            return redirect('index')
     context={'form': form,'signup_page': 'active'}
     return render(request, 'applicantportal/signup.html',context )
 def login(request):

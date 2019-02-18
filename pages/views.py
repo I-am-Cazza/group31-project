@@ -7,9 +7,8 @@ from app.models import Job
 # Create your views here.
 # Create your views here.
 def index(request):
-    context = {"home_page": "active"}
-    context_object = Job.objects
-    return render(request, 'global/index.html', context, context_object)
+    context = {"home_page": "active", "job_list": Job.objects.all()}
+    return render(request, 'global/index.html', context)
 
 def signup(request):
     form = UserCreationForm()

@@ -2,12 +2,14 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth import login as auth_login, authenticate
 from django.contrib.auth.forms import UserCreationForm
+from app.models import Job
 
 # Create your views here.
 # Create your views here.
 def index(request):
-    context = {"home_page": "active"}
+    context = {"home_page": "active", "job_list": Job.objects.all()}
     return render(request, 'global/index.html', context)
+
 def signup(request):
     form = UserCreationForm()
     # context = {'form': form}

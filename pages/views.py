@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.contrib.auth import login as auth_login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from app.models import Job
+from .forms import SignUpForm
 
 # Create your views here.
 # Create your views here.
@@ -11,11 +12,11 @@ def index(request):
     return render(request, 'global/index.html', context)
 
 def signup(request):
-    form = UserCreationForm()
+    form = SignUpForm()
     # context = {'form': form}
     # return render(request, 'pages/layouts/signup.html', context)
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = SignUpForm(request.POST)
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get('username')

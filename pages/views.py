@@ -14,7 +14,9 @@ def index(request):
 
 def aaron_signup(request):
     form = AddUserForm()
+    context = {'form': form, 'signup_page': 'active'}
     if request.method == 'POST':
+        form = AddUserForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email'] # TODO check email is unique, only store unique emails
             password = form.cleaned_data['password']
@@ -24,30 +26,30 @@ def aaron_signup(request):
                 user = AppUser(email=email, password=hashed_password, userType='Applicant')
                 user.save()  # TODO create session key
                 return redirect('index')
-        context = {'form': form, 'signup_page': 'active'}
-        return render(request, 'applicantportal/signup.html', context)
-
-
-def signup(request):
-    form = SignUpForm()
-    # context = {'form': form}
-    # return render(request, 'pages/layouts/signup.html', context)
-    if request.method == 'POST':
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            raw_password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=raw_password)
-            auth_login(request, user)
-            return redirect('index')
-    context = {'form': form, 'signup_page': 'active'}
     return render(request, 'applicantportal/signup.html', context)
 
 
-def login(request):
-    context = {"login_page": "active"}
-    return render(request, 'applicantportal/login.html', context)
+# def signup(request):
+#     form = SignUpForm()
+#     context = {'form': form, 'signup_page': 'active'}
+#     # context = {'form': form}
+#     # return render(request, 'pages/layouts/signup.html', context)
+#     if request.method == 'POST':
+#         form = SignUpForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             username = form.cleaned_data.get('username')
+#             raw_password = form.cleaned_data.get('password1')
+#             user = authenticate(username=username, password=raw_password)
+#             auth_login(request, user)
+#             return redirect('index')
+#
+#     return render(request, 'applicantportal/signup.html', context)
+
+
+# def login(request):
+#     context = {"login_page": "active"}
+#     return render(request, 'applicantportal/login.html', context)
 
 
 def aaron_login(request):
@@ -66,4 +68,3 @@ def aaron_login(request):
             return redirect('index') # TODO create session key
     context = {'form': form, 'login_page': 'active'}
     return render(request, 'applicantportal/login.html', context)
-

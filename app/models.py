@@ -4,8 +4,8 @@ from django.db import models
 class Organisation(models.Model):
     organisation_name = models.CharField(max_length=50)
     industry_type = models.CharField(max_length=50)
-    contact_email = models.CharField(max_length=50)
-    contact_number = models.CharField(max_length=11)
+    #contact_email = models.CharField(max_length=50)
+    #contact_number = models.CharField(max_length=11)
 
 class Job(models.Model):
     organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE)

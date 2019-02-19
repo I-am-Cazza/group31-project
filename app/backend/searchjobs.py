@@ -7,3 +7,7 @@ def keyword_filter(keyword):
 def title_search(title):
     results = Job.objects.filter(job_title__contains(title))
     return results
+
+def industry_filter(keyword):
+    results = Job.object.filter(industry_type__contains(keyword))
+    return results

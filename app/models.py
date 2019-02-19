@@ -1,11 +1,13 @@
 from django.db import models
 # from django.contrib.postgres.fields import JSONField
 
+
 class Organisation(models.Model):
     organisation_name = models.CharField(max_length=50)
     industry_type = models.CharField(max_length=50)
     contact_email = models.CharField(max_length=50)
     contact_number = models.CharField(max_length=11)
+
 
 class Job(models.Model):
     organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE)
@@ -15,8 +17,18 @@ class Job(models.Model):
     industry_type = models.CharField(max_length=50)
     deadline = models.DateTimeField(blank=True)
 
+
 class TestQuestions(models.Model):
     question_text = models.CharField(max_length=500)
     question_answer = models.CharField(max_length=500)
-    question_type = models.CharField(max_length=500) #MultipleChoice, LongAnswer, ShortAnswer, etc.
-    question_industry = models.CharField(max_length=50) #Computing questions only asked to computing applicants, etc.
+    question_type = models.CharField(max_length=500)  # MultipleChoice, LongAnswer, ShortAnswer, etc.
+    question_industry = models.CharField(max_length=50)  # Computing questions only asked to computing applicants, etc.
+
+
+class AppUser(models.Model):
+    email = models.EmailField(max_length=64)
+    password = models.CharField(max_length=500)  # Includes salt, iterations, hashing alg and hash
+    userType = models.CharField(max_length=16)  # 'Applicant', etc
+
+    def __str__(self):
+        return self.email

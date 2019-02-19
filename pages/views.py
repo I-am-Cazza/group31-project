@@ -14,7 +14,9 @@ def index(request):
 
 def aaron_signup(request):
     form = AddUserForm()
+    context = {'form': form, 'signup_page': 'active'}
     if request.method == 'POST':
+        form = AddUserForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']  # TODO check email is unique, only store unique emails
             password = form.cleaned_data['password']
@@ -24,8 +26,7 @@ def aaron_signup(request):
                 user = AppUser(email=email, password=hashed_password, userType='Applicant')
                 user.save()  # TODO create session key
                 return redirect('index')
-        context = {'form': form, 'signup_page': 'active'}
-        return render(request, 'applicantportal/signup.html', context)
+    return render(request, 'applicantportal/signup.html', context)
 
 
 # def signup(request):
@@ -69,4 +70,3 @@ def aaron_login(request):
             return login(request)
     else:
         return login(request)
-

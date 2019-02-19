@@ -5,8 +5,8 @@ from django.db import models
 class Organisation(models.Model):
     organisation_name = models.CharField(max_length=50)
     industry_type = models.CharField(max_length=50)
-    contact_email = models.CharField(max_length=50)
-    contact_number = models.CharField(max_length=11)
+    contact_email = models.CharField(max_length=50, default= "group31@gmail.com")
+    contact_number = models.CharField(max_length=11, default= "0800970970")
 
 
 class Job(models.Model):

@@ -1,9 +1,14 @@
 {% extends "global/base.html" %}
 {% block content %}
-<h1>Hello from the login page</h1>
- <form action=# method="post">
+{% load crispy_forms_tags %}
+<br>
+<h2>Log In</h2>
+ <form method="post">
      {% csrf_token %}
-     {{ form.as_p }}
-    <button type="submit">Log in</button>
- </form>
+{{ form|crispy }}
+    <button type="submit" class="btn btn-success">Log in</button>
+     </form>
 {% endblock %}
+
+
+ </form>

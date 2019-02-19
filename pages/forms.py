@@ -6,10 +6,10 @@ from django.contrib.auth.models import User
 
 
 class SignUpForm(UserCreationForm):
-    username = forms.CharField(max_length=20, required=True, help_text="*")
-    first_name = forms.CharField(max_length=20, required=True, help_text='*')
-    last_name = forms.CharField(max_length=30, required=True, help_text='*')
-    email = forms.EmailField(max_length=254, required=True,help_text='*')
+    username = forms.CharField(max_length=20, required=True )
+    first_name = forms.CharField(max_length=20, required=True)
+    last_name = forms.CharField(max_length=30, required=True )
+    email = forms.EmailField(max_length=254, required=True)
 
     class Meta:
         model = User

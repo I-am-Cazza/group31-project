@@ -28,30 +28,30 @@ def aaron_signup(request):
         return render(request, 'applicantportal/signup.html', context)
 
 
-def signup(request):
-    form = SignUpForm()
-    # context = {'form': form}
-    # return render(request, 'pages/layouts/signup.html', context)
-    if request.method == 'POST':
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            raw_password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=raw_password)
-            auth_login(request, user)
-            return redirect('index')
-    context = {'form': form, 'signup_page': 'active'}
-    return render(request, 'applicantportal/signup.html', context)
+# def signup(request):
+#     form = SignUpForm()
+#     # context = {'form': form}
+#     # return render(request, 'pages/layouts/signup.html', context)
+#     if request.method == 'POST':
+#         form = SignUpForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             username = form.cleaned_data.get('username')
+#             raw_password = form.cleaned_data.get('password1')
+#             user = authenticate(username=username, password=raw_password)
+#             auth_login(request, user)
+#             return redirect('index')
+#     context = {'form': form, 'signup_page': 'active'}
+#     return render(request, 'applicantportal/signup.html', context)
 
 
 def login(request):
-    context = {"login_page": "active"}
-    return render(request, 'applicantportal/login.html', context)
+    form = LoginUserForm()
+    context = {'form': form, 'login_page': 'active'}
+    return render(request, 'pages/templates/applicantportal/login.html', context)
 
 
 def aaron_login(request):
-    form = LoginUserForm()
     if request.method == 'POST':
         form = LoginUserForm(request.POST)
         if form.is_valid():
@@ -60,10 +60,13 @@ def aaron_login(request):
             if AppUser.objects.filter(email=email).exists():
                 password_hash = AppUser.objects.get(email=email).password
                 if check_password(password, password_hash):
-                    return redirect('index')
+                    return render(request, 'applicantportal/home.html')  # TODO create session key
+                else:
+                    return login(request)
             else:
-                return 0  # TODO email not registered error
-            return redirect('index') # TODO create session key
-    context = {'form': form, 'login_page': 'active'}
-    return render(request, 'applicantportal/login.html', context)
+                return login(request)  # TODO email not registered error
+        else:
+            return login(request)
+    else:
+        return login(request)
 

@@ -16,7 +16,7 @@ def aaron_signup(request):
     form = AddUserForm()
     if request.method == 'POST':
         if form.is_valid():
-            email = form.cleaned_data['email'] # TODO check email is unique, only store unique emails
+            email = form.cleaned_data['email']  # TODO check email is unique, only store unique emails
             password = form.cleaned_data['password']
             check_password = form.cleaned_data['confirm_password']
             if password == check_password:

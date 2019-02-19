@@ -18,3 +18,5 @@ class TestQuestions(models.Model):
     question_answer = models.CharField(max_length=500)
     question_type = models.CharField(max_length=500) #MultipleChoice, LongAnswer, ShortAnswer, etc.
     question_industry = models.CharField(max_length=50) #Computing questions only asked to computing applicants, etc.
+
+    #Aaron added this comment

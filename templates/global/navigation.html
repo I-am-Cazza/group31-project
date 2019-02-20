@@ -13,7 +13,7 @@
       <a class="nav-link {{ login_page }}" id="pills-contact-tab" data-toggle="pill" href="{% url 'aaron_login' %}"role="tab" aria-controls="pills-contact" aria-selected="false">Login</a>
     </li>
   {% else %}
-    <li class="nav-item">
+    <li class="nav-item ml-auto">
       <a class="nav-link {{ logout_page }}" id="pills-contact-tab" data-toggle="pill" href="{% url 'logout' %}"role="tab" aria-controls="pills-contact" aria-selected="false">Logout</a>
     </li>
   {% endif %}

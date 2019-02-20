@@ -12,6 +12,7 @@ def index(request):
     context = {"home_page": "active", "job_list": Job.objects.all()}
     return render(request, 'global/index.html', context)
 
+
 def applicant_jobs(request):
     if 'id' in request.session:
         useremail = AppUser.objects.get(id=request.session['id']).email
@@ -20,10 +21,12 @@ def applicant_jobs(request):
     else:
         return HttpResponseForbidden()
 
+
 def logout(request):
     request.session.flush()
     context = {"home_page": "active", "job_list": Job.objects.all()}
     return render(request, 'global/index.html', context)
+
 
 def aaron_signup(request):
     form = AddUserForm()
@@ -64,7 +67,7 @@ def signup(request):
 def login(request):
     form = LoginUserForm()
     context = {'form': form, 'login_page': 'active'}
-    return render(request, 'pages/templates/applicantportal/login.html', context)
+    return render(request, 'applicantportal/login.html', context)
 
 
 def aaron_login(request):

@@ -4,13 +4,26 @@ from django.contrib.auth import login as auth_login, authenticate
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.forms import UserCreationForm
 from app.models import Job, AppUser
-from .forms import SignUpForm, AddUserForm, LoginUserForm
+from .forms import AddUserForm, LoginUserForm
+from django.http import HttpResponseForbidden
 
 
 def index(request):
     context = {"home_page": "active", "job_list": Job.objects.all()}
     return render(request, 'global/index.html', context)
 
+def applicant_jobs(request):
+    if 'id' in request.session:
+        useremail = AppUser.objects.get(id=request.session['id']).email
+        context = {"job_list": Job.objects.all(), "email": useremail}
+        return render(request, 'applicantportal/jobs.html', context)
+    else:
+        return HttpResponseForbidden()
+
+def logout(request):
+    request.session.flush()
+    context = {"home_page": "active", "job_list": Job.objects.all()}
+    return render(request, 'global/index.html', context)
 
 def aaron_signup(request):
     form = AddUserForm()
@@ -22,19 +35,12 @@ def aaron_signup(request):
             password = form.cleaned_data['password']
             check_password = form.cleaned_data['confirm_password']
             if password == check_password:
-                if AppUser.objects.filter(email=email).exists():
-                    hashed_password = make_password(password)
-                    user = AppUser(email=email, password=hashed_password, userType='Applicant')
-                    user.save()  # TODO create session key
-                    return redirect(request, 'applicantportal/home.html')
-                else:
-                    return 0  # TODO email already in use error
-            else:
-                return 0  # TODO passwords don't match error
-        else:
-            return 0  # TODO Form invalid error
-    else:
-        return render(request, 'applicantportal/signup.html', context)
+                hashed_password = make_password(password)
+                user = AppUser(email=email, password=hashed_password, userType='Applicant')
+                user.save()  # TODO create session key
+                request.session['id'] = AppUser.objects.get(email=email).id
+                return redirect('applicantjobs')
+    return render(request, 'applicantportal/signup.html', context)
 
 
 def signup(request):
@@ -49,7 +55,8 @@ def signup(request):
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
             auth_login(request, user)
-            return redirect('index')
+            request.session['id'] = AppUser.objects.get(email=email).id
+            return redirect('applicantjobs')
     context = {'form': form, 'signup_page': 'active'}
     return render(request, 'applicantportal/signup.html', context)
 
@@ -69,7 +76,8 @@ def aaron_login(request):
             if AppUser.objects.filter(email=email).exists():
                 password_hash = AppUser.objects.get(email=email).password
                 if check_password(password, password_hash):
-                    return render(request, 'applicantportal/home.html')  # TODO create session key
+                    request.session['id'] = AppUser.objects.get(email=email).id
+                    return redirect('applicantjobs')
                 else:
                     return login(request)
             else:

@@ -1,0 +1,19 @@
+{% extends "global/base.html" %}
+{% block content %}
+<br>
+<p>You are currently logged in as {{email}}</p>
+<p>This is the job detail page </p>
+<h2>{{job.job_title}}</h2>
+<br>
+
+   <div>
+      <h4> Description</h4>
+      <p>{{job.job_desc}}</p>
+      <!-- <p>{{job.organisation.organisation_name}}</p> -->
+      <h4> Type of job</h4>
+      <p>{{job.industry_type}}</p>
+      <h4>Job Deadline</h4>
+      <p id="deadline">{{job.deadline}}</p>
+      <a href="{% url 'test' job.id %}">Apply</a>
+   </div>
+{% endblock %}

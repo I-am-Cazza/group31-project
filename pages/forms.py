@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm
-from app.models import AppUser
+from app.models import AppUser, TestQuestions
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 

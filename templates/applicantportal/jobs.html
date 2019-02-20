@@ -16,6 +16,7 @@
       <p>{{job.industry_type}}</p>
       <h4>Job Deadline</h4>
       <p id="deadline">{{job.deadline}}</p>
+      <a style="color: blue" href="{% url 'job' job.id %}">More info</a>
    </div>
    {% endfor %}
 </div>

@@ -3,20 +3,43 @@ from django.http import HttpResponse
 from django.contrib.auth import login as auth_login, authenticate
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.forms import UserCreationForm
-from app.models import Job, AppUser
+from app.models import Job, AppUser, TestQuestions
 from .forms import AddUserForm, LoginUserForm
 from django.http import HttpResponseForbidden
 
 
 def index(request):
-    context = {"home_page": "active", "job_list": Job.objects.all()}
-    return render(request, 'global/index.html', context)
+    if 'id' in request.session:
+        return redirect('applicantjobs')
+    else:
+        context = {"home_page": "active", "job_list": Job.objects.all()}
+        return render(request, 'global/index.html', context)
+
 
 def applicant_jobs(request):
     if 'id' in request.session:
         useremail = AppUser.objects.get(id=request.session['id']).email
         context = {"job_list": Job.objects.all(), "email": useremail}
         return render(request, 'applicantportal/jobs.html', context)
+    else:
+        return HttpResponseForbidden()
+
+def job(request, job_id):
+    if 'id' in request.session:
+        useremail = AppUser.objects.get(id=request.session['id']).email
+        requested_job = Job.objects.get(id=job_id)
+        context = {"email" : useremail, "job": requested_job}
+        return render(request, 'applicantportal/job.html', context)
+    else:
+        return HttpResponseForbidden()
+
+def test(request, job_id):
+    if 'id' in request.session:
+        useremail = AppUser.objects.get(id=request.session['id']).email
+        requested_job = Job.objects.get(id=job_id)
+        valid_questions = TestQuestions.objects.filter(question_industry=requested_job.industry_type)
+        context = {"email" : useremail, "job": requested_job, "questions": valid_questions}
+        return render(request, 'applicantportal/test.html', context)
     else:
         return HttpResponseForbidden()
 

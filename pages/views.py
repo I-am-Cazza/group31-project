@@ -4,7 +4,7 @@ from django.contrib.auth import login as auth_login, authenticate
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.forms import UserCreationForm
 from app.models import Job, AppUser
-from .forms import AddUserForm, LoginUserForm
+from .forms import AddUserForm, LoginUserForm, SignUpForm
 from django.http import HttpResponseForbidden
 
 

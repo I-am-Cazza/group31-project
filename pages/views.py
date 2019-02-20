@@ -34,12 +34,20 @@ def aaron_signup(request):
             email = form.cleaned_data['email']  # TODO check email is unique, only store unique emails
             password = form.cleaned_data['password']
             check_password = form.cleaned_data['confirm_password']
-            if password == check_password:
-                hashed_password = make_password(password)
-                user = AppUser(email=email, password=hashed_password, userType='Applicant')
-                user.save()  # TODO create session key
-                request.session['id'] = AppUser.objects.get(email=email).id
-                return redirect('applicantjobs')
+            if AppUser.objects.filter(email=email).exists():
+                context= {'form': form, 'signup_page': 'active','error_message':'<p style="color:red">This email already exsists.</p>'}
+                return render(request,'applicantportal/signup.html',context )
+            if (len(password)<8):
+                context= {'form': form, 'signup_page': 'active','error_message':'<p style="color:red">Password length is too short. Password must be greater than 8 characters.</p>'}
+                return render(request,'applicantportal/signup.html',context )
+            if (password!=check_password):
+                context= {'form': form, 'signup_page': 'active','error_message':'<p style="color:red">Passwords do not match.</p>'}
+                return render(request,'applicantportal/signup.html',context )
+            hashed_password = make_password(password)
+            user = AppUser(email=email, password=hashed_password, userType='Applicant')
+            user.save()  # TODO create session key
+            request.session['id'] = AppUser.objects.get(email=email).id
+            return redirect('applicantjobs')
     return render(request, 'applicantportal/signup.html', context)
 
 
@@ -64,7 +72,7 @@ def signup(request):
 def login(request):
     form = LoginUserForm()
     context = {'form': form, 'login_page': 'active'}
-    return render(request, 'pages/templates/applicantportal/login.html', context)
+    return render(request, 'applicantportal/login.html', context)
 
 
 def aaron_login(request):

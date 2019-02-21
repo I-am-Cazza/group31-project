@@ -37,7 +37,7 @@ The training data should be a single JSON object containing an array of CVs. Eac
   
 - Hobbies --- A list of JSON objects detailing hobbies, includes a name and a level of interest rated from 1-10. 1 being barely interested, 10 being very interested. i.e.:{"Name":"Gaming", "Interest":5}, {"Name":"Reading", "Interest":8}, {"Name":"Fencing", "Interest":3}
   
-- Classification The classification the MLEngine should give this CV, i.e. interview, reject etc. This is only needed in the training data
+- Classification --- The classification the MLEngine should give this CV, i.e. interview, reject etc. This is only needed in the training data
 
 This differes from the standard CV format given in three ways. First, there is no name. The second is that the names of the companies in Previous Employment are omitted. These are not used as there is no way to get three different data points into one cell of an array. It is fine for the data to contain these, and any other additional features, but not necessary. The third way is the inclusion of a classification. This is needed in the training data, and will be ignored for predictions.
 

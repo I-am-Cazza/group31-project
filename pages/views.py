@@ -126,15 +126,15 @@ def aaron_login(request):
         if form.is_valid():
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
-            if AppUser.objects.filter(email=email).exists():
-                password_hash = AppUser.objects.get(email=email).password
-                if check_password(password, password_hash):
-                    request.session['id'] = AppUser.objects.get(email=email).id
-                    return redirect('applicantjobs')
-                else:
-                    return login(request)
-            else:
-                return login(request)  # TODO email not registered error
+            if AppUser.objects.filter(email=email).exists()==False:
+                context= {'form': form, 'login_page': 'active','error_message':'<p style="color:red">Email is not registered.</p>'}
+                return render(request,'applicantportal/login.html',context )
+            password_hash = AppUser.objects.get(email=email).password
+            if check_password(password, password_hash)==False:
+                context= {'form': form, 'login_page': 'active','error_message':'<p style="color:red">Password is incorrect.</p>'}
+                return render(request,'applicantportal/login.html',context )
+            request.session['id'] = AppUser.objects.get(email=email).id
+            return redirect('applicantjobs')
         else:
             return login(request)
     else:

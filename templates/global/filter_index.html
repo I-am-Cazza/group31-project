@@ -11,7 +11,7 @@
 
 {% if job_list %}
 <div id="accordion">
-   {% for job in job_list %}
+   {% for job in filter.qs %}
    <h3>{{job.job_title}}</h3>
    <div>
       <h4> Description</h4>

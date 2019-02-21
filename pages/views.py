@@ -6,14 +6,22 @@ from django.contrib.auth.forms import UserCreationForm
 from app.models import Job, AppUser, TestQuestions
 from .forms import AddUserForm, LoginUserForm, SignUpForm, CvCreationForm
 from django.http import HttpResponseForbidden
+from app.views import search
 
 
 def index(request):
     if 'id' in request.session:
         return redirect('applicantjobs')
     else:
-        context = {"home_page": "active", "job_list": Job.objects.all()}
+        job_filter = search(request)
+        context = {"home_page": "active", "job_list": Job.objects.all(), 'filter': job_filter}
         return render(request, 'global/index.html', context)
+
+
+def filtered_index(request):
+    job_filter = search(request)
+    context = {"home_page": "active", "job_list": job_filter, 'filter': job_filter}
+    return render(request, 'global/filter_index.html', context)
 
 
 def applicant_jobs(request):
@@ -46,6 +54,13 @@ def test(request, job_id):
     else:
         return HttpResponseForbidden()
 
+
+def filter_jobs(request):
+    # TODO get data from filter (form?)
+
+    return request
+
+
 def cv(request):
     if 'id' in request.session:
         useremail = AppUser.objects.get(id=request.session['id']).email
@@ -53,7 +68,7 @@ def cv(request):
         if request.method == 'POST':
             form = CvCreationForm(request.POST)
             if form.is_valid():
-                #TODO store data in database
+                # TODO store data in database
                 AppUser.objects.filter(id=request.session['id']).update(cvComplete=True)
                 #context = {"job_list": Job.objects.all(), "email": useremail, "cv": True}
                 return redirect('applicantjobs')
@@ -63,6 +78,7 @@ def cv(request):
             return render(request, 'applicantportal/cv.html', context)
     else:
         return HttpResponseForbidden()
+
 
 def logout(request):
     request.session.flush()

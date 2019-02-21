@@ -4,7 +4,7 @@ from django.contrib.auth import login as auth_login, authenticate
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.forms import UserCreationForm
 from app.models import Job, AppUser, TestQuestions
-from .forms import AddUserForm, LoginUserForm
+from .forms import AddUserForm, LoginUserForm, SignUpForm
 from django.http import HttpResponseForbidden
 
 
@@ -24,6 +24,7 @@ def applicant_jobs(request):
     else:
         return HttpResponseForbidden()
 
+
 def job(request, job_id):
     if 'id' in request.session:
         useremail = AppUser.objects.get(id=request.session['id']).email
@@ -32,6 +33,7 @@ def job(request, job_id):
         return render(request, 'applicantportal/job.html', context)
     else:
         return HttpResponseForbidden()
+
 
 def test(request, job_id):
     if 'id' in request.session:
@@ -42,6 +44,7 @@ def test(request, job_id):
         return render(request, 'applicantportal/test.html', context)
     else:
         return HttpResponseForbidden()
+
 
 def logout(request):
     request.session.flush()
@@ -61,10 +64,10 @@ def aaron_signup(request):
             if AppUser.objects.filter(email=email).exists():
                 context= {'form': form, 'signup_page': 'active','error_message':'<p style="color:red">This email already exsists.</p>'}
                 return render(request,'applicantportal/signup.html',context )
-            if (len(password)<8):
+            if len(password)<8:
                 context= {'form': form, 'signup_page': 'active','error_message':'<p style="color:red">Password length is too short. Password must be greater than 8 characters.</p>'}
                 return render(request,'applicantportal/signup.html',context )
-            if (password!=check_password):
+            if password!=check_password:
                 context= {'form': form, 'signup_page': 'active','error_message':'<p style="color:red">Passwords do not match.</p>'}
                 return render(request,'applicantportal/signup.html',context )
             hashed_password = make_password(password)
@@ -87,7 +90,7 @@ def signup(request):
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
             auth_login(request, user)
-            request.session['id'] = AppUser.objects.get(email=email).id
+            request.session['id'] = AppUser.objects.get(username=username).id
             return redirect('applicantjobs')
     context = {'form': form, 'signup_page': 'active'}
     return render(request, 'applicantportal/signup.html', context)

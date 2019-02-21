@@ -31,3 +31,6 @@ class LoginUserForm(ModelForm):
     class Meta:
         model = AppUser
         fields = ['email', 'password']
+
+class CvCreationForm(forms.Form):
+    name = forms.CharField(label='Name', max_length=50)

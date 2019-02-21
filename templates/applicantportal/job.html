@@ -1,13 +1,11 @@
 {% extends "global/base.html" %}
 {% block content %}
 <br>
-<h2>Available Jobs</h2>
-<p>Please log in to apply to the following jobs.</p>
+<p>You are currently logged in as {{email}}</p>
+<p>This is the job detail page </p>
+<h2>{{job.job_title}}</h2>
+<br>
 
-{% if job_list %}
-<div id="accordion">
-   {% for job in job_list %}
-   <h3>{{job.job_title}}</h3>
    <div>
       <h4> Description</h4>
       <p>{{job.job_desc}}</p>
@@ -16,13 +14,6 @@
       <p>{{job.industry_type}}</p>
       <h4>Job Deadline</h4>
       <p id="deadline">{{job.deadline}}</p>
+      <a href="{% url 'test' job.id %}">Apply</a>
    </div>
-   {% endfor %}
-</div>
-{% else %}
-<p>No jobs are available.</p>
-{% endif %}
-<script>
-$( "#accordion" ).accordion();
-</script>
 {% endblock %}

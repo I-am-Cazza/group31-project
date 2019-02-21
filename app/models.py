@@ -29,6 +29,11 @@ class AppUser(models.Model):
     email = models.EmailField(max_length=64)
     password = models.CharField(max_length=500)  # Includes salt, iterations, hashing alg and hash
     userType = models.CharField(max_length=16)  # 'Applicant', etc
-
+    cvComplete = models.BooleanField(default=False)
     def __str__(self):
         return self.email
+
+class CV(models.Model):
+    owner = models.ForeignKey(AppUser, on_delete=models.CASCADE)
+    #cvData = JSONField() #Uncomment on production server, not included in testing due to incompatibility with sqlite3
+    cvData = models.CharField(max_length=500)

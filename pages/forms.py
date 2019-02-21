@@ -33,7 +33,7 @@ class LoginUserForm(ModelForm):
         fields = ['email', 'password']
 
 class CvCreationForm(forms.Form):
-    name = forms.CharField(label='Name', max_length=50)
+    name = forms.CharField(label='Name', max_length=50, required=False)
     extra_field_count = forms.CharField(widget=forms.HiddenInput())
     def __init__(self, *args, **kwargs):
         extra_fields = kwargs.pop('extra', 0)

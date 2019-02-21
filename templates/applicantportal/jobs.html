@@ -8,6 +8,12 @@
 {% endif %}
 <h2>Available Jobs</h2>
 <br>
+
+<form method="get" action="/filter">
+    {{ filter.form.as_p }}
+    <button type="submit">Search</button>
+  </form>
+
 {% if job_list %}
 <div id="accordion">
    {% for job in job_list %}

@@ -28,7 +28,8 @@ def applicant_jobs(request):
     if 'id' in request.session:
         useremail = AppUser.objects.get(id=request.session['id']).email
         completedCv = AppUser.objects.get(id=request.session['id']).cvComplete
-        context = {"job_list": Job.objects.all(), "email": useremail, "cv": completedCv}
+        job_filter = search(request)
+        context = {"job_list": Job.objects.all(), "email": useremail, "cv": completedCv, 'filter': job_filter}
         return render(request, 'applicantportal/jobs.html', context)
     else:
         return HttpResponseForbidden()

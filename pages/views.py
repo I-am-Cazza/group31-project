@@ -48,19 +48,38 @@ def test(request, job_id):
 
 def cv(request):
     if 'id' in request.session:
+        if 'skills' not in request.session:
+            request.session['skills'] = 1
         useremail = AppUser.objects.get(id=request.session['id']).email
         completedCv = AppUser.objects.get(id=request.session['id']).cvComplete
         if request.method == 'POST':
-            form = CvCreationForm(request.POST)
+            form = CvCreationForm(request.POST, extra=request.POST.get('extra_field_count'))
             if form.is_valid():
                 #TODO store data in database
                 AppUser.objects.filter(id=request.session['id']).update(cvComplete=True)
                 #context = {"job_list": Job.objects.all(), "email": useremail, "cv": True}
                 return redirect('applicantjobs')
+            else:
+                context = {"email" : useremail, "form": form, "cv": completedCv, "error": "Please fill out the form correctly"}
+                return render(request, 'applicantportal/cv.html', context)
         else:
-            form = CvCreationForm()
+            form = CvCreationForm(extra=1)
             context = {"email" : useremail, "form": form, "cv": completedCv}
             return render(request, 'applicantportal/cv.html', context)
+    else:
+        return HttpResponseForbidden()
+
+def addskill(request):
+    if 'id' in request.session:
+        request.session['skills'] += 1
+        return redirect('cv')
+    else:
+        return HttpResponseForbidden()
+
+def removeskill(request):
+    if 'id' in request.session:
+        request.session['skills'] -= 1
+        return redirect('cv')
     else:
         return HttpResponseForbidden()
 

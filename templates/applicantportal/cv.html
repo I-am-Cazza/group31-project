@@ -9,10 +9,61 @@
   <h3>Create your CV</h3>
 {% endif %}
 <br>
-
+{% if error is not None %}
+  <p style="color: red">{{error}}</p>
+{% endif %}
 <form action="{% url 'cv' %}" method="post">
+  <div id='forms'>
     {% csrf_token %}
-    {{ form }}
+    {% for field in form %}
+      {{ field.label_tag }} {{ field }}
+      <br>
+      {% endfor %}
+    </div>
     <input type="submit" value="Submit">
+
 </form>
+<button id="add-another">Add skill</button>
+<button id="remove-another">Remove skill </button>
+<script>
+form_count = Number($("[name=extra_field_count]").val());
+// get extra form count so we know what index to use for the next item.
+
+$("#add-another").click(function() {
+    form_count ++;
+    element = $('<label>Skill:</label>');
+    element.attr('name', 'extra_field_' + form_count);
+    element.attr('class', 'extra_field_' + form_count)
+    $("#forms").append(element);
+    element = $('<input type="text"/>');
+    element.attr('name', 'extra_field_' + form_count);
+    element.attr('class', 'extra_field_' + form_count)
+    $("#forms").append(element);
+    element = $('<label>Expertise:</label>');
+    element.attr('name', 'extra_field_' + form_count);
+    element.attr('class', 'extra_field_' + form_count)
+    $("#forms").append(element);
+    element = $('<input type="number"/>');
+    element.attr('name', 'extra_field_' + form_count);
+    element.attr('class', 'extra_field_' + form_count)
+    $("#forms").append(element);
+
+    // build element and append it to our forms container
+
+    $("[name=extra_field_count]").val(form_count);
+    // increment form count so our view knows to populate
+    // that many fields for validation
+})
+$("#remove-another").click(function() {
+
+
+    $('.extra_field_' + form_count).remove();
+    form_count --;
+    // build element and append it to our forms container
+
+    $("[name=extra_field_count]").val(form_count);
+    // increment form count so our view knows to populate
+    // that many fields for validation
+})
+</script>
 {% endblock %}

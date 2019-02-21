@@ -10,5 +10,7 @@ urlpatterns = [
     path('logout/', views.logout, name='logout'),
     path('applicant/<int:job_id>', views.job, name='job'),
     path('applicant/test/<int:job_id>', views.test, name='test'),
-    path('applicant/cv/', views.cv, name='cv')
+    path('applicant/cv/', views.cv, name='cv'),
+    path('applicant/cv/plus', views.addskill, name='addskill'),
+    path('applicant/cv/minus', views.removeskill, name='removeskill')
 ]

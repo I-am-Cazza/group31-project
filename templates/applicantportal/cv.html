@@ -1,0 +1,18 @@
+{% extends "global/base.html" %}
+{% block content %}
+<br>
+<p>You are currently logged in as {{email}}</p>
+{% if cv %}
+  <h3>Update your CV</h3>
+  <p>You have already uploaded a CV. You can update your CV below.</p>
+{% else %}
+  <h3>Create your CV</h3>
+{% endif %}
+<br>
+
+<form action="{% url 'cv' %}" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Submit">
+</form>
+{% endblock %}

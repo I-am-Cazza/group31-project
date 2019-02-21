@@ -3,6 +3,11 @@
   <li class="nav-item">
     <a class="nav-link {{ home_page }}" id="pills-home-tab" data-toggle="pill" href="{% url 'index' %}"role="tab" aria-controls="pills-home" aria-selected="true">Home</a>
   </li>
+  {% if email is not None %}
+    <li class="nav-item ml-auto">
+      <a class="nav-link {{ cv }}" id="pills-profile-tab" data-toggle="pill" href="{% url 'cv' %}" role="tab" aria-controls="pills-profile" aria-selected="false">CV management</a>
+    </li>
+    {% endif %}
   {% if email is None %}
     <li class="nav-item ml-auto">
       <a class="nav-link {{ signup_page }}" id="pills-profile-tab" data-toggle="pill" href="{% url 'aaron_signup' %}" role="tab" aria-controls="pills-profile" aria-selected="false">Signup</a>

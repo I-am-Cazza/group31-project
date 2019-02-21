@@ -9,10 +9,15 @@
   <h3>Create your CV</h3>
 {% endif %}
 <br>
-
+{% if error is not None %}
+  <p style="color: red">{{error}}</p>
+{% endif %}
 <form action="{% url 'cv' %}" method="post">
     {% csrf_token %}
-    {{ form }}
+    {% for field in form %}
+      {{ field.label_tag }} {{ field }}
+      <br>
+      {% endfor %}
     <input type="submit" value="Submit">
 </form>
 {% endblock %}

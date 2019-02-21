@@ -9,6 +9,3 @@ admin.site.register(Organisation)
 admin.site.register(Job)
 admin.site.register(TestQuestions)
 # admin.site.register(AppUser)
-
-
-# Register your models here.

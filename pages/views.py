@@ -3,14 +3,17 @@ from django.http import HttpResponse
 from django.contrib.auth import login as auth_login, authenticate
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.forms import UserCreationForm
-from app.models import Job, AppUser
-from .forms import AddUserForm, LoginUserForm, SignUpForm
+from app.models import Job, AppUser, TestQuestions
+from .forms import AddUserForm, LoginUserForm
 from django.http import HttpResponseForbidden
 
 
 def index(request):
-    context = {"home_page": "active", "job_list": Job.objects.all()}
-    return render(request, 'global/index.html', context)
+    if 'id' in request.session:
+        return redirect('applicantjobs')
+    else:
+        context = {"home_page": "active", "job_list": Job.objects.all()}
+        return render(request, 'global/index.html', context)
 
 
 def applicant_jobs(request):
@@ -21,6 +24,24 @@ def applicant_jobs(request):
     else:
         return HttpResponseForbidden()
 
+def job(request, job_id):
+    if 'id' in request.session:
+        useremail = AppUser.objects.get(id=request.session['id']).email
+        requested_job = Job.objects.get(id=job_id)
+        context = {"email" : useremail, "job": requested_job}
+        return render(request, 'applicantportal/job.html', context)
+    else:
+        return HttpResponseForbidden()
+
+def test(request, job_id):
+    if 'id' in request.session:
+        useremail = AppUser.objects.get(id=request.session['id']).email
+        requested_job = Job.objects.get(id=job_id)
+        valid_questions = TestQuestions.objects.filter(question_industry=requested_job.industry_type)
+        context = {"email" : useremail, "job": requested_job, "questions": valid_questions}
+        return render(request, 'applicantportal/test.html', context)
+    else:
+        return HttpResponseForbidden()
 
 def logout(request):
     request.session.flush()
@@ -37,12 +58,20 @@ def aaron_signup(request):
             email = form.cleaned_data['email']  # TODO check email is unique, only store unique emails
             password = form.cleaned_data['password']
             check_password = form.cleaned_data['confirm_password']
-            if password == check_password:
-                hashed_password = make_password(password)
-                user = AppUser(email=email, password=hashed_password, userType='Applicant')
-                user.save()  # TODO create session key
-                request.session['id'] = AppUser.objects.get(email=email).id
-                return redirect('applicantjobs')
+            if AppUser.objects.filter(email=email).exists():
+                context= {'form': form, 'signup_page': 'active','error_message':'<p style="color:red">This email already exsists.</p>'}
+                return render(request,'applicantportal/signup.html',context )
+            if (len(password)<8):
+                context= {'form': form, 'signup_page': 'active','error_message':'<p style="color:red">Password length is too short. Password must be greater than 8 characters.</p>'}
+                return render(request,'applicantportal/signup.html',context )
+            if (password!=check_password):
+                context= {'form': form, 'signup_page': 'active','error_message':'<p style="color:red">Passwords do not match.</p>'}
+                return render(request,'applicantportal/signup.html',context )
+            hashed_password = make_password(password)
+            user = AppUser(email=email, password=hashed_password, userType='Applicant')
+            user.save()  # TODO create session key
+            request.session['id'] = AppUser.objects.get(email=email).id
+            return redirect('applicantjobs')
     return render(request, 'applicantportal/signup.html', context)
 
 

@@ -1,0 +1,11 @@
+{% extends "global/base.html" %}
+{% block content %}
+<br>
+<p>You are currently logged in as {{email}}</p>
+<h2>Test for {{job.job_title}}</h2>
+<br>
+{% for question in questions %}
+  <h4>Question {{forloop.counter}}</h4>
+  <p>{{question.question_text}}</p>
+{% endfor %}
+{% endblock %}

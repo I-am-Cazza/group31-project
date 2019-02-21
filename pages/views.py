@@ -63,22 +63,40 @@ def filter_jobs(request):
 
 def cv(request):
     if 'id' in request.session:
+        if 'skills' not in request.session:
+            request.session['skills'] = 1
         useremail = AppUser.objects.get(id=request.session['id']).email
         completedCv = AppUser.objects.get(id=request.session['id']).cvComplete
         if request.method == 'POST':
-            form = CvCreationForm(request.POST)
+            form = CvCreationForm(request.POST, extra=request.POST.get('extra_field_count'))
             if form.is_valid():
                 # TODO store data in database
                 AppUser.objects.filter(id=request.session['id']).update(cvComplete=True)
                 #context = {"job_list": Job.objects.all(), "email": useremail, "cv": True}
                 return redirect('applicantjobs')
+            else:
+                context = {"email" : useremail, "form": form, "cv": completedCv, "error": "Please fill out the form correctly"}
+                return render(request, 'applicantportal/cv.html', context)
         else:
-            form = CvCreationForm()
+            form = CvCreationForm(extra=1)
             context = {"email" : useremail, "form": form, "cv": completedCv}
             return render(request, 'applicantportal/cv.html', context)
     else:
         return HttpResponseForbidden()
 
+def addskill(request):
+    if 'id' in request.session:
+        request.session['skills'] += 1
+        return redirect('cv')
+    else:
+        return HttpResponseForbidden()
+
+def removeskill(request):
+    if 'id' in request.session:
+        request.session['skills'] -= 1
+        return redirect('cv')
+    else:
+        return HttpResponseForbidden()
 
 def logout(request):
     request.session.flush()
@@ -142,15 +160,15 @@ def aaron_login(request):
         if form.is_valid():
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
-            if AppUser.objects.filter(email=email).exists():
-                password_hash = AppUser.objects.get(email=email).password
-                if check_password(password, password_hash):
-                    request.session['id'] = AppUser.objects.get(email=email).id
-                    return redirect('applicantjobs')
-                else:
-                    return login(request)
-            else:
-                return login(request)  # TODO email not registered error
+            if AppUser.objects.filter(email=email).exists()==False:
+                context= {'form': form, 'login_page': 'active','error_message':'<p style="color:red">Email is not registered.</p>'}
+                return render(request,'applicantportal/login.html',context )
+            password_hash = AppUser.objects.get(email=email).password
+            if check_password(password, password_hash)==False:
+                context= {'form': form, 'login_page': 'active','error_message':'<p style="color:red">Password is incorrect.</p>'}
+                return render(request,'applicantportal/login.html',context )
+            request.session['id'] = AppUser.objects.get(email=email).id
+            return redirect('applicantjobs')
         else:
             return login(request)
     else:

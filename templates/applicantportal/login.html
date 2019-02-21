@@ -3,6 +3,7 @@
 {% load crispy_forms_tags %}
 <br>
 <h2>Log In</h2>
+{{error_message|safe}}
  <form method="post">
      {% csrf_token %}
 {{ form|crispy }}

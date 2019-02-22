@@ -6,21 +6,30 @@ from django.contrib.auth.forms import UserCreationForm
 from app.models import Job, AppUser, TestQuestions
 from .forms import AddUserForm, LoginUserForm, SignUpForm, CvCreationForm
 from django.http import HttpResponseForbidden
+from app.views import search
 
 
 def index(request):
     if 'id' in request.session:
         return redirect('applicantjobs')
     else:
-        context = {"home_page": "active", "job_list": Job.objects.all()}
+        job_filter = search(request)
+        context = {"home_page": "active", "job_list": Job.objects.all(), 'filter': job_filter}
         return render(request, 'global/index.html', context)
+
+
+def filtered_index(request):
+    job_filter = search(request)
+    context = {"home_page": "active", "job_list": job_filter, 'filter': job_filter}
+    return render(request, 'global/filter_index.html', context)
 
 
 def applicant_jobs(request):
     if 'id' in request.session:
         useremail = AppUser.objects.get(id=request.session['id']).email
         completedCv = AppUser.objects.get(id=request.session['id']).cvComplete
-        context = {"job_list": Job.objects.all(), "email": useremail, "cv": completedCv}
+        job_filter = search(request)
+        context = {"job_list": Job.objects.all(), "email": useremail, "cv": completedCv, 'filter': job_filter}
         return render(request, 'applicantportal/jobs.html', context)
     else:
         return HttpResponseForbidden()
@@ -46,6 +55,13 @@ def test(request, job_id):
     else:
         return HttpResponseForbidden()
 
+
+def filter_jobs(request):
+    # TODO get data from filter (form?)
+
+    return request
+
+
 def cv(request):
     if 'id' in request.session:
         if 'skills' not in request.session:
@@ -55,7 +71,7 @@ def cv(request):
         if request.method == 'POST':
             form = CvCreationForm(request.POST, extra=request.POST.get('extra_field_count'))
             if form.is_valid():
-                #TODO store data in database
+                # TODO store data in database
                 AppUser.objects.filter(id=request.session['id']).update(cvComplete=True)
                 #context = {"job_list": Job.objects.all(), "email": useremail, "cv": True}
                 return redirect('applicantjobs')
@@ -145,15 +161,15 @@ def aaron_login(request):
         if form.is_valid():
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
-            if AppUser.objects.filter(email=email).exists():
-                password_hash = AppUser.objects.get(email=email).password
-                if check_password(password, password_hash):
-                    request.session['id'] = AppUser.objects.get(email=email).id
-                    return redirect('applicantjobs')
-                else:
-                    return login(request)
-            else:
-                return login(request)  # TODO email not registered error
+            if AppUser.objects.filter(email=email).exists()==False:
+                context= {'form': form, 'login_page': 'active','error_message':'<p style="color:red">Email is not registered.</p>'}
+                return render(request,'applicantportal/login.html',context )
+            password_hash = AppUser.objects.get(email=email).password
+            if check_password(password, password_hash)==False:
+                context= {'form': form, 'login_page': 'active','error_message':'<p style="color:red">Password is incorrect.</p>'}
+                return render(request,'applicantportal/login.html',context )
+            request.session['id'] = AppUser.objects.get(email=email).id
+            return redirect('applicantjobs')
         else:
             return login(request)
     else:

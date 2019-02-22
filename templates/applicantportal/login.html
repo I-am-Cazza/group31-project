@@ -3,12 +3,10 @@
 {% load crispy_forms_tags %}
 <br>
 <h2>Log In</h2>
+{{error_message|safe}}
  <form method="post">
      {% csrf_token %}
 {{ form|crispy }}
     <button type="submit" class="btn btn-success">Log in</button>
      </form>
 {% endblock %}
-
-
- </form>

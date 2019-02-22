@@ -1,22 +1,17 @@
 {% extends "global/base.html" %}
 {% block content %}
 <br>
-<p>You are currently logged in as {{email}}
-{% if not cv %}
-  <p>You have not completed your online CV, and will not be able to apply for any jobs until you do.
-    Click <a href="{% url 'cv' %}">here</a> to complete your online CV</p>
-{% endif %}
 <h2>Available Jobs</h2>
-<br>
+<p>Please log in to apply to the following jobs.</p>
 
-<form method="get" action="/filter">
+  <form method="get" action="/filter">
     {{ filter.form.as_p }}
     <button type="submit">Search</button>
   </form>
 
 {% if job_list %}
 <div id="accordion">
-   {% for job in job_list %}
+   {% for job in filter.qs %}
    <h3>{{job.job_title}}</h3>
    <div>
       <h4> Description</h4>
@@ -26,7 +21,6 @@
       <p>{{job.industry_type}}</p>
       <h4>Job Deadline</h4>
       <p id="deadline">{{job.deadline}}</p>
-      <a style="color: blue" href="{% url 'job' job.id %}">More info</a>
    </div>
    {% endfor %}
 </div>
@@ -35,5 +29,5 @@
 {% endif %}
 <script>
 $( "#accordion" ).accordion();
-</script
+</script>
 {% endblock %}

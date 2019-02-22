@@ -1,5 +1,6 @@
 {% extends "global/base.html" %}
 {% block content %}
+{% load crispy_forms_tags %}
 <br>
 <p>You are currently logged in as {{email}}</p>
 {% if cv %}
@@ -13,37 +14,51 @@
   <p style="color: red">{{error}}</p>
 {% endif %}
 <form action="{% url 'cv' %}" method="post">
+
   <div id='forms'>
+      {{ form|crispy }}
     {% csrf_token %}
     {% for field in form %}
       {{ field.label_tag }} {{ field }}
-      <br>
+
       {% endfor %}
+
+
     </div>
-    <input type="submit" value="Submit">
+
+    <br>
+    <div class="btn-group" role="group" aria-label="Basic example">
+    <button id="add-another" type="button"  class="btn btn-info">Add skill</button>
+    <button id="remove-another" type="button"  class="btn btn-secondary">Remove skill </button>
+    </div>
+        <input type="submit" class="btn btn-primary" value="Submit">
+
+
+
+
 
 </form>
-<button id="add-another">Add skill</button>
-<button id="remove-another">Remove skill </button>
+
+
 <script>
 form_count = Number($("[name=extra_field_count]").val());
 // get extra form count so we know what index to use for the next item.
 
 $("#add-another").click(function() {
     form_count ++;
-    element = $('<label>Skill:</label>');
+    element = $('<div class="form-group"><label>Skill:</label>');
     element.attr('name', 'extra_field_' + form_count);
     element.attr('class', 'extra_field_' + form_count)
     $("#forms").append(element);
-    element = $('<input type="text"/>');
+    element = $('<input type="text"/></div>');
+    element.attr('name', 'extra_field_' + form_count);
+    element.attr('class', 'extra_field_' + form_count);
+    $("#forms").append(element);
+    element = $('<div class="form-group"><label>Expertise:</label>');
     element.attr('name', 'extra_field_' + form_count);
     element.attr('class', 'extra_field_' + form_count)
     $("#forms").append(element);
-    element = $('<label>Expertise:</label>');
-    element.attr('name', 'extra_field_' + form_count);
-    element.attr('class', 'extra_field_' + form_count)
-    $("#forms").append(element);
-    element = $('<input type="number"/>');
+    element = $('<input type="number"/></div>');
     element.attr('name', 'extra_field_' + form_count);
     element.attr('class', 'extra_field_' + form_count)
     $("#forms").append(element);

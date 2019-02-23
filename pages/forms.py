@@ -35,13 +35,36 @@ class LoginUserForm(ModelForm):
 class CvCreationForm(forms.Form):
     name = forms.CharField(label='Name', max_length=50, required=False)
     extra_field_count = forms.CharField(widget=forms.HiddenInput())
+    extra_language_count = forms.CharField(widget=forms.HiddenInput())
+    extra_hobby_count = forms.CharField(widget=forms.HiddenInput())
+    extra_qual_count = forms.CharField(widget=forms.HiddenInput())
+    extra_job_count = forms.CharField(widget=forms.HiddenInput())
     def __init__(self, *args, **kwargs):
-        extra_fields = kwargs.pop('extra', 0)
-
+        extra_fields = kwargs.pop('extraskills', 0)
+        extra_language = kwargs.pop('extralang', 0)
+        extra_hobby = kwargs.pop('extrahobby', 0)
+        extra_qual = kwargs.pop('extraqual', 0)
+        extra_job = kwargs.pop('extrajob', 0)
         super(CvCreationForm, self).__init__(*args, **kwargs)
         self.fields['extra_field_count'].initial = extra_fields
-
+        self.fields['extra_language_count'].initial = extra_language
+        self.fields['extra_hobby_count'].initial = extra_hobby
+        self.fields['extra_qual_count'].initial = extra_qual
+        self.fields['extra_job_count'].initial = extra_job
         for index in range(int(extra_fields)):
             # generate extra fields in the number specified via extra_fields
             self.fields['extra_charfield_{index}'.format(index=index)] = forms.CharField(label='Skill', required=False)
             self.fields['extra_intfield_{index}'.format(index=index)] =  forms.IntegerField(label='Expertise (1-10)', validators=[MaxValueValidator(10), MinValueValidator(1)], required=False)
+        for index in range(int(extra_language)):
+            self.fields['extra_charfield_lang_{index}'.format(index=index)] = forms.CharField(label='Language', required=False)
+            self.fields['extra_intfield_lang_{index}'.format(index=index)] =  forms.IntegerField(label='Expertise (1-10)', validators=[MaxValueValidator(10), MinValueValidator(1)], required=False)
+        for index in range(int(extra_hobby)):
+            self.fields['extra_charfield_hobby_{index}'.format(index=index)] = forms.CharField(label='Hobby', required=False)
+            self.fields['extra_intfield_hobby_{index}'.format(index=index)] =  forms.IntegerField(label='Interest (1-10)', validators=[MaxValueValidator(10), MinValueValidator(1)], required=False)
+        for index in range(int(extra_qual)):
+            self.fields['extra_charfield_qual_{index}'.format(index=index)] = forms.CharField(label='Qualification', required=False)
+            self.fields['extra_intfield_qual_{index}'.format(index=index)] =  forms.CharField(label='Grade', required=False)
+        for index in range(int(extra_job)):
+            self.fields['extra_charfield_job_{index}'.format(index=index)] = forms.CharField(label='Company', required=False)
+            self.fields['extra_intfield_job_{index}'.format(index=index)] =  forms.CharField(label='Position', required=False)
+            self.fields['extra_lenfield_job_{index}'.format(index=index)] =  forms.CharField(label='Length of employment', required=False)

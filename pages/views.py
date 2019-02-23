@@ -65,11 +65,11 @@ def filter_jobs(request):
 def cv(request):
     if 'id' in request.session:
         if 'skills' not in request.session:
-            request.session['skills'] = 1
+            request.session['skills'] = 0
         useremail = AppUser.objects.get(id=request.session['id']).email
         completedCv = AppUser.objects.get(id=request.session['id']).cvComplete
         if request.method == 'POST':
-            form = CvCreationForm(request.POST, extra=request.POST.get('extra_field_count'))
+            form = CvCreationForm(request.POST, extraskills=request.POST.get('extra_field_count'), extralang=request.POST.get('extra_language_count'), extrahobby=request.POST.get('extra_hobby_count'), extraqual=request.POST.get('extra_qual_count'), extrajob=request.POST.get('extra_job_count'))
             if form.is_valid():
                 # TODO store data in database
                 AppUser.objects.filter(id=request.session['id']).update(cvComplete=True)
@@ -79,7 +79,7 @@ def cv(request):
                 context = {"email" : useremail, "form": form, "cv": completedCv, "error": "Please fill out the form correctly"}
                 return render(request, 'applicantportal/cv.html', context)
         else:
-            form = CvCreationForm(extra=1)
+            form = CvCreationForm()
             context = {"email" : useremail, "form": form, "cv": completedCv}
             return render(request, 'applicantportal/cv.html', context)
     else:

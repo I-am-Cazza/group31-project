@@ -18,22 +18,43 @@
   <div id='forms'>
       {{ form|crispy }}
     {% csrf_token %}
-    {% for field in form %}
-      {{ field.label_tag }} {{ field }}
 
-      {% endfor %}
 
 
     </div>
 
     <br>
     <div class="btn-group" role="group" aria-label="Basic example">
-    <button id="add-another" type="button"  class="btn btn-info">Add skill</button>
-    <button id="remove-another" type="button"  class="btn btn-secondary">Remove skill </button>
+    <button id="add-another-skill" type="button"  class="btn btn-info">Add skill</button>
+    <button id="remove-another-skill" type="button"  class="btn btn-secondary">Remove skill </button>
     </div>
+    <br>
+    <br>
+    <div class="btn-group" role="group" aria-label="Basic example">
+    <button id="add-another-language" type="button"  class="btn btn-info">Add language</button>
+    <button id="remove-another-language" type="button"  class="btn btn-secondary">Remove language </button>
+    </div>
+    <br>
+    <br>
+    <div class="btn-group" role="group" aria-label="Basic example">
+    <button id="add-another-hobby" type="button"  class="btn btn-info">Add hobby</button>
+    <button id="remove-another-hobby" type="button"  class="btn btn-secondary">Remove hobby </button>
+    </div>
+    <br>
+    <br>
+    <div class="btn-group" role="group" aria-label="Basic example">
+    <button id="add-another-qual" type="button"  class="btn btn-info">Add A-Level Qualification</button>
+    <button id="remove-another-qual" type="button"  class="btn btn-secondary">Remove A-Level Qualification </button>
+    </div>
+    <br>
+    <br>
+    <div class="btn-group" role="group" aria-label="Basic example">
+    <button id="add-another-job" type="button"  class="btn btn-info">Add previous employment</button>
+    <button id="remove-another-job" type="button"  class="btn btn-secondary">Remove previous employment</button>
+    </div>
+    <br>
+    <br>
         <input type="submit" class="btn btn-primary" value="Submit">
-
-
 
 
 
@@ -42,26 +63,32 @@
 
 <script>
 form_count = Number($("[name=extra_field_count]").val());
+language_count = Number($("[name=extra_language_count]").val());
+hobby_count = Number($("[name=extra_hobby_count]").val());
+qual_count = Number($("[name=extra_qual_count]").val());
+job_count = Number($("[name=extra_job_count]").val());
 // get extra form count so we know what index to use for the next item.
 
-$("#add-another").click(function() {
+$("#add-another-skill").click(function() {
     form_count ++;
-    element = $('<div class="form-group"><label>Skill:</label>');
-    element.attr('name', 'extra_field_' + form_count);
-    element.attr('class', 'extra_field_' + form_count)
-    $("#forms").append(element);
-    element = $('<input type="text"/></div>');
-    element.attr('name', 'extra_field_' + form_count);
-    element.attr('class', 'extra_field_' + form_count);
-    $("#forms").append(element);
-    element = $('<div class="form-group"><label>Expertise:</label>');
-    element.attr('name', 'extra_field_' + form_count);
-    element.attr('class', 'extra_field_' + form_count)
-    $("#forms").append(element);
-    element = $('<input type="number"/></div>');
-    element.attr('name', 'extra_field_' + form_count);
-    element.attr('class', 'extra_field_' + form_count)
-    $("#forms").append(element);
+    element = $('<label>Skill:</label>');
+    element.attr('name', 'extra_charfield_' + form_count);
+    element.attr('id', 'extra_field_skill' + form_count)
+    $(".form-group").append(element);
+    element = $('<input type="text"/>');
+    element.attr('name', 'extra_charfield_' + form_count);
+    element.attr('id', 'extra_field_text' + form_count);
+    element.attr('class', 'form-control')
+    $(".form-group").append(element);
+    element = $('<label>Expertise:</label>');
+    element.attr('name', 'extra_intfield_' + form_count);
+    element.attr('id', 'extra_field_expertise' + form_count)
+    $(".form-group").append(element);
+    element = $('<input type="number"/>');
+    element.attr('name', 'extra_intfield_' + form_count);
+    element.attr('id', 'extra_field_number' + form_count)
+    element.attr('class', 'form-control')
+    $(".form-group").append(element);
 
     // build element and append it to our forms container
 
@@ -69,16 +96,172 @@ $("#add-another").click(function() {
     // increment form count so our view knows to populate
     // that many fields for validation
 })
-$("#remove-another").click(function() {
+$("#remove-another-skill").click(function() {
 
+if (form_count > 0){
+      $('#extra_field_skill' + form_count).remove();
+      $('#extra_field_text' + form_count).remove();
+      $('#extra_field_expertise' + form_count).remove();
+      $('#extra_field_number' + form_count).remove();
+      form_count --;
 
-    $('.extra_field_' + form_count).remove();
-    form_count --;
-    // build element and append it to our forms container
+      $("[name=extra_field_count]").val(form_count);
+    }
+})
+$("#add-another-language").click(function() {
+    language_count ++;
+    element = $('<label>Language:</label>');
+    element.attr('name', 'extra_charfield_lang_' + language_count);
+    element.attr('id', 'extra_field_lang_' + language_count)
+    $(".form-group").append(element);
+    element = $('<input type="text"/>');
+    element.attr('name', 'extra_charfield_lang_' + language_count);
+    element.attr('id', 'extra_field_text_lang_' + language_count);
+    element.attr('class', 'form-control')
+    $(".form-group").append(element);
+    element = $('<label>Expertise:</label>');
+    element.attr('name', 'extra_intfield_lang_' + language_count);
+    element.attr('id', 'extra_field_expertise_lang_' + language_count)
+    $(".form-group").append(element);
+    element = $('<input type="number"/>');
+    element.attr('name', 'extra_intfield_lang_' + language_count);
+    element.attr('id', 'extra_field_number_lang_' + language_count)
+    element.attr('class', 'form-control')
+    $(".form-group").append(element);
 
-    $("[name=extra_field_count]").val(form_count);
-    // increment form count so our view knows to populate
-    // that many fields for validation
+    $("[name=extra_language_count]").val(language_count);
+
+})
+$("#remove-another-language").click(function() {
+
+if (language_count > 0){
+      $('#extra_field_lang_' + language_count).remove();
+      $('#extra_field_text_lang_' + language_count).remove();
+      $('#extra_field_expertise_lang_' + language_count).remove();
+      $('#extra_field_number_lang_' + language_count).remove();
+      language_count --;
+
+      $("[name=extra_language_count]").val(language_count);
+    }
+})
+$("#add-another-hobby").click(function() {
+    hobby_count ++;
+    element = $('<label>Hobby:</label>');
+    element.attr('name', 'extra_charfield_hobby_' + hobby_count);
+    element.attr('id', 'extra_field_hobby_' + hobby_count)
+    $(".form-group").append(element);
+    element = $('<input type="text"/>');
+    element.attr('name', 'extra_charfield_hobby_' + hobby_count);
+    element.attr('id', 'extra_field_text_hobby_' + hobby_count);
+    element.attr('class', 'form-control')
+    $(".form-group").append(element);
+    element = $('<label>Interest:</label>');
+    element.attr('name', 'extra_intfield_hobby_' + hobby_count);
+    element.attr('id', 'extra_field_expertise_hobby_' + hobby_count)
+    $(".form-group").append(element);
+    element = $('<input type="number"/>');
+    element.attr('name', 'extra_intfield_hobby_' + hobby_count);
+    element.attr('id', 'extra_field_number_hobby_' + hobby_count)
+    element.attr('class', 'form-control')
+    $(".form-group").append(element);
+
+    $("[name=extra_hobby_count]").val(hobby_count);
+})
+$("#remove-another-hobby").click(function() {
+
+if (hobby_count > 0){
+      $('#extra_field_hobby_' + hobby_count).remove();
+      $('#extra_field_text_hobby_' + hobby_count).remove();
+      $('#extra_field_expertise_hobby_' + hobby_count).remove();
+      $('#extra_field_number_hobby_' + hobby_count).remove();
+      hobby_count --;
+
+      $("[name=extra_hobby_count]").val(hobby_count);
+    }
+
+})
+$("#add-another-qual").click(function() {
+    qual_count ++;
+    element = $('<label>Qualification:</label>');
+    element.attr('name', 'extra_charfield_qual_' + qual_count);
+    element.attr('id', 'extra_field_qual_' + qual_count)
+    $(".form-group").append(element);
+    element = $('<input type="text"/>');
+    element.attr('name', 'extra_charfield_qual_' + qual_count);
+    element.attr('id', 'extra_field_text_qual_' + qual_count);
+    element.attr('class', 'form-control')
+    $(".form-group").append(element);
+    element = $('<label>Grade:</label>');
+    element.attr('name', 'extra_intfield_qual_' + qual_count);
+    element.attr('id', 'extra_field_expertise_qual_' + qual_count)
+    $(".form-group").append(element);
+    element = $('<input type="text"/>');
+    element.attr('name', 'extra_intfield_qual_' + qual_count);
+    element.attr('id', 'extra_field_number_qual_' + qual_count)
+    element.attr('class', 'form-control')
+    $(".form-group").append(element);
+
+    $("[name=extra_qual_count]").val(qual_count);
+})
+$("#remove-another-qual").click(function() {
+
+if (qual_count > 0){
+      $('#extra_field_qual_' + qual_count).remove();
+      $('#extra_field_text_qual_' + qual_count).remove();
+      $('#extra_field_expertise_qual_' + qual_count).remove();
+      $('#extra_field_number_qual_' + qual_count).remove();
+      qual_count --;
+
+      $("[name=extra_qual_count]").val(qual_count);
+    }
+
+})
+$("#add-another-job").click(function() {
+    job_count ++;
+    element = $('<label>Company:</label>');
+    element.attr('name', 'extra_charfield_job_' + job_count);
+    element.attr('id', 'extra_field_job_' + job_count)
+    $(".form-group").append(element);
+    element = $('<input type="text"/>');
+    element.attr('name', 'extra_charfield_job_' + job_count);
+    element.attr('id', 'extra_field_text_job_' + job_count);
+    element.attr('class', 'form-control')
+    $(".form-group").append(element);
+    element = $('<label>Position:</label>');
+    element.attr('name', 'extra_intfield_job_' + job_count);
+    element.attr('id', 'extra_field_expertise_job_' + job_count)
+    $(".form-group").append(element);
+    element = $('<input type="text"/>');
+    element.attr('name', 'extra_intfield_job_' + job_count);
+    element.attr('id', 'extra_field_number_job_' + job_count)
+    element.attr('class', 'form-control')
+    $(".form-group").append(element);
+    element = $('<label>Length of employment:</label>');
+    element.attr('name', 'extra_lenfield_job_' + job_count);
+    element.attr('id', 'extra_field_len_job_label_' + job_count)
+    $(".form-group").append(element);
+    element = $('<input type="text"/>');
+    element.attr('name', 'extra_lenfield_job_' + job_count);
+    element.attr('id', 'extra_field_len_job_' + job_count)
+    element.attr('class', 'form-control')
+    $(".form-group").append(element);
+
+    $("[name=extra_job_count]").val(job_count);
+})
+$("#remove-another-job").click(function() {
+
+if (job_count > 0){
+      $('#extra_field_job_' + job_count).remove();
+      $('#extra_field_text_job_' + job_count).remove();
+      $('#extra_field_expertise_job_' + job_count).remove();
+      $('#extra_field_number_job_' + job_count).remove();
+      $('#extra_field_len_job_label_' + job_count).remove();
+      $('#extra_field_len_job_' + job_count).remove();
+      job_count --;
+
+      $("[name=extra_job_count]").val(job_count);
+    }
+
 })
 </script>
 {% endblock %}

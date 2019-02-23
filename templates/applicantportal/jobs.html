@@ -1,5 +1,6 @@
 {% extends "global/base.html" %}
 {% block content %}
+{% load crispy_forms_tags %}
 <br>
 <p>You are currently logged in as {{email}}
 {% if not cv %}
@@ -7,13 +8,13 @@
     Click <a href="{% url 'cv' %}">here</a> to complete your online CV</p>
 {% endif %}
 <h2>Available Jobs</h2>
-<br>
+
 
 <form method="get" action="/filter">
-    {{ filter.form.as_p }}
-    <button type="submit">Search</button>
+    {{ filter.form|crispy }}
+    <button type="submit" class="btn btn-info btn-sm btn-block" >Filter</button>
   </form>
-
+<br>
 {% if job_list %}
 <div id="accordion">
    {% for job in job_list %}
@@ -34,6 +35,8 @@
 <p>No jobs are available.</p>
 {% endif %}
 <script>
-$( "#accordion" ).accordion();
-</script
+    $( "#accordion" ).accordion({
+        collapsible: true
+    });
+    </script>
 {% endblock %}

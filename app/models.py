@@ -20,6 +20,9 @@ class Job(models.Model):
     class Meta:
         ordering = ['deadline']
 
+    def __str__(self):
+        return self.job_title
+
 
 class TestQuestions(models.Model):
     question_text = models.CharField(max_length=500)
@@ -48,3 +51,6 @@ class Application(models.Model):
     userid = models.ForeignKey(AppUser, on_delete=models.CASCADE)
     jobid = models.ForeignKey(Job, on_delete=models.CASCADE)
     status = models.CharField(max_length=128)
+
+    def __str__(self):
+        return "User: " + str(self.userid) + " Job Title: " + str(self.jobid)

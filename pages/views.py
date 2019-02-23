@@ -11,7 +11,7 @@ from app.views import search
 
 def index(request):
     if 'id' in request.session:
-        return redirect('applicantjobs')
+        return applicant_jobs(request)
     else:
         job_filter = search(request)
         context = {"home_page": "active", "job_list": Job.objects.all(), 'filter': job_filter}
@@ -62,9 +62,10 @@ def apply(request, job_id):
         cv = CV.objects.get(owner=id).cvData
         # TODO Send CV to Machine Learning
         if make_application(request, job_id):
-            return redirect('applicant')  # TODO Success message for adding application
+            return redirect('../../')  # TODO Return to applicant_jobs
+            # TODO Success message for adding application
         else:
-            return redirect('applicant')  # TODO Error message for application not made...
+            return redirect('../../')  # TODO Error message for application not made...
     else:
         return HttpResponseForbidden()
 
@@ -90,7 +91,7 @@ def cv(request):
                 # TODO store data in database
                 AppUser.objects.filter(id=request.session['id']).update(cvComplete=True)
                 #context = {"job_list": Job.objects.all(), "email": useremail, "cv": True}
-                return redirect('applicantjobs')
+                return applicant_jobs(request)
             else:
                 context = {"email" : useremail, "form": form, "cv": completedCv, "error": "Please fill out the form correctly"}
                 return render(request, 'applicantportal/cv.html', context)
@@ -145,7 +146,7 @@ def aaron_signup(request):
             user = AppUser(email=email, password=hashed_password, userType='Applicant')
             user.save()  # TODO create session key
             request.session['id'] = AppUser.objects.get(email=email).id
-            return redirect('applicantjobs')
+            return applicant_jobs(request)
     return render(request, 'applicantportal/signup.html', context)
 
 
@@ -162,7 +163,7 @@ def signup(request):
             user = authenticate(username=username, password=raw_password)
             auth_login(request, user)
             request.session['id'] = AppUser.objects.get(username=username).id
-            return redirect('applicantjobs')
+            return applicant_jobs(request)
     context = {'form': form, 'signup_page': 'active'}
     return render(request, 'applicantportal/signup.html', context)
 
@@ -187,7 +188,7 @@ def aaron_login(request):
                 context= {'form': form, 'login_page': 'active','error_message':'<p style="color:red">Password is incorrect.</p>'}
                 return render(request,'applicantportal/login.html',context )
             request.session['id'] = AppUser.objects.get(email=email).id
-            return redirect('applicantjobs')
+            return applicant_jobs(request)
         else:
             return login(request)
     else:

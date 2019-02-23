@@ -1,5 +1,5 @@
 from django.db import models
-# from django.contrib.postgres.fields import JSONField
+from django.contrib.postgres.fields import JSONField
 
 
 class Organisation(models.Model):
@@ -40,5 +40,5 @@ class AppUser(models.Model):
 
 class CV(models.Model):
     owner = models.ForeignKey(AppUser, on_delete=models.CASCADE)
-    # cvData = JSONField() #Uncomment on production server, not included in testing due to incompatibility with sqlite3
-    cvData = models.CharField(max_length=500)
+    cvData = JSONField()
+    # cvData = models.CharField(max_length=500)

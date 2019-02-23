@@ -3,11 +3,11 @@ from django.http import HttpResponse
 from django.contrib.auth import login as auth_login, authenticate
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.forms import UserCreationForm
-from app.models import Job, AppUser, TestQuestions
+from app.models import Job, AppUser, TestQuestions, CV
 from .forms import AddUserForm, LoginUserForm, SignUpForm, CvCreationForm
 from django.http import HttpResponseForbidden
 from app.views import search
-
+import json
 
 def index(request):
     if 'id' in request.session:
@@ -69,9 +69,34 @@ def cv(request):
         useremail = AppUser.objects.get(id=request.session['id']).email
         completedCv = AppUser.objects.get(id=request.session['id']).cvComplete
         if request.method == 'POST':
-            form = CvCreationForm(request.POST, extraskills=request.POST.get('extra_field_count'), extralang=request.POST.get('extra_language_count'), extrahobby=request.POST.get('extra_hobby_count'), extraqual=request.POST.get('extra_qual_count'), extrajob=request.POST.get('extra_job_count'))
+            skillsnumber = request.POST.get('extra_field_count')
+            languagesnumber = request.POST.get('extra_language_count')
+            hobbiesnumber = request.POST.get('extra_hobby_count')
+            qualificationsnumber = request.POST.get('extra_qual_count')
+            jobsnumber = request.POST.get('extra_job_count')
+            form = CvCreationForm(request.POST, extraskills=skillsnumber, extralang=languagesnumber, extrahobby=hobbiesnumber, extraqual=qualificationsnumber, extrajob=jobsnumber)
             if form.is_valid():
                 # TODO store data in database
+                formname = form.cleaned_data['name']
+                skillslist = []
+                langlist = []
+                hobbylist = []
+                quallist = []
+                joblist = []
+                for i in range(int(skillsnumber)):
+                    skillslist.append(dict(skill = form.cleaned_data['extra_charfield_' + str(i+1)], expertise = form.cleaned_data['extra_intfield_' + str(i+1)]))
+                for i in range(int(languagesnumber)):
+                    langlist.append(dict(language = form.cleaned_data['extra_charfield_lang_' + str(i+1)], expertise = form.cleaned_data['extra_intfield_lang_' + str(i+1)]))
+                for i in range(int(hobbiesnumber)):
+                    hobbylist.append(dict(hobby = form.cleaned_data['extra_charfield_hobby_' + str(i+1)], interest = form.cleaned_data['extra_intfield_hobby_' + str(i+1)]))
+                for i in range(int(qualificationsnumber)):
+                    quallist.append(dict(qualification = form.cleaned_data['extra_charfield_qual_' + str(i+1)], grade = form.cleaned_data['extra_intfield_qual_' + str(i+1)]))
+                for i in range(int(jobsnumber)):
+                    quallist.append(dict(company = form.cleaned_data['extra_charfield_job_' + str(i+1)], grade = form.cleaned_data['extra_intfield_job_' + str(i+1)], length = form.cleaned_data['extra_lenfield_job_'+ str(i+1)]))
+                finalobject = dict(name = formname, skills=skillslist, languages = langlist, hobbies=hobbylist, qualifications = quallist, jobs = joblist)
+                jsonobject = json.dumps(finalobject)
+                newCV = CV(owner=AppUser.objects.get(id=request.session['id']), cvData=jsonobject)
+                newCV.save()
                 AppUser.objects.filter(id=request.session['id']).update(cvComplete=True)
                 #context = {"job_list": Job.objects.all(), "email": useremail, "cv": True}
                 return redirect('applicantjobs')

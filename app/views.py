@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Job
+from .models import Job, AppUser, Application
 from .filters import JobFilter
 
 

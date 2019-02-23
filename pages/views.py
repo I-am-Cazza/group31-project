@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.contrib.auth import login as auth_login, authenticate
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.forms import UserCreationForm
-from app.models import Job, AppUser, TestQuestions
+from app.models import Job, AppUser, TestQuestions, Application, CV
 from .forms import AddUserForm, LoginUserForm, SignUpForm, CvCreationForm
 from django.http import HttpResponseForbidden
 from app.views import search
@@ -39,7 +39,7 @@ def job(request, job_id):
     if 'id' in request.session:
         useremail = AppUser.objects.get(id=request.session['id']).email
         requested_job = Job.objects.get(id=job_id)
-        context = {"email" : useremail, "job": requested_job}
+        context = {"email": useremail, "job": requested_job}
         return render(request, 'applicantportal/job.html', context)
     else:
         return HttpResponseForbidden()
@@ -56,10 +56,26 @@ def test(request, job_id):
         return HttpResponseForbidden()
 
 
-def filter_jobs(request):
-    # TODO get data from filter (form?)
+def apply(request, job_id):
+    if 'id' in request.session:
+        id = request.session['id']
+        cv = CV.objects.get(owner=id).cvData
+        # TODO Send CV to Machine Learning
+        if make_application(request, job_id):
+            return redirect('applicant')  # TODO Success message for adding application
+        else:
+            return redirect('applicant')  # TODO Error message for application not made...
+    else:
+        return HttpResponseForbidden()
 
-    return request
+
+def make_application(request, jobid):
+        userid = request.session['id']
+        user = AppUser.objects.get(pk=userid)
+        job = Job.objects.get(pk=jobid)
+        application = Application(userid=user, jobid=job, status='Applied')
+        application.save()
+        return True
 
 
 def cv(request):
@@ -85,12 +101,14 @@ def cv(request):
     else:
         return HttpResponseForbidden()
 
+
 def addskill(request):
     if 'id' in request.session:
         request.session['skills'] += 1
         return redirect('cv')
     else:
         return HttpResponseForbidden()
+
 
 def removeskill(request):
     if 'id' in request.session:
@@ -99,10 +117,10 @@ def removeskill(request):
     else:
         return HttpResponseForbidden()
 
+
 def logout(request):
     request.session.flush()
-    context = {"home_page": "active", "job_list": Job.objects.all()}
-    return render(request, 'global/index.html', context)
+    return redirect('index')
 
 
 def aaron_signup(request):

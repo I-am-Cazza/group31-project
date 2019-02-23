@@ -42,3 +42,9 @@ class CV(models.Model):
     owner = models.ForeignKey(AppUser, on_delete=models.CASCADE)
     # cvData = JSONField() #Uncomment on production server, not included in testing due to incompatibility with sqlite3
     cvData = models.CharField(max_length=500)
+
+
+class Application(models.Model):
+    userid = models.ForeignKey(AppUser, on_delete=models.CASCADE)
+    jobid = models.ForeignKey(Job, on_delete=models.CASCADE)
+    status = models.CharField(max_length=128)

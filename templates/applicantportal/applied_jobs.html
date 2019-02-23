@@ -7,14 +7,8 @@
   <p>You have not completed your online CV, and will not be able to apply for any jobs until you do.
     Click <a href="{% url 'cv' %}">here</a> to complete your online CV</p>
 {% endif %}
-<h2>Available Jobs</h2>
+<h2>Jobs you've applied for:</h2>
 
-
-<form method="get" action="/filter">
-    {{ filter.form|crispy }}
-    <button type="submit" class="btn btn-info btn-sm btn-block" >Filter</button>
-</form>
-<br>
 
 {% if job_list %}
 <div id="accordion">

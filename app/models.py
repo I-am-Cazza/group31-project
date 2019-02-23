@@ -43,9 +43,7 @@ class AppUser(models.Model):
 
 class CV(models.Model):
     owner = models.ForeignKey(AppUser, on_delete=models.CASCADE)
-<<<<<<< HEAD
-    # cvData = JSONField() #Uncomment on production server, not included in testing due to incompatibility with sqlite3
-    cvData = models.CharField(max_length=500)
+    cvData = JSONField()
 
 
 class Application(models.Model):
@@ -55,7 +53,3 @@ class Application(models.Model):
 
     def __str__(self):
         return "User: " + str(self.userid) + " Job Title: " + str(self.jobid)
-=======
-    cvData = JSONField()
-    # cvData = models.CharField(max_length=500)
->>>>>>> development

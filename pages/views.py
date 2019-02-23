@@ -3,15 +3,14 @@ from django.http import HttpResponse
 from django.contrib.auth import login as auth_login, authenticate
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.forms import UserCreationForm
-<<<<<<< HEAD
 from app.models import Job, AppUser, TestQuestions, Application, CV
-=======
 from app.models import Job, AppUser, TestQuestions, CV
->>>>>>> development
 from .forms import AddUserForm, LoginUserForm, SignUpForm, CvCreationForm
 from django.http import HttpResponseForbidden
 from app.views import search
 import json
+from itertools import chain
+
 
 def index(request):
     if 'id' in request.session:
@@ -222,3 +221,19 @@ def aaron_login(request):
             return login(request)
     else:
         return login(request)
+
+
+def applied_jobs(request):
+    if 'id' in request.session:
+        id = request.session['id']
+        user = AppUser.objects.get(id=id)
+        applications = Application.objects.filter(userid=user)
+        jobs = []
+        for i in applications:
+            jobs.append(i.jobid)
+        # TODO get all jobs that user has applied for
+        context = {'job_list': jobs}
+        return render(request, 'applicantportal/applied_jobs.html', context)
+    else:
+        redirect('../../')
+

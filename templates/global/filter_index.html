@@ -1,14 +1,15 @@
 {% extends "global/base.html" %}
 {% block content %}
+{% load crispy_forms_tags %}
 <br>
 <h2>Available Jobs</h2>
 <p>Please log in to apply to the following jobs.</p>
 
   <form method="get" action="/filter">
-    {{ filter.form.as_p }}
-    <button type="submit">Search</button>
+    {{ filter.form|crispy }}
+    <button type="submit" class="btn btn-info btn-sm btn-block" >Filter</button>
   </form>
-
+<br>
 {% if job_list %}
 <div id="accordion">
    {% for job in filter.qs %}
@@ -28,6 +29,8 @@
 <p>No jobs are available.</p>
 {% endif %}
 <script>
-$( "#accordion" ).accordion();
+    $( "#accordion" ).accordion({
+        collapsible: true
+    });
 </script>
 {% endblock %}

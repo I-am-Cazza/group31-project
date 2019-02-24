@@ -42,7 +42,8 @@ def job(request, job_id):
         user = AppUser.objects.get(id=request.session['id'])
         useremail = user.email
         requested_job = Job.objects.get(id=job_id)
-        context = {"email": useremail, "job": requested_job}
+        completedCv = user.cvComplete
+        context = {"email": useremail, "job": requested_job, 'cv': completedCv}
         if Application.objects.filter(userid=user, jobid=requested_job).exists():
             context['has_applied'] = True
         return render(request, 'applicantportal/job.html', context)

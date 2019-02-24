@@ -230,9 +230,11 @@ def applied_jobs(request):
         applications = Application.objects.filter(userid=user)
         jobs = []
         for i in applications:
-            jobs.append(i.jobid)
-        # TODO get all jobs that user has applied for
-        context = {'job_list': jobs}
+            jobs.append([i.jobid, i.status])
+            jobs.append
+        useremail = user.email
+        completedCv = user.cvComplete
+        context = {'job_list': jobs, 'user': user, 'email': useremail, 'cv': completedCv}
         return render(request, 'applicantportal/applied_jobs.html', context)
     else:
         redirect('../../')

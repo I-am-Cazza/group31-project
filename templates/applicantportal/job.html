@@ -15,6 +15,11 @@
       <h4>Job Deadline</h4>
       <p id="deadline">{{job.deadline}}</p>
       <!--<a href="{% url 'apply' job.id %}">Apply</a>-->
+      {% if has_applied %}
+      <h5>You've already applied for this job</h5>
+      <a href="applied_jobs">See application</a>
+      {% else %}
       <a href="{% url 'test' job.id %}">Apply</a>
+      {% endif %}
    </div>
 {% endblock %}

@@ -9,7 +9,6 @@ from .forms import AddUserForm, LoginUserForm, SignUpForm, CvCreationForm, TestF
 from django.http import HttpResponseForbidden
 from app.views import search
 import json
-from itertools import chain
 
 
 def index(request):
@@ -40,9 +39,12 @@ def applicant_jobs(request):
 
 def job(request, job_id):
     if 'id' in request.session:
-        useremail = AppUser.objects.get(id=request.session['id']).email
+        user = AppUser.objects.get(id=request.session['id'])
+        useremail = user.email
         requested_job = Job.objects.get(id=job_id)
         context = {"email": useremail, "job": requested_job}
+        if Application.objects.filter(userid=user, jobid=requested_job).exists():
+            context['has_applied'] = True
         return render(request, 'applicantportal/job.html', context)
     else:
         return HttpResponseForbidden()
@@ -59,10 +61,10 @@ def test(request, job_id):
         if request.method == "POST":
             form = TestForm(request.POST, extraquestion=len(valid_questions), extranames=question_text_list)
             if form.is_valid():
-                #TODO store test results in database
+                # TODO store test results in database
                 return redirect('apply', job_id)
             else:
-                context = {"email" : useremail, "job": requested_job, "questions": valid_questions, "form": form, "error": True}
+                context = {"email": useremail, "job": requested_job, "questions": valid_questions, "form": form, "error": True}
                 return render(request, 'applicantportal/test.html', context)
         else:
             form = TestForm(extraquestion=len(valid_questions), extranames=question_text_list)

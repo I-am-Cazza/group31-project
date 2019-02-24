@@ -14,7 +14,7 @@
       <p>{{job.industry_type}}</p>
       <h4>Job Deadline</h4>
       <p id="deadline">{{job.deadline}}</p>
-      <a href="{% url 'apply' job.id %}">Apply</a>
-      <!-- <a href="{% url 'test' job.id %}">Apply</a> -->
+      <!--<a href="{% url 'apply' job.id %}">Apply</a>-->
+      <a href="{% url 'test' job.id %}">Apply</a>
    </div>
 {% endblock %}

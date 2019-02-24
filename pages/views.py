@@ -5,7 +5,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.forms import UserCreationForm
 from app.models import Job, AppUser, TestQuestions, Application, CV
 from app.models import Job, AppUser, TestQuestions, CV
-from .forms import AddUserForm, LoginUserForm, SignUpForm, CvCreationForm
+from .forms import AddUserForm, LoginUserForm, SignUpForm, CvCreationForm, TestForm
 from django.http import HttpResponseForbidden
 from app.views import search
 import json
@@ -53,8 +53,21 @@ def test(request, job_id):
         useremail = AppUser.objects.get(id=request.session['id']).email
         requested_job = Job.objects.get(id=job_id)
         valid_questions = TestQuestions.objects.filter(question_industry=requested_job.industry_type)
-        context = {"email" : useremail, "job": requested_job, "questions": valid_questions}
-        return render(request, 'applicantportal/test.html', context)
+        question_text_list = []
+        for question in valid_questions:
+            question_text_list.append(question.question_text)
+        if request.method == "POST":
+            form = TestForm(request.POST, extraquestion=len(valid_questions), extranames=question_text_list)
+            if form.is_valid():
+                #TODO store test results in database
+                return redirect('apply', job_id)
+            else:
+                context = {"email" : useremail, "job": requested_job, "questions": valid_questions, "form": form, "error": True}
+                return render(request, 'applicantportal/test.html', context)
+        else:
+            form = TestForm(extraquestion=len(valid_questions), extranames=question_text_list)
+            context = {"email" : useremail, "job": requested_job, "questions": valid_questions, "form": form}
+            return render(request, 'applicantportal/test.html', context)
     else:
         return HttpResponseForbidden()
 
@@ -65,7 +78,7 @@ def apply(request, job_id):
         cv = CV.objects.get(owner=id).cvData
         # TODO Send CV to Machine Learning
         if make_application(request, job_id):
-            return redirect('../../')  # TODO Return to applicant_jobs
+            return redirect('applied_jobs')  # TODO Return to applicant_jobs
             # TODO Success message for adding application
         else:
             return redirect('../../')  # TODO Error message for application not made...
@@ -237,5 +250,4 @@ def applied_jobs(request):
         context = {'job_list': jobs, 'user': user, 'email': useremail, 'cv': completedCv}
         return render(request, 'applicantportal/applied_jobs.html', context)
     else:
-        redirect('../../')
-
+        return HttpResponseForbidden()

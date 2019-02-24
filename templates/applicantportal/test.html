@@ -1,11 +1,23 @@
 {% extends "global/base.html" %}
+{% load crispy_forms_tags %}
 {% block content %}
 <br>
 <p>You are currently logged in as {{email}}</p>
 <h2>Test for {{job.job_title}}</h2>
 <br>
-{% for question in questions %}
-  <h4>Question {{forloop.counter}}</h4>
-  <p>{{question.question_text}}</p>
-{% endfor %}
+{% if error %}
+<p>Please fill out the form correctly</p>
+{% endif %}
+<form action="{% url 'test' job.id%}" method="post">
+
+  <div id='forms'>
+      {{ form|crispy }}
+    {% csrf_token %}
+
+
+
+    </div>
+
+  <input type="submit" class="btn btn-primary" value="Submit">
+</form>
 {% endblock %}

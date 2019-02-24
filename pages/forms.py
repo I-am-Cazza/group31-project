@@ -68,3 +68,14 @@ class CvCreationForm(forms.Form):
             self.fields['extra_charfield_job_{index}'.format(index=index+1)] = forms.CharField(label='Company', required=False)
             self.fields['extra_intfield_job_{index}'.format(index=index+1)] =  forms.CharField(label='Position', required=False)
             self.fields['extra_lenfield_job_{index}'.format(index=index+1)] =  forms.CharField(label='Length of employment', required=False)
+
+class TestForm(forms.Form):
+    extra_question_count = forms.CharField(widget=forms.HiddenInput())
+    def __init__(self, *args, **kwargs):
+        extra_questions = kwargs.pop('extraquestion', 0)
+        extra_names = kwargs.pop('extranames', [])
+        super(TestForm, self).__init__(*args, **kwargs)
+        self.fields['extra_question_count'].initial = extra_questions
+        for index in range(int(extra_questions)):
+            # generate extra fields in the number specified via extra_fields
+            self.fields['extra_questionfield_{index}'.format(index=index)] = forms.CharField(label='Question '+str(index+1) + ' ' + extra_names[index], required=False)

@@ -30,7 +30,6 @@ class TestQuestions(models.Model):
     question_type = models.CharField(max_length=500)  # MultipleChoice, LongAnswer, ShortAnswer, etc.
     question_industry = models.CharField(max_length=50)  # Computing questions only asked to computing applicants, etc.
 
-
 class AppUser(models.Model):
     email = models.EmailField(max_length=64)
     password = models.CharField(max_length=500)  # Includes salt, iterations, hashing alg and hash
@@ -61,3 +60,8 @@ class Application(models.Model):
 
     def __str__(self):
         return "User: " + str(self.userid) + " Job Title: " + str(self.jobid)
+
+class TestAnswers(models.Model):
+    applicationid = models.ForeignKey(Application, on_delete=models.CASCADE) # Which application the answers belong to
+    questionid = models.ForeignKey(TestQuestions, on_delete=models.CASCADE)
+    answer_text = models.CharField(max_length=500)

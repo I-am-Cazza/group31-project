@@ -3,13 +3,11 @@ from django.http import HttpResponse
 from django.contrib.auth import login as auth_login, authenticate
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.forms import UserCreationForm
-from app.models import Job, AppUser, TestQuestions, Application, CV
-from app.models import Job, AppUser, TestQuestions, CV
+from app.models import Job, AppUser, TestQuestions, Application, CV, TestAnswers
 from .forms import AddUserForm, LoginUserForm, SignUpForm, CvCreationForm, TestForm,SettingsForm
 from django.http import HttpResponseForbidden
 from app.views import search
 import json
-from itertools import chain
 
 
 def index(request):
@@ -40,9 +38,13 @@ def applicant_jobs(request):
 
 def job(request, job_id):
     if 'id' in request.session:
-        useremail = AppUser.objects.get(id=request.session['id']).email
+        user = AppUser.objects.get(id=request.session['id'])
+        useremail = user.email
         requested_job = Job.objects.get(id=job_id)
-        context = {"email": useremail, "job": requested_job}
+        completedCv = user.cvComplete
+        context = {"email": useremail, "job": requested_job, 'cv': completedCv}
+        if Application.objects.filter(userid=user, jobid=requested_job).exists():
+            context['has_applied'] = True
         return render(request, 'applicantportal/job.html', context)
     else:
         return HttpResponseForbidden()
@@ -59,10 +61,16 @@ def test(request, job_id):
         if request.method == "POST":
             form = TestForm(request.POST, extraquestion=len(valid_questions), extranames=question_text_list)
             if form.is_valid():
-                #TODO store test results in database
-                return redirect('apply', job_id)
+                question_id_list = []
+                question_answer_list=[]
+                for question in valid_questions:
+                    question_id_list.append(int(question.id))
+                for i in range(len(valid_questions)):
+                    question_answer_list.append(form.cleaned_data['extra_questionfield_' +str(i)])
+                # TODO store test results in database
+                return apply(request, job_id, question_id_list, question_answer_list)
             else:
-                context = {"email" : useremail, "job": requested_job, "questions": valid_questions, "form": form, "error": True}
+                context = {"email": useremail, "job": requested_job, "questions": valid_questions, "form": form, "error": True}
                 return render(request, 'applicantportal/test.html', context)
         else:
             form = TestForm(extraquestion=len(valid_questions), extranames=question_text_list)
@@ -72,13 +80,17 @@ def test(request, job_id):
         return HttpResponseForbidden()
 
 
-def apply(request, job_id):
+def apply(request, job_id, question_id_list, question_answer_list):
     if 'id' in request.session:
         id = request.session['id']
         cv = CV.objects.get(owner=id).cvData
         # TODO Send CV to Machine Learning
         if make_application(request, job_id):
-            return redirect('applied_jobs')  # TODO Return to applicant_jobs
+            recent_application = Application.objects.all().order_by('-id')[0]
+            for i in range(len(question_id_list)):
+                answer = TestAnswers(applicationid = recent_application, questionid = TestQuestions.objects.get(id=question_id_list[i]), answer_text = question_answer_list[i])
+                answer.save()
+            return redirect('applied_jobs')
             # TODO Success message for adding application
         else:
             return redirect('../../')  # TODO Error message for application not made...

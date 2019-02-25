@@ -8,7 +8,10 @@
       <a class="nav-link {{ cv }}" id="pills-profile-tab" data-toggle="pill" href="{% url 'cv' %}" role="tab" aria-controls="pills-profile" aria-selected="false">CV management</a>
     </li>
     <li class="nav-item ml-auto">
-      <a class="nav-link {{ cv }}" id="pills-profile-tab" data-toggle="pill" href="{% url 'applied_jobs' %}" role="tab" aria-controls="pills-profile" aria-selected="false">Current Applications</a>
+      <a class="nav-link {{ applied_jobs }}" id="pills-profile-tab" data-toggle="pill" href="{% url 'applied_jobs' %}" role="tab" aria-controls="pills-profile" aria-selected="false">Current Applications</a>
+    </li>
+    <li class="nav-item ml-auto">
+      <a class="nav-link {{ applicant_settings }}" id="pills-profile-tab" data-toggle="pill" href="{% url 'applicant_settings' %}" role="tab" aria-controls="pills-profile" aria-selected="false">Settings</a>
     </li>
     {% endif %}
   {% if email is None %}

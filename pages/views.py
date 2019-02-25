@@ -81,7 +81,7 @@ def apply(request, job_id):
         cv = CV.objects.get(owner=id).cvData
         # TODO Send CV to Machine Learning
         if make_application(request, job_id):
-            return redirect('applied_jobs')  # TODO Return to applicant_jobs
+            return redirect('applied_jobs')
             # TODO Success message for adding application
         else:
             return redirect('../../')  # TODO Error message for application not made...

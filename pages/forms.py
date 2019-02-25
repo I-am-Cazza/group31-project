@@ -35,9 +35,9 @@ class LoginUserForm(ModelForm):
         fields = ['email', 'password']
 
 class SettingsForm(ModelForm):
-    old_password=forms.CharField(label='Old Password',widget=forms.PasswordInput(), max_length=50)
-    password = forms.CharField(label='New Password',widget=forms.PasswordInput(), max_length=50)
-    confirm_password = forms.CharField(label='Confirm New Password', widget=forms.PasswordInput(), max_length=50)
+    old_password=forms.CharField(label='Old Password',widget=forms.PasswordInput(), max_length=50,required=False)
+    password = forms.CharField(label='New Password',widget=forms.PasswordInput(), max_length=50,required=False)
+    confirm_password = forms.CharField(label='Confirm New Password', widget=forms.PasswordInput(), max_length=50,required=False)
     class Meta:
         model= AppUser
         fields=['email','first_name','last_name','country','city','address_line_1','address_line_2','postal_code','phone_number']

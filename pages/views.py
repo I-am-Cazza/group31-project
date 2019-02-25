@@ -174,6 +174,8 @@ def aaron_signup(request):
             email = form.cleaned_data['email']  # TODO check email is unique, only store unique emails
             password = form.cleaned_data['password']
             check_password = form.cleaned_data['confirm_password']
+            first_name= form.cleaned_data['first_name']
+            last_name=form.cleaned_data['last_name']
             if AppUser.objects.filter(email=email).exists():
                 context= {'form': form, 'signup_page': 'active','error_message':'<p style="color:red">This email already exsists.</p>'}
                 return render(request,'applicantportal/signup.html',context )
@@ -184,7 +186,7 @@ def aaron_signup(request):
                 context= {'form': form, 'signup_page': 'active','error_message':'<p style="color:red">Passwords do not match.</p>'}
                 return render(request,'applicantportal/signup.html',context )
             hashed_password = make_password(password)
-            user = AppUser(email=email, password=hashed_password, userType='Applicant')
+            user = AppUser(email=email, password=hashed_password, userType='Applicant',first_name=first_name,last_name=last_name)
             user.save()  # TODO create session key
             request.session['id'] = AppUser.objects.get(email=email).id
             return applicant_jobs(request)
@@ -263,6 +265,48 @@ def applicant_settings(request):
         address_line_2=user.address_line_2
         postal_code=user.postal_code
         phone_number=user.phone_number
-        form=SettingsForm(initial={'email':email,'first_name':first_name,'last_name':last_name,'country':country,'city':city,'address_line_1':address_line_1,'address_line_2':address_line_2,'postal_code':postal_code,'phone_number':phone_number})
-        context = {'form': form, 'signup_page': 'active', 'email': email}
-        return render(request, 'applicantportal/applicant_settings.html', context)
+        if request.method == 'POST':
+            form = SettingsForm(request.POST)
+            if form.is_valid():
+                print(user.id)
+                product = AppUser.objects.get(id=user.id)
+                product.email=form.cleaned_data.get('email')
+                product.first_name=form.cleaned_data.get('first_name')
+                product.last_name=form.cleaned_data.get('last_name')
+                product.country=form.cleaned_data.get('country')
+                product.city=form.cleaned_data.get('city')
+                product.address_line_1=form.cleaned_data.get('address_line_1')
+                product.address_line_2=form.cleaned_data.get('address_line_2')
+                product.postal_code=form.cleaned_data.get('postal_code')
+                product.phone_number=form.cleaned_data.get('phone_number')
+                product.save()
+                password_hash = user.password
+                old_password_form=form.cleaned_data.get('old_password')
+                if bool(form.data.get('old_password', False))!=False:
+                    print("X")
+                    if check_password(old_password_form, password_hash)==True:
+                        new_password=form.cleaned_data.get('password')
+                        confirm_password=form.cleaned_data.get('confirm_password')
+                        print(new_password)
+                        print(confirm_password)
+                        if new_password==confirm_password:
+                            print(new_password)
+                            print(confirm_password)
+                            if len(new_password)<8:
+                                context= {'form': form, 'applicant_settings': 'active','error_message':'<p style="color:red">Password length is too short. Password must be greater than 8 characters.</p>'}
+                                return render(request,'applicantportal/applicant_settings.html',context )
+                            product.password=make_password(new_password)
+                            product.save()
+                            return applicant_jobs(request)
+                        else:
+                            context= {'form': form, 'applicant_settings': 'active','error_message':'<p style="color:red">Passwords do not match</p>'}
+                            return render(request,'applicantportal/applicant_settings.html',context )
+                    else:
+                        context= {'form': form, 'applicant_settings': 'active','error_message':'<p style="color:red">Old password does not match with exisisting password</p>'}
+                        return render(request,'applicantportal/applicant_settings.html',context )
+                else:
+                    return applicant_jobs(request)
+        else:
+            form=SettingsForm(initial={'email':email,'first_name':first_name,'last_name':last_name,'country':country,'city':city,'address_line_1':address_line_1,'address_line_2':address_line_2,'postal_code':postal_code,'phone_number':phone_number})
+            context = {'form': form, 'signup_page': 'active', 'email': email}
+            return render(request, 'applicantportal/applicant_settings.html', context)

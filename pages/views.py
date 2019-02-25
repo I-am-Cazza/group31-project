@@ -5,7 +5,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.forms import UserCreationForm
 from app.models import Job, AppUser, TestQuestions, Application, CV
 from app.models import Job, AppUser, TestQuestions, CV
-from .forms import AddUserForm, LoginUserForm, SignUpForm, CvCreationForm, TestForm
+from .forms import AddUserForm, LoginUserForm, SignUpForm, CvCreationForm, TestForm,SettingsForm
 from django.http import HttpResponseForbidden
 from app.views import search
 import json
@@ -134,11 +134,11 @@ def cv(request):
                 #context = {"job_list": Job.objects.all(), "email": useremail, "cv": True}
                 return applicant_jobs(request)
             else:
-                context = {"email" : useremail, "form": form, "cv": completedCv, "error": "Please fill out the form correctly"}
+                context = {"CV":"active","email" : useremail, "form": form, "cv": completedCv, "error": "Please fill out the form correctly"}
                 return render(request, 'applicantportal/cv.html', context)
         else:
             form = CvCreationForm()
-            context = {"email" : useremail, "form": form, "cv": completedCv}
+            context = {"CV":"active","email" : useremail, "form": form, "cv": completedCv}
             return render(request, 'applicantportal/cv.html', context)
     else:
         return HttpResponseForbidden()
@@ -247,7 +247,22 @@ def applied_jobs(request):
             jobs.append
         useremail = user.email
         completedCv = user.cvComplete
-        context = {'job_list': jobs, 'user': user, 'email': useremail, 'cv': completedCv}
+        context = {"applied_jobs":"active",'job_list': jobs, 'user': user, 'email': useremail, 'cv': completedCv}
         return render(request, 'applicantportal/applied_jobs.html', context)
     else:
         return HttpResponseForbidden()
+def applicant_settings(request):
+    if 'id' in request.session:
+        user=AppUser.objects.get(id=request.session['id'])
+        email=user.email
+        first_name=user.first_name
+        last_name=user.last_name
+        country=user.country
+        city=user.city
+        address_line_1=user.address_line_1
+        address_line_2=user.address_line_2
+        postal_code=user.postal_code
+        phone_number=user.phone_number
+        form=SettingsForm(initial={'email':email,'first_name':first_name,'last_name':last_name,'country':country,'city':city,'address_line_1':address_line_1,'address_line_2':address_line_2,'postal_code':postal_code,'phone_number':phone_number})
+        context = {'form': form, 'signup_page': 'active', 'email': email}
+        return render(request, 'applicantportal/applicant_settings.html', context)

@@ -1,6 +1,6 @@
 import mlengine
 import json
-from formatting import convert_format
+#from formatting import convert_format
 
 
 # Train the 'model' on the majority of the data in 'dataset', then test with the last 'n_test_count' records. Returns the classification and probability of the last 'n_test_count' records

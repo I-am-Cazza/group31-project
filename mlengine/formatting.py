@@ -43,7 +43,10 @@ def assess_cv(cv: list):
 def years_to_months(time: str):  # time is in the format "1 year 5 months"
     breakdown = time.split(' ')  # breakdown is in the format ['1', 'year', '5', 'months']
     if len(breakdown) <= 1:
-        return 0
+        if breakdown == ['']:
+            return 0
+        else:
+            return int(breakdown[0])
     total = 0
     if breakdown[1] == "year" or breakdown[1] == "years":
         total += 12*int(breakdown[0])

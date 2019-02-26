@@ -101,7 +101,8 @@ def make_application(request, jobid):
         userid = request.session['id']
         user = AppUser.objects.get(pk=userid)
         cv = CV.objects.get(owner=userid).cvData
-        private_classification = predict("Testmodel", cv)
+        #private_classification = predict("demo", cv)[0]
+        private_classification = "test"
         print("This is the classification", private_classification)
         job = Job.objects.get(pk=jobid)
         application = Application(userid=user, jobid=job, status='Applied', classification=private_classification)

@@ -5,6 +5,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.forms import UserCreationForm
 from app.models import Job, AppUser, TestQuestions, Application, CV, TestAnswers
 from .forms import AddUserForm, LoginUserForm, SignUpForm, CvCreationForm, TestForm,SettingsForm
+from app.mlengine.mlengine import train, predict
 from django.http import HttpResponseForbidden
 from app.views import search
 import json
@@ -83,8 +84,6 @@ def test(request, job_id):
 def apply(request, job_id, question_id_list, question_answer_list):
     if 'id' in request.session:
         id = request.session['id']
-        cv = CV.objects.get(owner=id).cvData
-        # TODO Send CV to Machine Learning
         if make_application(request, job_id):
             recent_application = Application.objects.all().order_by('-id')[0]
             for i in range(len(question_id_list)):
@@ -101,8 +100,11 @@ def apply(request, job_id, question_id_list, question_answer_list):
 def make_application(request, jobid):
         userid = request.session['id']
         user = AppUser.objects.get(pk=userid)
+        cv = CV.objects.get(owner=userid).cvData
+        private_classification = predict("Testmodel", cv)
+        print("This is the classification", private_classification)
         job = Job.objects.get(pk=jobid)
-        application = Application(userid=user, jobid=job, status='Applied')
+        application = Application(userid=user, jobid=job, status='Applied', classification=private_classification)
         application.save()
         return True
 
@@ -123,22 +125,25 @@ def cv(request):
             if form.is_valid():
                 # TODO store data in database
                 formname = form.cleaned_data['name']
+                formdegree = form.cleaned_data['degree']
+                formlevel = form.cleaned_data['degree_level']
+                formuniversity = form.cleaned_data['university']
                 skillslist = []
                 langlist = []
                 hobbylist = []
                 quallist = []
                 joblist = []
                 for i in range(int(skillsnumber)):
-                    skillslist.append(dict(skill = form.cleaned_data['extra_charfield_' + str(i+1)], expertise = form.cleaned_data['extra_intfield_' + str(i+1)]))
+                    skillslist.append(dict(Skill = form.cleaned_data['extra_charfield_' + str(i+1)], Expertise = form.cleaned_data['extra_intfield_' + str(i+1)]))
                 for i in range(int(languagesnumber)):
-                    langlist.append(dict(language = form.cleaned_data['extra_charfield_lang_' + str(i+1)], expertise = form.cleaned_data['extra_intfield_lang_' + str(i+1)]))
+                    langlist.append(dict(Language = form.cleaned_data['extra_charfield_lang_' + str(i+1)], Expertise = form.cleaned_data['extra_intfield_lang_' + str(i+1)]))
                 for i in range(int(hobbiesnumber)):
-                    hobbylist.append(dict(hobby = form.cleaned_data['extra_charfield_hobby_' + str(i+1)], interest = form.cleaned_data['extra_intfield_hobby_' + str(i+1)]))
+                    hobbylist.append(dict(Hobby = form.cleaned_data['extra_charfield_hobby_' + str(i+1)], Interest = form.cleaned_data['extra_intfield_hobby_' + str(i+1)]))
                 for i in range(int(qualificationsnumber)):
-                    quallist.append(dict(qualification = form.cleaned_data['extra_charfield_qual_' + str(i+1)], grade = form.cleaned_data['extra_intfield_qual_' + str(i+1)]))
+                    quallist.append(dict(Qualification = form.cleaned_data['extra_charfield_qual_' + str(i+1)], Grade = form.cleaned_data['extra_intfield_qual_' + str(i+1)]))
                 for i in range(int(jobsnumber)):
-                    quallist.append(dict(company = form.cleaned_data['extra_charfield_job_' + str(i+1)], grade = form.cleaned_data['extra_intfield_job_' + str(i+1)], length = form.cleaned_data['extra_lenfield_job_'+ str(i+1)]))
-                finalobject = dict(name = formname, skills=skillslist, languages = langlist, hobbies=hobbylist, qualifications = quallist, jobs = joblist)
+                    joblist.append(dict(Company = form.cleaned_data['extra_charfield_job_' + str(i+1)], Position = form.cleaned_data['extra_intfield_job_' + str(i+1)], Length = form.cleaned_data['extra_lenfield_job_'+ str(i+1)]))
+                finalobject = dict(Name = formname, Degree = formdegree, Level = formlevel, University = formuniversity, Skills=skillslist, Languages = langlist, hobbies=hobbylist, Qualifications = quallist, Employment = joblist)
                 jsonobject = json.dumps(finalobject)
                 newCV = CV(owner=AppUser.objects.get(id=request.session['id']), cvData=jsonobject)
                 newCV.save()

@@ -29,7 +29,7 @@ class AddUserForm(ModelForm):
 
 class LoginUserForm(ModelForm):
     password = forms.CharField(widget=forms.PasswordInput(), max_length=50)
-
+    
     class Meta:
         model = AppUser
         fields = ['email', 'password']
@@ -40,8 +40,7 @@ class SettingsForm(ModelForm):
     confirm_password = forms.CharField(label='Confirm New Password', widget=forms.PasswordInput(), max_length=50,required=False)
     class Meta:
         model= AppUser
-        fields=['email','first_name','last_name','country','city','address_line_1','address_line_2','postal_code','phone_number']
-
+        fields=['email','first_name','last_name','city','country','address_line_1','address_line_2','postal_code','phone_number']
 
 class CvCreationForm(forms.Form):
     name = forms.CharField(label='Name', max_length=50, required=False)

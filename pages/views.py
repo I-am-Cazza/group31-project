@@ -197,6 +197,9 @@ def aaron_signup(request):
             if password!=check_password:
                 context= {'form': form, 'signup_page': 'active','error_message':'<p style="color:red">Passwords do not match.</p>'}
                 return render(request,'applicantportal/signup.html',context )
+            if any(x.isupper() for x in password)==False:
+                context= {'form': form, 'signup_page': 'active','error_message':'<p style="color:red">Password needs one uppercase letter.</p>'}
+                return render(request,'applicantportal/signup.html',context )
             hashed_password = make_password(password)
             user = AppUser(email=email, password=hashed_password, userType='Applicant',first_name=first_name,last_name=last_name)
             user.save()  # TODO create session key
@@ -306,6 +309,9 @@ def applicant_settings(request):
                             print(confirm_password)
                             if len(new_password)<8:
                                 context= {'form': form, 'applicant_settings': 'active','error_message':'<p style="color:red">Password length is too short. Password must be greater than 8 characters.</p>'}
+                                return render(request,'applicantportal/applicant_settings.html',context )
+                            if any(x.isupper() for x in new_password)==False:
+                                context= {'form': form, 'applicant_settings': 'active','error_message':'<p style="color:red">Password needs one uppercase letter.</p>'}
                                 return render(request,'applicantportal/applicant_settings.html',context )
                             product.password=make_password(new_password)
                             product.save()

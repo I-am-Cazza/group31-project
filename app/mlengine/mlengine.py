@@ -1,4 +1,4 @@
-from .formatting import convert_format
+from formatting import convert_format
 from sklearn.ensemble import RandomForestClassifier
 import pickle
 import numpy

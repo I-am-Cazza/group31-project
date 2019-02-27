@@ -358,7 +358,7 @@ def employer_index(request, user_id):
 def employer_job(request, user_id, job_id):
     userType = AppUser.objects.get(id=user_id).userType
     if userType == 'Employer':
-        job = Job.objects.all(id=job_id)
+        job = Job.objects.filter(id=job_id)
         application_list = Application.objects.filter(jobid=job)
         context = {'application_list': application_list}
         return render(request, 'employerportal/job.html', context)

@@ -36,9 +36,3 @@ def predict(model_name: str, cv: any) -> [str, float]:
         index = ai_model.classes_.tolist().index(classification)
         probability = ai_model.predict_proba(formatted_cv)[0][index]
         return [classification, probability]
-
-
-def _get_path(model_name: str):
-    here_path = Path(__file__)
-    model_path = here_path.parent / "aimodels" / (model_name+".ai")
-    return model_path

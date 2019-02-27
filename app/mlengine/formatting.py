@@ -40,7 +40,9 @@ def assess_cv(cv: list):
 
 
 # Converts the string X years Y months into the number of months (12X+Y)
-def years_to_months(time: str):  # time is in the format "1 year 5 months"
+def years_to_months(time):  # time is in the format "1 year 5 months"
+    if isinstance(time, int):
+        return time
     breakdown = time.split(' ')  # breakdown is in the format ['1', 'year', '5', 'months']
     if len(breakdown) <= 1:
         if breakdown == ['']:

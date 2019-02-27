@@ -101,7 +101,8 @@ def make_application(request, jobid):
         userid = request.session['id']
         user = AppUser.objects.get(pk=userid)
         cv = CV.objects.get(owner=userid).cvData
-        private_classification = predict("demo", cv)[0]
+        dictCv = json.loads(cv)
+        private_classification = predict("demo", dictCv)[0]
         #private_classification = "test"
         print("This is the classification", private_classification)
         job = Job.objects.get(pk=jobid)
@@ -139,7 +140,7 @@ def cv(request):
                 for i in range(int(languagesnumber)):
                     langlist.append(dict(Language = form.cleaned_data['extra_charfield_lang_' + str(i+1)], Expertise = form.cleaned_data['extra_intfield_lang_' + str(i+1)]))
                 for i in range(int(hobbiesnumber)):
-                    hobbylist.append(dict(Hobby = form.cleaned_data['extra_charfield_hobby_' + str(i+1)], Interest = form.cleaned_data['extra_intfield_hobby_' + str(i+1)]))
+                    hobbylist.append(dict(Name = form.cleaned_data['extra_charfield_hobby_' + str(i+1)], Interest = form.cleaned_data['extra_intfield_hobby_' + str(i+1)]))
                 for i in range(int(qualificationsnumber)):
                     quallist.append(dict(Qualification = form.cleaned_data['extra_charfield_qual_' + str(i+1)], Grade = form.cleaned_data['extra_intfield_qual_' + str(i+1)]))
                 for i in range(int(jobsnumber)):

@@ -1,10 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "global/base.html" %}
+{% block content %}
+<br>
+
+   <div>
+      <h4> Description</h4>
+      <p>{{job.job_desc}}</p>
+      <!-- <p>{{job.organisation.organisation_name}}</p> -->
+      <h4> Type of job</h4>
+      <p>{{job.industry_type}}</p>
+      <h4>Job Deadline</h4>
+      <p id="deadline">{{job.deadline}}</p>
+      <!--<a href="{% url 'apply' job.id %}">Apply</a>-->
+      {% if application_list %}
+      <h4>List of applicants:</h4>
+            <!--{% for i in application_list %}-->
+            <!--<p>{{i.userid}}</p>-->
+            <!--<p>Status: {{i.status}}</p>-->
+            <!--{% endfor %}-->
+      {% else %}
+      <h2>There are currently no applicants to this job</h2>
+      {% endif %}
+   </div>
+{% endblock %}

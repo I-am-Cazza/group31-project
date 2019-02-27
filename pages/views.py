@@ -101,8 +101,8 @@ def make_application(request, jobid):
         userid = request.session['id']
         user = AppUser.objects.get(pk=userid)
         cv = CV.objects.get(owner=userid).cvData
-        #private_classification = predict("demo", cv)[0]
-        private_classification = "test"
+        private_classification = predict("demo", cv)[0]
+        #private_classification = "test"
         print("This is the classification", private_classification)
         job = Job.objects.get(pk=jobid)
         application = Application(userid=user, jobid=job, status='Applied', classification=private_classification)
@@ -143,9 +143,15 @@ def cv(request):
                 for i in range(int(qualificationsnumber)):
                     quallist.append(dict(Qualification = form.cleaned_data['extra_charfield_qual_' + str(i+1)], Grade = form.cleaned_data['extra_intfield_qual_' + str(i+1)]))
                 for i in range(int(jobsnumber)):
-                    joblist.append(dict(Company = form.cleaned_data['extra_charfield_job_' + str(i+1)], Position = form.cleaned_data['extra_intfield_job_' + str(i+1)], Length = form.cleaned_data['extra_lenfield_job_'+ str(i+1)]))
-                finalobject = dict(Name = formname, Degree = formdegree, Level = formlevel, University = formuniversity, Skills=skillslist, Languages = langlist, hobbies=hobbylist, Qualifications = quallist, Employment = joblist)
+                    Length = "Length of Employment"
+                    joblist.append({"Company" : form.cleaned_data['extra_charfield_job_' + str(i+1)], "Position" : form.cleaned_data['extra_intfield_job_' + str(i+1)], "Length of Employment" : form.cleaned_data['extra_lenfield_job_'+ str(i+1)]})
+                Languages = "Languages Known"
+                Employment = "Previous Employment"
+                finalobject = {"Name" : formname, "Degree" : formdegree, "Level" : formlevel, "University" : formuniversity, "Skills" :skillslist, "Languages Known" : langlist, "Hobbies":hobbylist, "Qualifications" : quallist, "Previous Employment" : joblist}
                 jsonobject = json.dumps(finalobject)
+                if completedCv:
+                    oldCV = CV.objects.get(owner=AppUser.objects.get(id=request.session['id']))
+                    oldCV.delete()
                 newCV = CV(owner=AppUser.objects.get(id=request.session['id']), cvData=jsonobject)
                 newCV.save()
                 AppUser.objects.filter(id=request.session['id']).update(cvComplete=True)

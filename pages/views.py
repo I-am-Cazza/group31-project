@@ -168,23 +168,6 @@ def cv(request):
     else:
         return HttpResponseForbidden()
 
-
-def addskill(request):
-    if 'id' in request.session:
-        request.session['skills'] += 1
-        return redirect('cv')
-    else:
-        return HttpResponseForbidden()
-
-
-def removeskill(request):
-    if 'id' in request.session:
-        request.session['skills'] -= 1
-        return redirect('cv')
-    else:
-        return HttpResponseForbidden()
-
-
 def logout(request):
     request.session.flush()
     return redirect('index')

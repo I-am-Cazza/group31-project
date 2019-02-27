@@ -43,7 +43,10 @@ class SettingsForm(ModelForm):
         fields=['email','first_name','last_name','city','country','address_line_1','address_line_2','postal_code','phone_number']
 
 class CvCreationForm(forms.Form):
-    name = forms.CharField(label='Name', max_length=50, required=False)
+    name = forms.CharField(label='Name', max_length=50, required=True)
+    university = forms.CharField(label='University Attended', max_length=100, required=False)
+    degree = forms.CharField(label='Degree Qualification', max_length=100, required=False)
+    degree_level = forms.CharField(label = 'Degree Level', max_length=10, required=False)
     extra_field_count = forms.CharField(widget=forms.HiddenInput())
     extra_language_count = forms.CharField(widget=forms.HiddenInput())
     extra_hobby_count = forms.CharField(widget=forms.HiddenInput())

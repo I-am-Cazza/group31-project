@@ -1,8 +1,8 @@
-from formatting import convert_format
+from .formatting import convert_format
 from sklearn.ensemble import RandomForestClassifier
 import pickle
 import numpy
-
+import sys
 
 # Creates or retrains a model. data is a collection of cvs in json form. model_name is the name of the model to train
 def train(model_name: str, data: any) -> None:
@@ -22,13 +22,13 @@ def train(model_name: str, data: any) -> None:
     ai_model = RandomForestClassifier(n_estimators=10, max_features=n_features, max_depth=None, min_samples_split=2, n_jobs=-1)
     ai_model.fit(training_matrix, assessed_data)
 
-    with open("aimodels/" + model_name + ".ai", "wb") as file:
+    with open("./app/mlengine/aimodels/" + model_name + ".ai", "wb") as file:
         pickle.dump([ai_model, custom_indices], file, pickle.HIGHEST_PROTOCOL)
 
 
 # Returns the classification of 'cv' according to 'model_name' and a number 0-1 indicating the certainty of the classification.
 def predict(model_name: str, cv: any) -> [str, float]:
-    with open("aimodels/" + model_name + ".ai", "rb") as file:
+    with open("./app/mlengine/aimodels/" + model_name + ".ai", "rb") as file:
         ai_model, custom_indices = pickle.load(file)
         formatted_cv = [convert_format(cv, custom_indices, False)]
         classification = ai_model.predict(formatted_cv)[0]

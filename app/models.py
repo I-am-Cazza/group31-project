@@ -37,12 +37,12 @@ class AppUser(models.Model):
     cvComplete = models.BooleanField(default=False)
     first_name=models.CharField(max_length=50,null=True)
     last_name=models.CharField(max_length=50,null=True)
-    country=models.CharField(max_length=20,null=True)
-    city=models.CharField(max_length=20,null=True)
-    address_line_1=models.CharField(max_length=80,null=True)
-    address_line_2=models.CharField(max_length=80,null=True)
-    postal_code=models.CharField(max_length=30,null=True)
-    phone_number=models.CharField(max_length=30,null=True)
+    # country=models.CharField(max_length=20,null=True)
+    # city=models.CharField(max_length=20,null=True)
+    # address_line_1=models.CharField(max_length=80,null=True)
+    # address_line_2=models.CharField(max_length=80,null=True)
+    # postal_code=models.CharField(max_length=30,null=True)
+    # phone_number=models.CharField(max_length=30,null=True)
 
     def __str__(self):
         return self.email

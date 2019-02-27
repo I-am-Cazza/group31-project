@@ -16,5 +16,7 @@ urlpatterns = [
     path('applicant/cv/plus', views.addskill, name='addskill'),
     path('applicant/cv/minus', views.removeskill, name='removeskill'),
     path('applicant/applied_jobs', views.applied_jobs, name='applied_jobs'),
-    path('applicant/applicant_settings', views.applicant_settings, name='applicant_settings')
+    path('applicant/applicant_settings', views.applicant_settings, name='applicant_settings'),
+    path('admin/index/<int:user_id>/', views.employer_index, name='employer_index'),
+    path('admin/index/<int:user_id>/<int:job_id>', views.employer_job, name='employer_job'),
 ]

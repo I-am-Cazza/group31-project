@@ -58,6 +58,7 @@ class Application(models.Model):
     jobid = models.ForeignKey(Job, on_delete=models.CASCADE)
     status = models.CharField(max_length=128)
     classification = models.CharField(max_length=128, default="Testmodel")
+    answer_percent = models.FloatField(default=50.0)
 
     def __str__(self):
         return "User: " + str(self.userid) + " Job Title: " + str(self.jobid)

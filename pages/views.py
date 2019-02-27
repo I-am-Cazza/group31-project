@@ -84,6 +84,13 @@ def test(request, job_id):
 def apply(request, job_id, question_id_list, question_answer_list):
     if 'id' in request.session:
         id = request.session['id']
+        correct_answer_count = 0
+        for i in range(len(question_id_list)):
+            correct_answer = TestQuestions.objects.get(id=question_id_list[i]).question_answer
+            if question_answer_list[i].lower() == correct_answer.lower():
+                correct_answer_count += 1
+        correct_answer_percentage = (correct_answer_count / len(question_id_list)) * 100
+        request.session['success'] = correct_answer_percentage
         if make_application(request, job_id):
             recent_application = Application.objects.all().order_by('-id')[0]
             for i in range(len(question_id_list)):
@@ -106,8 +113,9 @@ def make_application(request, jobid):
         #private_classification = "test"
         print("This is the classification", private_classification)
         job = Job.objects.get(pk=jobid)
-        application = Application(userid=user, jobid=job, status='Applied', classification=private_classification)
+        application = Application(userid=user, jobid=job, status='Applied', classification=private_classification, answer_percent= request.session['success'])
         application.save()
+        request.session['success'] = None
         return True
 
 

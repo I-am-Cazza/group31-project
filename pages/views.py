@@ -352,10 +352,20 @@ def employer_index(request, user_id):
 def employer_job(request, user_id, job_id):
     userType = AppUser.objects.get(id=user_id).userType
     if userType == 'Employer':
-        job = Job.objects.filter(id=job_id)
+        job = Job.objects.get(id=job_id)
         application_list = Application.objects.filter(jobid=job)
         context = {'job': job, 'application_list': application_list}
         return render(request, 'employerportal/job.html', context)
+    else:
+        return HttpResponseForbidden()
+
+
+def employer_job_applicant(request, user_id, applicant_id):
+    userType = AppUser.objects.get(id=user_id).userType
+    if userType == 'Employer':
+        applicant = AppUser.objects.get(id=applicant_id)
+        context = {'applicant': applicant}
+        return render(request, 'employerportal/applicant.html', context)
     else:
         return HttpResponseForbidden()
 

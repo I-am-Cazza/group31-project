@@ -1,0 +1,16 @@
+{% extends "global/base.html" %}
+{% block content %}
+<br>
+   {% if applicant %}
+   <div>
+      <h4>First Name:</h4>
+      <p>{{applicant.first_name}}</p>
+      <h4>Last Name:</h4>
+      <p>{{applicant.last_name}}</p>
+      <h4>Email:</h4>
+      <p>{{applicant.email}}</p>
+   </div>
+   {% else %}
+      <h2>This applicant does not exist</h2>
+   {% endif %}
+{% endblock %}

@@ -9,6 +9,15 @@
       <p>{{applicant.last_name}}</p>
       <h4>Email:</h4>
       <p>{{applicant.email}}</p>
+      {% if cv %}
+      <h4>CV:</h4>
+      <p>{{cv.cvData}}</p>
+      {% else %}
+      <h4>There is no CV to show</h4>
+      {% endif %}
+      <form>
+         <p style="color:red;">Include way to provide feedback on applicant here</p>
+      </form>
    </div>
    {% else %}
       <h2>This applicant does not exist</h2>

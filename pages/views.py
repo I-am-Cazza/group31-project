@@ -360,11 +360,12 @@ def employer_job(request, user_id, job_id):
         return HttpResponseForbidden()
 
 
-def employer_job_applicant(request, user_id, applicant_id):
+def employer_job_applicant(request, user_id, job_id, applicant_id):
     userType = AppUser.objects.get(id=user_id).userType
     if userType == 'Employer':
         applicant = AppUser.objects.get(id=applicant_id)
-        context = {'applicant': applicant}
+        cv = CV.objects.get(owner=applicant)
+        context = {'applicant': applicant, 'cv': cv}
         return render(request, 'employerportal/applicant.html', context)
     else:
         return HttpResponseForbidden()

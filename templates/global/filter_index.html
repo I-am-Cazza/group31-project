@@ -3,8 +3,11 @@
 {% load crispy_forms_tags %}
 <br>
 <h2>Available Jobs</h2>
-<p>Please log in to apply to the following jobs.</p>
-
+{% if email %}
+  <p>You are currently logged in as {{email}}</p>
+{% else %}
+  <p>Please log in to apply to the following jobs.</p>
+{% endif %}
   <form method="get" action="/filter">
     {{ filter.form|crispy }}
     <button type="submit" class="btn btn-info btn-sm btn-block" >Filter</button>
@@ -22,6 +25,9 @@
       <p>{{job.industry_type}}</p>
       <h4>Job Deadline</h4>
       <p id="deadline">{{job.deadline}}</p>
+      {% if email %}
+      <a style="color: blue" href="{% url 'job' job.id %}">More info</a>
+      {% endif %}
    </div>
    {% endfor %}
 </div>

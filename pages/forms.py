@@ -76,7 +76,7 @@ class CvCreationForm(forms.Form):
             self.fields['extra_intfield_hobby_{index}'.format(index=index+1)] =  forms.IntegerField(label='Interest (1-10)', validators=[MaxValueValidator(10), MinValueValidator(1)], required=False)
         for index in range(int(extra_qual)):
             self.fields['extra_charfield_qual_{index}'.format(index=index+1)] = forms.CharField(label='Qualification', required=False)
-            self.fields['extra_intfield_qual_{index}'.format(index=index+1)] =  forms.ChoiceField(widget=forms.Select(),label='Grade', required=False,choices=grades_choices)
+            self.fields['extra_intfield_qual_{index}'.format(index=index+1)] =  forms.CharField(label='Grade', required=False)
         for index in range(int(extra_job)):
             self.fields['extra_charfield_job_{index}'.format(index=index+1)] = forms.CharField(label='Company', required=False)
             self.fields['extra_intfield_job_{index}'.format(index=index+1)] =  forms.CharField(label='Position', required=False)

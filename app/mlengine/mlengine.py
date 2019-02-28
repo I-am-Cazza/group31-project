@@ -23,22 +23,16 @@ def train(model_name: str, data: any) -> None:
     ai_model = RandomForestClassifier(n_estimators=10, max_features=n_features, max_depth=None, min_samples_split=2, n_jobs=-1)
     ai_model.fit(training_matrix, assessed_data)
 
-    with open(_get_path(model_name), "wb") as file:
+    with open("./app/mlengine/aimodels/" + model_name + ".ai", "wb") as file:
         pickle.dump([ai_model, custom_indices], file, pickle.HIGHEST_PROTOCOL)
 
 
 # Returns the classification of 'cv' according to 'model_name' and a number 0-1 indicating the certainty of the classification.
 def predict(model_name: str, cv: any) -> [str, float]:
-    with open(_get_path(model_name), "rb") as file:
+    with open("./app/mlengine/aimodels/" + model_name + ".ai", "rb") as file:
         ai_model, custom_indices = pickle.load(file)
         formatted_cv = [convert_format(cv, custom_indices, False)]
         classification = ai_model.predict(formatted_cv)[0]
         index = ai_model.classes_.tolist().index(classification)
         probability = ai_model.predict_proba(formatted_cv)[0][index]
         return [classification, probability]
-
-
-def _get_path(model_name: str):
-    here_path = Path(__file__)
-    model_path = here_path.parent / "aimodels" / (model_name+".ai")
-    return model_path

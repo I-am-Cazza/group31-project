@@ -19,13 +19,9 @@
       {{ form|crispy }}
     {% csrf_token %}
 
-<<<<<<< HEAD
+
     </div>
-=======
 
-
-  </div>
->>>>>>> 354f49891890bf16e33bbc2ff81deef4df18dbc3
 
     <br>
     <div class="btn-group" role="group" aria-label="Basic example">
@@ -239,13 +235,8 @@ $("#add-another-job").click(function() {
     element.attr('name', 'extra_intfield_job_' + job_count);
     element.attr('id', 'extra_field_number_job_' + job_count)
     element.attr('class', 'form-control')
-<<<<<<< HEAD
-    $(".form-group").append(element);
-    element = $('<label>Length of employment in months:</label>');
-=======
     $("#forms").append(element);
-    element = $('<label>Length of employment:</label>');
->>>>>>> 354f49891890bf16e33bbc2ff81deef4df18dbc3
+    element = $('<label>Length of employment in months:</label>');
     element.attr('name', 'extra_lenfield_job_' + job_count);
     element.attr('id', 'extra_field_len_job_label_' + job_count)
     $("#forms").append(element);

@@ -21,8 +21,9 @@ def index(request):
 
 
 def filtered_index(request):
+    useremail = AppUser.objects.get(id=request.session['id']).email
     job_filter = search(request)
-    context = {"home_page": "active", "job_list": job_filter, 'filter': job_filter}
+    context = {"home_page": "active", "job_list": job_filter, 'filter': job_filter, "email": useremail}
     return render(request, 'global/filter_index.html', context)
 
 
@@ -84,6 +85,13 @@ def test(request, job_id):
 def apply(request, job_id, question_id_list, question_answer_list):
     if 'id' in request.session:
         id = request.session['id']
+        correct_answer_count = 0
+        for i in range(len(question_id_list)):
+            correct_answer = TestQuestions.objects.get(id=question_id_list[i]).question_answer
+            if question_answer_list[i].lower() == correct_answer.lower():
+                correct_answer_count += 1
+        correct_answer_percentage = (correct_answer_count / len(question_id_list)) * 100
+        request.session['success'] = correct_answer_percentage
         if make_application(request, job_id):
             recent_application = Application.objects.all().order_by('-id')[0]
             for i in range(len(question_id_list)):
@@ -101,12 +109,14 @@ def make_application(request, jobid):
         userid = request.session['id']
         user = AppUser.objects.get(pk=userid)
         cv = CV.objects.get(owner=userid).cvData
-        private_classification = predict("demo", cv)[0]
+        dictCv = json.loads(cv)
+        private_classification = predict("demo", dictCv)[0]
         #private_classification = "test"
         print("This is the classification", private_classification)
         job = Job.objects.get(pk=jobid)
-        application = Application(userid=user, jobid=job, status='Applied', classification=private_classification)
+        application = Application(userid=user, jobid=job, status='Applied', classification=private_classification, answer_percent= request.session['success'])
         application.save()
+        request.session['success'] = None
         return True
 
 
@@ -139,7 +149,7 @@ def cv(request):
                 for i in range(int(languagesnumber)):
                     langlist.append(dict(Language = form.cleaned_data['extra_charfield_lang_' + str(i+1)], Expertise = form.cleaned_data['extra_intfield_lang_' + str(i+1)]))
                 for i in range(int(hobbiesnumber)):
-                    hobbylist.append(dict(Hobby = form.cleaned_data['extra_charfield_hobby_' + str(i+1)], Interest = form.cleaned_data['extra_intfield_hobby_' + str(i+1)]))
+                    hobbylist.append(dict(Name = form.cleaned_data['extra_charfield_hobby_' + str(i+1)], Interest = form.cleaned_data['extra_intfield_hobby_' + str(i+1)]))
                 for i in range(int(qualificationsnumber)):
                     quallist.append(dict(Qualification = form.cleaned_data['extra_charfield_qual_' + str(i+1)], Grade = form.cleaned_data['extra_intfield_qual_' + str(i+1)]))
                 for i in range(int(jobsnumber)):
@@ -166,23 +176,6 @@ def cv(request):
             return render(request, 'applicantportal/cv.html', context)
     else:
         return HttpResponseForbidden()
-
-
-def addskill(request):
-    if 'id' in request.session:
-        request.session['skills'] += 1
-        return redirect('cv')
-    else:
-        return HttpResponseForbidden()
-
-
-def removeskill(request):
-    if 'id' in request.session:
-        request.session['skills'] -= 1
-        return redirect('cv')
-    else:
-        return HttpResponseForbidden()
-
 
 def logout(request):
     request.session.flush()

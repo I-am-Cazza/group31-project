@@ -2,6 +2,18 @@ from django.db import models
 from django.contrib.postgres.fields import JSONField
 
 
+class MLModel(models.Model):  # TODO Make Job.industry_type a foreign key of model_name?
+    model_name = models.CharField(max_length=128, unique=True)
+
+    def __unicode__(self):
+        return self.model_name
+
+
+class MLcv (models.Model):
+    model = models.ForeignKey(MLModel, on_delete=models.CASCADE)
+    cv = JSONField()
+
+
 class Organisation(models.Model):
     organisation_name = models.CharField(max_length=50)
     industry_type = models.CharField(max_length=50)
@@ -14,7 +26,7 @@ class Job(models.Model):
     job_title = models.CharField(max_length=50)
     job_desc = models.CharField(max_length=500)
     # keywords = JSONField(null=True)
-    industry_type = models.CharField(max_length=50)
+    industry_type = models.ForeignKey(MLModel, default=1, on_delete=models.CASCADE)
     deadline = models.DateTimeField(blank=True)
 
     class Meta:
@@ -29,6 +41,7 @@ class TestQuestions(models.Model):
     question_answer = models.CharField(max_length=500)
     question_type = models.CharField(max_length=500)  # MultipleChoice, LongAnswer, ShortAnswer, etc.
     question_industry = models.CharField(max_length=50)  # Computing questions only asked to computing applicants, etc.
+
 
 class AppUser(models.Model):
     email = models.EmailField(max_length=64)
@@ -68,12 +81,3 @@ class TestAnswers(models.Model):
     questionid = models.ForeignKey(TestQuestions, on_delete=models.CASCADE)
     answer_text = models.CharField(max_length=500)
 
-
-class MLModel(models.Model):  # TODO Make Job.industry_type a foreign key of model_name?
-    model_name = models.CharField(max_length=128)
-
-
-class MLcv (models.Model):
-    model = models.ForeignKey(MLModel, on_delete=models.CASCADE)
-    cv = JSONField()
-    # classification?

@@ -9,7 +9,7 @@ class JobFilter(django_filters.FilterSet):
         fields = {
             'job_title': ['icontains'],
             'job_desc': ['icontains'],
-            'industry_type': ['icontains'],
+            'industry_type__model_name': ['icontains'],
         }
 
 

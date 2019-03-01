@@ -15,8 +15,17 @@
       {% else %}
       <h4>There is no CV to show</h4>
       {% endif %}
-      <form>
-         <p style="color:red;">Include way to provide feedback on applicant here</p>
+      <br>
+      <form method="POST" action="./{{applicant.id}}/feedback">
+         {% csrf_token %}
+         <label style="font-size:16px;font-weight:bold;">Please enter how suitable the applicant is for the job:</label>
+         <select name="classification">
+            <option value="Very suitable">Very suitable</option>
+            <option value="Acceptable">Acceptable</option>
+            <option value="Unacceptable">Unacceptable</option>
+            <option value="Not suitable at all">Not suitable at all</option>
+         </select>
+         <input type="submit" value="Submit">
       </form>
    </div>
    {% else %}

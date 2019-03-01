@@ -55,7 +55,7 @@ def test(request, job_id):
     if 'id' in request.session:
         useremail = AppUser.objects.get(id=request.session['id']).email
         requested_job = Job.objects.get(id=job_id)
-        valid_questions = TestQuestions.objects.filter(question_industry=requested_job.industry_type)
+        valid_questions = TestQuestions.objects.filter(question_industry=requested_job.industry_type.model_name)
         question_text_list = []
         for question in valid_questions:
             question_text_list.append(question.question_text)
@@ -102,9 +102,11 @@ def make_application(request, jobid):
         user = AppUser.objects.get(pk=userid)
         cv = CV.objects.get(owner=userid).cvData
         #private_classification = predict("demo", cv)[0]
-        private_classification = "test"
+        private_classification = "test"  # If this is changed, change classification in train_cv accordingly
         print("This is the classification", private_classification)
         job = Job.objects.get(pk=jobid)
+        ml_model = MLModel.objects.get(model_name=job.industry_type.model_name)  # CHECK can use .get
+        ml_cv = MLcv(model=ml_model,cv=cv)  # Add cv to dataset for that ML model
         application = Application(userid=user, jobid=job, status='Applied', classification=private_classification)
         application.save()
         return True
@@ -374,11 +376,14 @@ def employer_job_applicant(request, user_id, job_id, applicant_id):
 def applicant_feedback(request, user_id, job_id, applicant_id):
     if request.method == 'POST':
         classification = request.POST['classification']
+        print(classification)
         ml_model = Job.objects.get(id=job_id).industry_type
         cv_user = AppUser.objects.get(id=applicant_id)
         cv = CV.objects.get(owner=cv_user).cvData  # Get applicant's CV
-        cv['classification'] = classification  # Append classification to CV
-        new_mlcv = MLcv.create(model=ml_model, cv=cv)  # Add modified cv to ML data
+        jsonCV = json.loads(cv)
+        jsonCV['classification'] = classification  # Append classification to CV
+        new_mlcv = MLcv.objects.create(model=ml_model, cv=cv)  # Add modified cv to ML data
+        return redirect('../.')
 
 
 def train_cv(request, model_name):
@@ -390,10 +395,11 @@ def train_cv(request, model_name):
             cvs = MLcv.objects.filter(model=model)
             training_data = []
             for i in cvs:
-                training_data.append(i.cv)
-            train(model_name, training_data)
-            return render()  # TODO Where does this return?
-    # Create new model of same name from MLEngine
+                if i.classifcation:
+                    if i.classifcation != "test":
+                        training_data.append(i.cv)
+                train(model_name, training_data)
+                return redirect('admin')  # TODO Give success / error messages
 
 
 def create_new_model(request):

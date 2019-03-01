@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.contrib.auth import login as auth_login, authenticate
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.forms import UserCreationForm
-from app.models import Job, AppUser, TestQuestions, Application, CV, TestAnswers
+from app.models import Job, AppUser, TestQuestions, Application, CV, TestAnswers, MLModel, MLcv
 from .forms import AddUserForm, LoginUserForm, SignUpForm, CvCreationForm, TestForm # ,SettingsForm
 from app.mlengine.mlengine import train, predict
 from django.http import HttpResponseForbidden
@@ -192,8 +192,8 @@ def aaron_signup(request):
             email = form.cleaned_data['email']  # TODO check email is unique, only store unique emails
             password = form.cleaned_data['password']
             check_password = form.cleaned_data['confirm_password']
-            # first_name= form.cleaned_data['first_name']
-            # last_name=form.cleaned_data['last_name']
+            first_name= form.cleaned_data['first_name']
+            last_name=form.cleaned_data['last_name']
             if AppUser.objects.filter(email=email).exists():
                 context= {'form': form, 'signup_page': 'active','error_message':'<p style="color:red">This email already exsists.</p>'}
                 return render(request,'applicantportal/signup.html',context )
@@ -369,4 +369,45 @@ def employer_job_applicant(request, user_id, job_id, applicant_id):
         return render(request, 'employerportal/applicant.html', context)
     else:
         return HttpResponseForbidden()
+
+
+def applicant_feedback(request, user_id, job_id, applicant_id):
+    if request.method == 'POST':
+        classification = request.POST['classification']
+        ml_model = Job.objects.get(id=job_id).industry_type
+        cv_user = AppUser.objects.get(id=applicant_id)
+        cv = CV.objects.get(owner=cv_user).cvData  # Get applicant's CV
+        cv['classification'] = classification  # Append classification to CV
+        new_mlcv = MLcv.create(model=ml_model, cv=cv)  # Add modified cv to ML data
+
+
+def train_cv(request, model_name):
+    # TODO Should only be able to be done by an employer
+    if 'id' in request.session:
+        userType = AppUser.objects.get(id=request.session['id']).userType
+        if userType == 'Employer':
+            model = MLModel.objects.filter(model_name=model_name)
+            cvs = MLcv.objects.filter(model=model)
+            training_data = []
+            for i in cvs:
+                training_data.append(i.cv)
+            train(model_name, training_data)
+            return render()  # TODO Where does this return?
+    # Create new model of same name from MLEngine
+
+
+def create_new_model(request):
+    if 'id' in request.session:
+        userType = AppUser.objects.get(id=request.session['id']).userType
+        if userType == 'Employer':
+            if request.method == 'POST':
+                model_name = request.POST['model_name']  # TODO Make form for creating new model
+                new_model = MLModel(model_name=model_name)
+                # TODO Where does this return?
+
+
+
+
+
+
 

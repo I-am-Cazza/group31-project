@@ -62,7 +62,18 @@ class Application(models.Model):
     def __str__(self):
         return "User: " + str(self.userid) + " Job Title: " + str(self.jobid)
 
+
 class TestAnswers(models.Model):
     applicationid = models.ForeignKey(Application, on_delete=models.CASCADE) # Which application the answers belong to
     questionid = models.ForeignKey(TestQuestions, on_delete=models.CASCADE)
     answer_text = models.CharField(max_length=500)
+
+
+class MLModel(models.Model):  # TODO Make Job.industry_type a foreign key of model_name?
+    model_name = models.CharField(max_length=128)
+
+
+class MLcv (models.Model):
+    model = models.ForeignKey(MLModel, on_delete=models.CASCADE)
+    cv = JSONField()
+    # classification?

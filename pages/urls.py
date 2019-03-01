@@ -17,6 +17,7 @@ urlpatterns = [
     path('applicant/cv/minus', views.removeskill, name='removeskill'),
     path('applicant/applied_jobs', views.applied_jobs, name='applied_jobs'),
     path('applicant/applicant_settings', views.applicant_settings, name='applicant_settings'),
+    path('admin/index/<int:user_id>/<int:job_id>/<int:applicant_id>/feedback', views.applicant_feedback, name='applicant_feedback'),
     path('admin/index/<int:user_id>/<int:job_id>/<int:applicant_id>', views.employer_job_applicant, name='employer_job_applicant'),
     path('admin/index/<int:user_id>/<int:job_id>', views.employer_job, name='employer_job'),
     path('admin/index/<int:user_id>/', views.employer_index, name='employer_index'),

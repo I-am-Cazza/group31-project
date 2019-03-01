@@ -110,8 +110,8 @@ def make_application(request, jobid):
         user = AppUser.objects.get(pk=userid)
         cv = CV.objects.get(owner=userid).cvData
         dictCv = json.loads(cv)
-        private_classification = predict("demo", dictCv)[0]
-        #private_classification = "test"
+        dictCv['Answer Percent'] = request.session['success']
+        private_classification = predict("demo", dictCv)[0] #TODO change demo model to industry_type
         print("This is the classification", private_classification)
         job = Job.objects.get(pk=jobid)
         application = Application(userid=user, jobid=job, status='Applied', classification=private_classification, answer_percent= request.session['success'])

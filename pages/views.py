@@ -4,7 +4,7 @@ from django.contrib.auth import login as auth_login, authenticate
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.forms import UserCreationForm
 from app.models import Job, AppUser, TestQuestions, Application, CV, TestAnswers
-from .forms import AddUserForm, LoginUserForm, SignUpForm, CvCreationForm, TestForm SettingsForm
+from .forms import AddUserForm, LoginUserForm, SignUpForm, CvCreationForm, TestForm ,SettingsForm
 from app.mlengine.mlengine import train, predict
 from django.http import HttpResponseForbidden
 from app.views import search
@@ -357,8 +357,6 @@ def employer_job(request, user_id, job_id):
         return render(request, 'employerportal/job.html', context)
     else:
         return HttpResponseForbidden()
-<<<<<<< HEAD
-=======
 
 
 def employer_job_applicant(request, user_id, job_id, applicant_id):
@@ -370,5 +368,3 @@ def employer_job_applicant(request, user_id, job_id, applicant_id):
         return render(request, 'employerportal/applicant.html', context)
     else:
         return HttpResponseForbidden()
-
->>>>>>> 237f5024b78f12196015aff7a16463be54aa8be4

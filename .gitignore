@@ -4,4 +4,5 @@ app/migrations/
 !app/migrations/__init__.py
 venv/
 __pycache__/
+lib/python3.7
 .*/

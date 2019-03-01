@@ -1,19 +1,34 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <link rel="stylesheet" type="text/css" href="../global/main.css">
-        <title>Employer Login</title>
-    </head>
-    <body>
-        <h1>Login as Employer</h1>
-        <form>
-            <label>Username:<input type="text" name="username" /></label>
-            <br/>
-            <label>Password:<input type="text" name="password" /></label>
-            <br/>
-            <input type="submit" value="Login" />
-            <input type="button" value="Sign Up" />
-        </form>
-    </body>
-</html>
+{% extends "employerportal/base.html" %}
+{% block content %}
+{% load crispy_forms_tags %}
+<br>
+
+<h2>All jobs:</h2>
+
+<br>
+
+{% if job_list %}
+<div id="accordion">
+   {% for job in job_list %}
+   <h3>{{job.job_title}}</h3>
+   <div>
+      <h4> Description</h4>
+      <p>{{job.job_desc}}</p>
+      <!-- <p>{{job.organisation.organisation_name}}</p> -->
+      <h4> Type of job</h4>
+      <p>{{job.industry_type.model_name}}</p>
+      <h4>Job Deadline</h4>
+      <p id="deadline">{{job.deadline}}</p>
+      <a style="color: blue" href="./{{userid}}/{{job.id}}/">View Applications</a>
+   </div>
+   {% endfor %}
+</div>
+{% else %}
+<p>No jobs are available.</p>
+{% endif %}
+<script>
+    $( "#accordion" ).accordion({
+        collapsible: true
+    });
+    </script>
+{% endblock %}

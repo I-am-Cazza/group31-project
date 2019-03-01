@@ -19,9 +19,7 @@
       {{ form|crispy }}
     {% csrf_token %}
 
-
     </div>
-
 
     <br>
     <div class="btn-group" role="group" aria-label="Basic example">
@@ -240,7 +238,7 @@ $("#add-another-job").click(function() {
     element.attr('name', 'extra_lenfield_job_' + job_count);
     element.attr('id', 'extra_field_len_job_label_' + job_count)
     $("#forms").append(element);
-    element = $('<input type="number"/>');
+    element = $('<input type="text" onkeypress="check(this);"/>');
     element.attr('name', 'extra_lenfield_job_' + job_count);
     element.attr('id', 'extra_field_len_job_' + job_count)
     element.attr('class', 'form-control')
@@ -263,5 +261,12 @@ if (job_count > 0){
     }
 
 })
+
+function check(field) {
+    var v = field.value.charAt(field.value.length - 1);
+    if (v >= '9' || v <= '0') {
+        field.value = field.value.substring(0, field.value.length - 1);
+    }
+}
 </script>
 {% endblock %}

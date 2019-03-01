@@ -19,8 +19,8 @@ class SignUpForm(UserCreationForm):
 class AddUserForm(ModelForm):
     password = forms.CharField(widget=forms.PasswordInput(), max_length=50)
     confirm_password = forms.CharField(label='Confirm Password', widget=forms.PasswordInput(), max_length=50)
-    # first_name= forms.CharField(max_length=50)
-    # last_name=forms.CharField(max_length=50)
+    first_name= forms.CharField(max_length=50)
+    last_name=forms.CharField(max_length=50)
 
     class Meta:
         model = AppUser
@@ -40,7 +40,7 @@ class SettingsForm(ModelForm):
     confirm_password = forms.CharField(label='Confirm New Password', widget=forms.PasswordInput(), max_length=50,required=False)
     class Meta:
         model= AppUser
-        fields=['email','first_name','last_name','city','country','address_line_1','address_line_2','postal_code','phone_number']
+        fields=['email','first_name','last_name']
 
 class CvCreationForm(forms.Form):
     name = forms.CharField(label='Name', max_length=50, required=True)
@@ -80,7 +80,7 @@ class CvCreationForm(forms.Form):
         for index in range(int(extra_job)):
             self.fields['extra_charfield_job_{index}'.format(index=index+1)] = forms.CharField(label='Company', required=False)
             self.fields['extra_intfield_job_{index}'.format(index=index+1)] =  forms.CharField(label='Position', required=False)
-            self.fields['extra_lenfield_job_{index}'.format(index=index+1)] =  forms.IntegerField(label='Length of employment in months', required=False)
+            self.fields['extra_lenfield_job_{index}'.format(index=index+1)] =  forms.CharField(label='Length of employment in months', required=False)
 
 class TestForm(forms.Form):
     extra_question_count = forms.CharField(widget=forms.HiddenInput())

@@ -1,0 +1,34 @@
+{% extends "employerportal/base.html" %}
+{% block content %}
+<br>
+   {% if applicant %}
+   <div>
+      <h4>First Name:</h4>
+      <p>{{applicant.first_name}}</p>
+      <h4>Last Name:</h4>
+      <p>{{applicant.last_name}}</p>
+      <h4>Email:</h4>
+      <p>{{applicant.email}}</p>
+      {% if cv %}
+      <h4>CV:</h4>
+      <p>{{cv.cvData}}</p>
+      {% else %}
+      <h4>There is no CV to show</h4>
+      {% endif %}
+      <br>
+      <form method="POST" action="./{{applicant.id}}/feedback">
+         {% csrf_token %}
+         <label style="font-size:16px;font-weight:bold;">Please enter how suitable the applicant is for the job:</label>
+         <select name="classification">
+            <option value="Very suitable">Very suitable</option>
+            <option value="Acceptable">Acceptable</option>
+            <option value="Unacceptable">Unacceptable</option>
+            <option value="Not suitable at all">Not suitable at all</option>
+         </select>
+         <input type="submit" value="Submit">
+      </form>
+   </div>
+   {% else %}
+      <h2>This applicant does not exist</h2>
+   {% endif %}
+{% endblock %}

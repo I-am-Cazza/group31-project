@@ -19,8 +19,8 @@ class SignUpForm(UserCreationForm):
 class AddUserForm(ModelForm):
     password = forms.CharField(widget=forms.PasswordInput(), max_length=50)
     confirm_password = forms.CharField(label='Confirm Password', widget=forms.PasswordInput(), max_length=50)
-    # first_name= forms.CharField(max_length=50)
-    # last_name=forms.CharField(max_length=50)
+    first_name= forms.CharField(max_length=50)
+    last_name=forms.CharField(max_length=50)
 
     class Meta:
         model = AppUser
@@ -34,13 +34,13 @@ class LoginUserForm(ModelForm):
         model = AppUser
         fields = ['email', 'password']
 
-# class SettingsForm(ModelForm):
-#     old_password=forms.CharField(label='Old Password',widget=forms.PasswordInput(), max_length=50,required=False)
-#     password = forms.CharField(label='New Password',widget=forms.PasswordInput(), max_length=50,required=False)
-#     confirm_password = forms.CharField(label='Confirm New Password', widget=forms.PasswordInput(), max_length=50,required=False)
-#     class Meta:
-#         model= AppUser
-#         fields=['email','first_name','last_name','city','country','address_line_1','address_line_2','postal_code','phone_number']
+class SettingsForm(ModelForm):
+    old_password=forms.CharField(label='Old Password',widget=forms.PasswordInput(), max_length=50,required=False)
+    password = forms.CharField(label='New Password',widget=forms.PasswordInput(), max_length=50,required=False)
+    confirm_password = forms.CharField(label='Confirm New Password', widget=forms.PasswordInput(), max_length=50,required=False)
+    class Meta:
+        model= AppUser
+        fields=['email','first_name','last_name']
 
 class CvCreationForm(forms.Form):
     name = forms.CharField(label='Name', max_length=50, required=True)

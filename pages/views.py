@@ -378,9 +378,9 @@ def applicant_feedback(request, user_id, job_id, applicant_id):
         ml_model = Job.objects.get(id=job_id).industry_type
         cv_user = AppUser.objects.get(id=applicant_id)
         cv = CV.objects.get(owner=cv_user).cvData  # Get applicant's CV
-        json_cv = json.load(cv)
+        json_cv = json.loads(cv)
         json_cv['classification'] = classification  # Append classification to CV
-        new_mlcv = MLcv.create(model=ml_model, cv=json_cv)  # Add modified cv to ML data
+        new_mlcv = MLcv.objects.create(model=ml_model, cv=json_cv)  # Add modified cv to ML data
         return redirect('../.')
 
 

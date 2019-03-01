@@ -13,7 +13,7 @@
       {% if application_list %}
       <h4>List of applicants:</h4>
             {% for i in application_list %}
-            <a style="color: blue" href="./{{job.id}}/{{i.userid.id}}">{{i.userid}}</a><br>
+            <a style="color: blue" href="./{{i.userid.id}}">{{i.userid}}</a><br>
             {% endfor %}
       {% else %}
       <h2>There are currently no applicants to this job</h2>

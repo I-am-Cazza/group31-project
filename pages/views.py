@@ -370,3 +370,40 @@ def employer_job_applicant(request, user_id, job_id, applicant_id):
         return render(request, 'employerportal/applicant.html', context)
     else:
         return HttpResponseForbidden()
+
+
+def applicant_feedback(request, user_id, job_id, applicant_id):
+    if request.method == 'POST':
+        classification = request.POST['classification']
+        ml_model = Job.objects.get(id=job_id).industry_type
+        cv_user = AppUser.objects.get(id=applicant_id)
+        cv = CV.objects.get(owner=cv_user).cvData  # Get applicant's CV
+        json_cv = json.load(cv)
+        json_cv['classification'] = classification  # Append classification to CV
+        new_mlcv = MLcv.create(model=ml_model, cv=json_cv)  # Add modified cv to ML data
+        return redirect('../.')
+
+
+def train_cv(request, model_name):
+    # TODO Should only be able to be done by an employer
+    if 'id' in request.session:
+        userType = AppUser.objects.get(id=request.session['id']).userType
+        if userType == 'Employer':
+            model = MLModel.objects.filter(model_name=model_name)
+            cvs = MLcv.objects.filter(model=model)
+            training_data = []
+            for i in cvs:
+                training_data.append(i.cv)
+            train(model_name, training_data)
+            return render()  # TODO Where does this return?
+    # Create new model of same name from MLEngine
+
+
+def create_new_model(request):
+    if 'id' in request.session:
+        userType = AppUser.objects.get(id=request.session['id']).userType
+        if userType == 'Employer':
+            if request.method == 'POST':
+                model_name = request.POST['model_name']  # TODO Make form for creating new model
+                new_model = MLModel(model_name=model_name)
+                # TODO Where does this return?

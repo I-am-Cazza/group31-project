@@ -1,7 +1,7 @@
 {% extends "global/base.html" %}
 {% block content %}
 <br>
-
+   {% if job %}
    <div>
       <h4> Description</h4>
       <p>{{job.job_desc}}</p>
@@ -10,15 +10,16 @@
       <p>{{job.industry_type}}</p>
       <h4>Job Deadline</h4>
       <p id="deadline">{{job.deadline}}</p>
-      <!--<a href="{% url 'apply' job.id %}">Apply</a>-->
       {% if application_list %}
       <h4>List of applicants:</h4>
-            <!--{% for i in application_list %}-->
-            <!--<p>{{i.userid}}</p>-->
-            <!--<p>Status: {{i.status}}</p>-->
-            <!--{% endfor %}-->
+            {% for i in application_list %}
+            <a style="color: blue" href="./{{job.id}}/{{i.userid.id}}">{{i.userid}}</a><br>
+            {% endfor %}
       {% else %}
       <h2>There are currently no applicants to this job</h2>
       {% endif %}
    </div>
+   {% else %}
+      <h2>There is no job to show</h2>
+   {% endif %}
 {% endblock %}

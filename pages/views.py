@@ -3,8 +3,8 @@ from django.http import HttpResponse
 from django.contrib.auth import login as auth_login, authenticate
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.forms import UserCreationForm
-from app.models import Job, AppUser, TestQuestions, Application, CV, TestAnswers
-from .forms import AddUserForm, LoginUserForm, SignUpForm, CvCreationForm, TestForm ,SettingsForm
+from app.models import Job, AppUser, TestQuestions, Application, CV, TestAnswers, MLModel, MLcv
+from .forms import AddUserForm, LoginUserForm, SignUpForm, CvCreationForm, TestForm, SettingsForm
 from app.mlengine.mlengine import train, predict
 from django.http import HttpResponseForbidden
 from app.views import search
@@ -55,7 +55,7 @@ def test(request, job_id):
     if 'id' in request.session:
         useremail = AppUser.objects.get(id=request.session['id']).email
         requested_job = Job.objects.get(id=job_id)
-        valid_questions = TestQuestions.objects.filter(question_industry=requested_job.industry_type)
+        valid_questions = TestQuestions.objects.filter(question_industry=requested_job.industry_type.model_name)
         question_text_list = []
         for question in valid_questions:
             question_text_list.append(question.question_text)
@@ -102,9 +102,11 @@ def make_application(request, jobid):
         user = AppUser.objects.get(pk=userid)
         cv = CV.objects.get(owner=userid).cvData
         #private_classification = predict("demo", cv)[0]
-        private_classification = "test"
+        private_classification = "test"  # If this is changed, change classification in train_cv accordingly
         print("This is the classification", private_classification)
         job = Job.objects.get(pk=jobid)
+        ml_model = MLModel.objects.get(model_name=job.industry_type.model_name)  # CHECK can use .get
+        ml_cv = MLcv(model=ml_model,cv=cv)  # Add cv to dataset for that ML model
         application = Application(userid=user, jobid=job, status='Applied', classification=private_classification)
         application.save()
         return True
@@ -192,8 +194,8 @@ def aaron_signup(request):
             email = form.cleaned_data['email']  # TODO check email is unique, only store unique emails
             password = form.cleaned_data['password']
             check_password = form.cleaned_data['confirm_password']
-            # first_name= form.cleaned_data['first_name']
-            # last_name=form.cleaned_data['last_name']
+            first_name= form.cleaned_data['first_name']
+            last_name=form.cleaned_data['last_name']
             if AppUser.objects.filter(email=email).exists():
                 context= {'form': form, 'signup_page': 'active','error_message':'<p style="color:red">This email already exsists.</p>'}
                 return render(request,'applicantportal/signup.html',context )

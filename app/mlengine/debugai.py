@@ -1,4 +1,4 @@
-import mlengine
+from .mlengine import train, predict
 import json
 #from formatting import convert_format
 
@@ -30,10 +30,10 @@ def test_run(dataset: str, model: str, n_test_count: int):
             training_data.append(cv)
 
     print("Training model")
-    mlengine.train(model, training_data)
+    train(model, training_data)
 
     for i in testing_data:
-        predicted_class, probability = mlengine.predict(model, i)
+        predicted_class, probability = predict(model, i)
         print("\nActual class:", i["Classification"], "\nPredicted class:", predicted_class, "\nCertainty;", probability)
 
 

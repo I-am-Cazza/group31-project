@@ -37,13 +37,15 @@ The training data should be a single JSON object containing an array of CVs. Eac
   
 - Hobbies --- A list of JSON objects detailing hobbies, includes a name and a level of interest rated from 1-10. 1 being barely interested, 10 being very interested. i.e.:{"Name":"Gaming", "Interest":5}, {"Name":"Reading", "Interest":8}, {"Name":"Fencing", "Interest":3}
   
+- Answer Percentage --- The percentage of answers the applicant got right in testing. A float in the range 0-100
+  
 - Classification --- The classification the MLEngine should give this CV, i.e. interview, reject etc. This is only needed in the training data
 
 This differes from the standard CV format given in three ways. First, there is no name. The second is that the names of the companies in Previous Employment are omitted. These are not used as there is no way to get three different data points into one cell of an array. It is fine for the data to contain these, and any other additional features, but not necessary. The third way is the inclusion of a classification. This is needed in the training data, and will be ignored for predictions.
 
 ### mlengine.predict
 ``` python
-mlengine.predict(model_name: str, cv: Any) -> Tuple[str, float]
+mlengine.predict(model_name: str, cv: Any) -> str
 ```
 
 | Parameters |                                                     |
@@ -54,10 +56,9 @@ mlengine.predict(model_name: str, cv: Any) -> Tuple[str, float]
 | Returns   |                                                                        |
 | --------- | ---------------------------------------------------------------------- |
 | **str**   | The predicted classification given by the model                        |
-| **float** | The probabilistic certainty of the result of the model. AKA confidence |
 
 #### Description
-Gives a prediction of what classification the CV should fall under e.g. "interview" or "reject". The available classifications are determined by the classifications given in the training data. The float is a number between 0 and 1 showing how confident the model is in its decision.
+Gives a prediction of what classification the CV should fall under e.g. "interview" or "reject". The available classifications are determined by the classifications given in the training data.
 
 ## Dependencies
 The Machine Learning Engine requires:

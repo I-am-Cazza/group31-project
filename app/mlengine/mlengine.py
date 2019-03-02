@@ -2,14 +2,13 @@ from .formatting import convert_format
 from sklearn.ensemble import RandomForestClassifier
 import pickle
 import numpy
-from pathlib import Path
 
 
 # Creates or retrains a model. data is a collection of cvs in json form. model_name is the name of the model to train
 def train(model_name: str, data: any) -> None:
     training_data = list()
     assessed_data = list()
-    custom_indices = {"Language Skill Total": 0, "Other Skill Total": 1, "Experience Total": 2, "Hobby Total": 3}
+    custom_indices = {"Language Skill Total": 0, "Other Skill Total": 1, "Experience Total": 2, "Hobby Total": 3, "Answer Percentage": 4}
     for cv in data:
         training_data.append(convert_format(cv, custom_indices, True))
         assessed_data.append(cv["Classification"])
@@ -32,7 +31,4 @@ def predict(model_name: str, cv: any) -> [str, float]:
     with open("./app/mlengine/aimodels/" + model_name + ".ai", "rb") as file:
         ai_model, custom_indices = pickle.load(file)
         formatted_cv = [convert_format(cv, custom_indices, False)]
-        classification = ai_model.predict(formatted_cv)[0]
-        index = ai_model.classes_.tolist().index(classification)
-        probability = ai_model.predict_proba(formatted_cv)[0][index]
-        return [classification, probability]
+        return ai_model.predict(formatted_cv)[0]

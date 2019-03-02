@@ -80,7 +80,7 @@ class CvCreationForm(forms.Form):
         for index in range(int(extra_job)):
             self.fields['extra_charfield_job_{index}'.format(index=index+1)] = forms.CharField(label='Company', required=False)
             self.fields['extra_intfield_job_{index}'.format(index=index+1)] =  forms.CharField(label='Position', required=False)
-            self.fields['extra_lenfield_job_{index}'.format(index=index+1)] =  forms.IntegerField(label='Length of employment in months', required=False)
+            self.fields['extra_lenfield_job_{index}'.format(index=index+1)] =  forms.CharField(label='Length of employment in months', required=False)
 
 class TestForm(forms.Form):
     extra_question_count = forms.CharField(widget=forms.HiddenInput())

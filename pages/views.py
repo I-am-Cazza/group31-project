@@ -3,8 +3,8 @@ from django.http import HttpResponse
 from django.contrib.auth import login as auth_login, authenticate
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.forms import UserCreationForm
-from app.models import Job, AppUser, TestQuestions, Application, CV, TestAnswers
-from .forms import AddUserForm, LoginUserForm, SignUpForm, CvCreationForm, TestForm  ,SettingsForm
+from app.models import Job, AppUser, TestQuestions, Application, CV, TestAnswers, MLModel, MLcv
+from .forms import AddUserForm, LoginUserForm, SignUpForm, CvCreationForm, TestForm, SettingsForm
 from app.mlengine.mlengine import train, predict
 from django.http import HttpResponseForbidden
 from app.views import search
@@ -56,7 +56,7 @@ def test(request, job_id):
     if 'id' in request.session:
         useremail = AppUser.objects.get(id=request.session['id']).email
         requested_job = Job.objects.get(id=job_id)
-        valid_questions = TestQuestions.objects.filter(question_industry=requested_job.industry_type)
+        valid_questions = TestQuestions.objects.filter(question_industry=requested_job.industry_type.model_name)
         question_text_list = []
         for question in valid_questions:
             question_text_list.append(question.question_text)
@@ -110,11 +110,19 @@ def make_application(request, jobid):
         user = AppUser.objects.get(pk=userid)
         cv = CV.objects.get(owner=userid).cvData
         dictCv = json.loads(cv)
-        private_classification = predict("demo", dictCv)[0]
-        #private_classification = "test"
-        print("This is the classification", private_classification)
+        dictCv['Answer Percent'] = request.session['success']
         job = Job.objects.get(pk=jobid)
-        application = Application(userid=user, jobid=job, status='Applied', classification=private_classification, answer_percent= request.session['success'])
+
+        # Don't predict until MLModel dataset is > 20 cvs
+        model = MLModel.objects.get(model_name=job.industry_type)
+        model_cvs = MLcv.objects.filter(model=model)
+
+        if len(model_cvs) > 20 or True:
+            private_classification = predict(job.industry_type.model_name, dictCv)[0] #TODO change demo model to industry_type
+            print("This is the classification", private_classification)
+        else:
+            private_classification = "not_set"
+        application = Application(userid=user, jobid=job, status='Applied', classification=private_classification, answer_percent=request.session['success'])
         application.save()
         request.session['success'] = None
         return True
@@ -176,6 +184,7 @@ def cv(request):
             return render(request, 'applicantportal/cv.html', context)
     else:
         return HttpResponseForbidden()
+
 
 def logout(request):
     request.session.flush()
@@ -280,13 +289,26 @@ def applicant_settings(request):
         email=user.email
         first_name=user.first_name
         last_name=user.last_name
+        # country=user.country
+        # city=user.city
+        # address_line_1=user.address_line_1
+        # address_line_2=user.address_line_2
+        # postal_code=user.postal_code
+        # phone_number=user.phone_number
         if request.method == 'POST':
             form = SettingsForm(request.POST)
             if form.is_valid():
+                print(user.id)
                 product = AppUser.objects.get(id=user.id)
                 product.email=form.cleaned_data.get('email')
                 product.first_name=form.cleaned_data.get('first_name')
                 product.last_name=form.cleaned_data.get('last_name')
+                # product.country=form.cleaned_data.get('country')
+                # product.city=form.cleaned_data.get('city')
+                # product.address_line_1=form.cleaned_data.get('address_line_1')
+                # product.address_line_2=form.cleaned_data.get('address_line_2')
+                # product.postal_code=form.cleaned_data.get('postal_code')
+                # product.phone_number=form.cleaned_data.get('phone_number')
                 product.save()
                 password_hash = user.password
                 old_password_form=form.cleaned_data.get('old_password')
@@ -324,22 +346,101 @@ def applicant_settings(request):
         return render(request, 'applicantportal/applicant_settings.html')
 
 
-def employer_index(request, user_id):
-        userType = AppUser.objects.get(id=user_id).userType
-        if userType == 'Employer':
-            job_list = Job.objects.all()
-            context = {'job_list': job_list, 'userid': user_id}
-            return render(request, 'employerportal/index.html', context)
-        else:
-            return HttpResponseForbidden()
+def employer_index(request):
+    # if 'id' in request.session:
+    #     user = AppUser.objects.get(id=request.session['id'])
+    #     if user.userType == 'Employer':
+    user = check_employer(request)
+    if user is not None:
+        job_list = Job.objects.all()
+        context = {'job_list': job_list, 'userid': user.id}
+        return render(request, 'employerportal/index.html', context)
+    else:
+        return HttpResponseForbidden()
 
 
-def employer_job(request, user_id, job_id):
-    userType = AppUser.objects.get(id=user_id).userType
-    if userType == 'Employer':
-        job = Job.objects.filter(id=job_id)
+def employer_job(request, job_id):
+    user = check_employer(request)
+    if user is not None:
+        job = Job.objects.get(id=job_id)
         application_list = Application.objects.filter(jobid=job)
-        context = {'application_list': application_list}
+        context = {'user': user, 'job': job, 'application_list': application_list}
         return render(request, 'employerportal/job.html', context)
     else:
         return HttpResponseForbidden()
+
+
+def employer_job_applicant(request, job_id, applicant_id):
+    user = check_employer(request)
+    if user is not None:
+        applicant = AppUser.objects.get(id=applicant_id)
+        cv = CV.objects.get(owner=applicant)
+        context = {'applicant': applicant, 'cv': cv}
+        return render(request, 'employerportal/applicant.html', context)
+    else:
+        return HttpResponseForbidden()
+
+
+def applicant_feedback(request, job_id, applicant_id):
+    user = check_employer(request)
+    if user is not None:
+        if request.method == 'POST':
+            classification = request.POST['classification']
+            ml_model = Job.objects.get(id=job_id).industry_type
+            cv_user = AppUser.objects.get(id=applicant_id)
+            user_application = Application.objects.get(userid=cv_user, jobid=job_id)
+            user_application.classification = classification
+            user_application.save()
+            cv = CV.objects.get(owner=cv_user).cvData  # Get applicant's CV
+            json_cv = json.loads(cv)
+            json_cv['Classification'] = classification  # Append classification to CV
+            new_mlcv = MLcv.objects.create(model=ml_model, cv=json_cv)  # Add modified cv to ML data
+            return redirect('../.')
+    else:
+        return HttpResponseForbidden()
+
+
+def train_model(request):
+    user = check_employer(request)
+    if user is not None:
+        if request.method == 'POST':
+            model_name = request.POST['model']
+            model = MLModel.objects.get(model_name=model_name)
+            cvs = MLcv.objects.filter(model=model)
+            training_data = []
+            for i in cvs:
+                training_data.append(i.cv)
+            train(model_name, training_data)
+            return redirect('./index/')
+    else:
+        return HttpResponseForbidden()
+    # Create new model of same name from MLEngine
+
+
+# def create_new_model(request):
+#     if 'id' in request.session:
+#         userType = AppUser.objects.get(id=request.session['id']).userType
+#         if userType == 'Employer':
+#             if request.method == 'POST':
+#                 model_name = request.POST['model_name']  # TODO Make form for creating new model
+#                 new_model = MLModel.objects.create(model_name=model_name)
+#                 return redirect('/admin/index')
+#                 # TODO Where does this return?
+
+
+# def new_model(request):
+#     if 'id' in request.session:
+#         userType = AppUser.objects.get(id=request.session['id']).userType
+#         if userType == 'Employer':
+#             return render(request, 'employerportal/new_model.html')
+#     else:
+#         return HttpResponseForbidden()
+
+
+def check_employer(request):
+    if 'id' in request.session:
+        user = AppUser.objects.get(id=request.session['id'])
+        if user.userType == 'Employer':
+            return user
+    else:
+        return None

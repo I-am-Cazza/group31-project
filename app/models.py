@@ -2,6 +2,21 @@ from django.db import models
 from django.contrib.postgres.fields import JSONField
 
 
+class MLModel(models.Model):  # TODO Make Job.industry_type a foreign key of model_name?
+    model_name = models.CharField(max_length=128, unique=True)
+
+    def __unicode__(self):
+        return self.model_name
+
+    def __str__(self):
+        return self.model_name
+
+
+class MLcv (models.Model):
+    model = models.ForeignKey(MLModel, on_delete=models.CASCADE)
+    cv = JSONField()
+
+
 class Organisation(models.Model):
     organisation_name = models.CharField(max_length=50)
     industry_type = models.CharField(max_length=50)
@@ -14,7 +29,12 @@ class Job(models.Model):
     job_title = models.CharField(max_length=50 ,verbose_name="Job Title")
     job_desc = models.CharField(max_length=500,verbose_name="Job Description")
     # keywords = JSONField(null=True)
+<<<<<<< HEAD
     industry_type = models.CharField(max_length=50,verbose_name="Industry Type")
+=======
+    industry_type = models.ForeignKey(MLModel, default=1, on_delete=models.CASCADE)
+    #industry_type_text = models.CharField(max_length=100, default="Software")
+>>>>>>> 6063683f94da47edf568e7a441676e2eadbe976c
     deadline = models.DateTimeField(blank=True)
 
     class Meta:
@@ -29,6 +49,7 @@ class TestQuestions(models.Model):
     question_answer = models.CharField(max_length=500)
     question_type = models.CharField(max_length=500)  # MultipleChoice, LongAnswer, ShortAnswer, etc.
     question_industry = models.CharField(max_length=50)  # Computing questions only asked to computing applicants, etc.
+
 
 class AppUser(models.Model):
     email = models.EmailField(max_length=64)
@@ -62,6 +83,7 @@ class Application(models.Model):
 
     def __str__(self):
         return "User: " + str(self.userid) + " Job Title: " + str(self.jobid)
+
 
 class TestAnswers(models.Model):
     applicationid = models.ForeignKey(Application, on_delete=models.CASCADE) # Which application the answers belong to

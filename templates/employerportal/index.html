@@ -1,4 +1,4 @@
-{% extends "global/base.html" %}
+{% extends "employerportal/base.html" %}
 {% block content %}
 {% load crispy_forms_tags %}
 <br>
@@ -16,16 +16,18 @@
       <p>{{job.job_desc}}</p>
       <!-- <p>{{job.organisation.organisation_name}}</p> -->
       <h4> Type of job</h4>
-      <p>{{job.industry_type}}</p>
+      <p>{{job.industry_type.model_name}}</p>
       <h4>Job Deadline</h4>
       <p id="deadline">{{job.deadline}}</p>
-      <a style="color: blue" href="./{{job.id}}">View Applications</a>
+      <a style="color: blue" href="./{{job.id}}/">View Applications</a>
    </div>
    {% endfor %}
 </div>
 {% else %}
 <p>No jobs are available.</p>
 {% endif %}
+
+
 <script>
     $( "#accordion" ).accordion({
         collapsible: true

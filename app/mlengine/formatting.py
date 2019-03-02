@@ -1,5 +1,12 @@
 # Converts a json format cv into a list in a usable format. Updates the custom_indices if is_training
 def convert_format(cv, custom_indices: dict, is_training):
+    required_fields = {"Degree Qualification", "Degree level", "University Attended", "A-Level Qualifications", "Languages Known", "Previous Employment", "Skills", "Hobbies", "Answer Percentage"}
+    for field in required_fields:
+        if field not in cv:
+            raise Exception("Required field: \"{}\" not found in CV: {}".format(field, cv))
+    if is_training and "Classification" not in cv:
+        raise Exception("Required field: \"Classification\" not found in CV: {}".format(cv))
+
     formatted_cv = [0] * len(custom_indices)
     language_skill_total = sum_value(custom_indices, is_training, formatted_cv, cv["Languages Known"], "Language", "Expertise")
     other_skill_total = sum_value(custom_indices, is_training, formatted_cv, cv["Skills"], "Skill", "Expertise")

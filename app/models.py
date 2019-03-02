@@ -27,6 +27,7 @@ class Job(models.Model):
     job_desc = models.CharField(max_length=500)
     # keywords = JSONField(null=True)
     industry_type = models.ForeignKey(MLModel, default=1, on_delete=models.CASCADE)
+    #industry_type_text = models.CharField(max_length=100, default="Software")
     deadline = models.DateTimeField(blank=True)
 
     class Meta:
@@ -81,4 +82,3 @@ class TestAnswers(models.Model):
     applicationid = models.ForeignKey(Application, on_delete=models.CASCADE) # Which application the answers belong to
     questionid = models.ForeignKey(TestQuestions, on_delete=models.CASCADE)
     answer_text = models.CharField(max_length=500)
-

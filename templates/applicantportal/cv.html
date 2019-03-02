@@ -13,21 +13,33 @@
 {% if error is not None %}
   <p style="color: red">{{error}}</p>
 {% endif %}
+<style type="text/css">
+div.rounded
+{
+padding: 0px;
+border: 2px solid #000;
+border-radius: 15px;
+-moz-border-radius: 15px;
+}
+</style>
+
 <form action="{% url 'cv' %}" method="post">
 
   <div id='forms'>
+    <div id='mainform' class='rounded' style='padding: 10px; margin-top:10px; margin-bottom:10px; border-color:#e3f7f7; background-color:#e3f7f7'>
       {{ form|crispy }}
+    </div>
     {% csrf_token %}
 
-    <div id='skills'>
+    <div id='skills' class='rounded' style='visibility: hidden; border-color: #e3eff7; background-color:#e3eff7'>
     </div>
-    <div id='languages'>
+    <div id='languages' class='rounded' style='visibility: hidden; border-color: #e3e9f7; background-color:#e3e9f7'>
     </div>
-    <div id='hobbies'>
+    <div id='hobbies' class='rounded' style='visibility: hidden; border-color: #e3e4f7; background-color:#e3e4f7'>
     </div>
-    <div id='qualifications'>
+    <div id='qualifications' class='rounded' style='visibility: hidden; border-color: #e7e3f7; background-color:#e7e3f7'>
     </div>
-    <div id='jobs'>
+    <div id='jobs' class='rounded' style='visibility: hidden; border-color: #ece3f7; background-color:#ece3f7'>
     </div>
     </div>
 
@@ -97,8 +109,10 @@ $("#add-another-skill").click(function() {
     element.attr('id', 'extra_field_number' + form_count)
     element.attr('class', 'form-control')
     $("#skills").append(element);
-    $("#skills").append("<br>");
-
+    $('#skills').css('visibility', 'visible')
+    $('#skills').css('padding', '10px')
+    $('#skills').css('margin-top', '10px')
+    $('#skills').css('margin-bottom', '10px')
     // build element and append it to our forms container
 
     $("[name=extra_field_count]").val(form_count);
@@ -113,6 +127,12 @@ if (form_count > 0){
       $('#extra_field_expertise' + form_count).remove();
       $('#extra_field_number' + form_count).remove();
       form_count --;
+      if(form_count == 0){
+        $('#skills').css('visibility', 'hidden')
+        $('#skills').css('padding', '0px')
+        $('#skills').css('margin-top', '0px')
+        $('#skills').css('margin-bottom', '0px')
+      }
 
       $("[name=extra_field_count]").val(form_count);
     }
@@ -137,6 +157,10 @@ $("#add-another-language").click(function() {
     element.attr('id', 'extra_field_number_lang_' + language_count)
     element.attr('class', 'form-control')
     $("#languages").append(element);
+    $('#languages').css('visibility', 'visible')
+    $('#languages').css('padding', '10px')
+    $('#languages').css('margin-top', '10px')
+    $('#languages').css('margin-bottom', '10px')
 
     $("[name=extra_language_count]").val(language_count);
 
@@ -149,7 +173,12 @@ if (language_count > 0){
       $('#extra_field_expertise_lang_' + language_count).remove();
       $('#extra_field_number_lang_' + language_count).remove();
       language_count --;
-
+      if(language_count == 0){
+        $('#languages').css('visibility', 'hidden')
+        $('#languages').css('padding', '0px')
+        $('#languages').css('margin-top', '0px')
+        $('#languages').css('margin-bottom', '0px')
+      }
       $("[name=extra_language_count]").val(language_count);
     }
 })
@@ -173,6 +202,10 @@ $("#add-another-hobby").click(function() {
     element.attr('id', 'extra_field_number_hobby_' + hobby_count)
     element.attr('class', 'form-control')
     $("#hobbies").append(element);
+    $('#hobbies').css('visibility', 'visible')
+    $('#hobbies').css('padding', '10px')
+    $('#hobbies').css('margin-top', '10px')
+    $('#hobbies').css('margin-bottom', '10px')
 
     $("[name=extra_hobby_count]").val(hobby_count);
 })
@@ -184,7 +217,12 @@ if (hobby_count > 0){
       $('#extra_field_expertise_hobby_' + hobby_count).remove();
       $('#extra_field_number_hobby_' + hobby_count).remove();
       hobby_count --;
-
+      if(hobby_count == 0){
+        $('#hobbies').css('visibility', 'hidden')
+        $('#hobbies').css('padding', '0px')
+        $('#hobbies').css('margin-top', '0px')
+        $('#hobbies').css('margin-bottom', '0px')
+      }
       $("[name=extra_hobby_count]").val(hobby_count);
     }
 
@@ -209,7 +247,10 @@ $("#add-another-qual").click(function() {
     element.attr('id', 'extra_field_number_qual_' + qual_count)
     element.attr('class', 'form-control')
     $("#qualifications").append(element);
-
+    $('#qualifications').css('visibility', 'visible')
+    $('#qualifications').css('padding', '10px')
+    $('#qualifications').css('margin-top', '10px')
+    $('#qualifications').css('margin-bottom', '10px')
     $("[name=extra_qual_count]").val(qual_count);
 })
 $("#remove-another-qual").click(function() {
@@ -220,7 +261,12 @@ if (qual_count > 0){
       $('#extra_field_expertise_qual_' + qual_count).remove();
       $('#extra_field_number_qual_' + qual_count).remove();
       qual_count --;
-
+      if(qual_count == 0){
+        $('#qualifications').css('visibility', 'hidden')
+        $('#qualifications').css('padding', '0px')
+        $('#qualifications').css('margin-top', '0px')
+        $('#qualifications').css('margin-bottom', '0px')
+      }
       $("[name=extra_qual_count]").val(qual_count);
     }
 
@@ -254,7 +300,10 @@ $("#add-another-job").click(function() {
     element.attr('id', 'extra_field_len_job_' + job_count)
     element.attr('class', 'form-control')
     $("#jobs").append(element);
-
+    $('#jobs').css('visibility', 'visible')
+    $('#jobs').css('padding', '10px')
+    $('#jobs').css('margin-top', '10px')
+    $('#jobs').css('margin-bottom', '10px')
     $("[name=extra_job_count]").val(job_count);
 })
 $("#remove-another-job").click(function() {
@@ -267,7 +316,12 @@ if (job_count > 0){
       $('#extra_field_len_job_label_' + job_count).remove();
       $('#extra_field_len_job_' + job_count).remove();
       job_count --;
-
+      if(job_count == 0){
+        $('#jobs').css('visibility', 'hidden')
+        $('#jobs').css('padding', '0px')
+        $('#jobs').css('margin-top', '0px')
+        $('#jobs').css('margin-bottom', '0px')
+      }
       $("[name=extra_job_count]").val(job_count);
     }
 

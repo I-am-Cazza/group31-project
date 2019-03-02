@@ -111,7 +111,7 @@ def make_application(request, jobid):
         cv = CV.objects.get(owner=userid).cvData
         dictCv = json.loads(cv)
         dictCv['Answer Percent'] = request.session['success']
-        private_classification = predict("demo", dictCv)[0] #TODO change demo model to industry_type
+        private_classification = predict("demo", dictCv) #TODO change demo model to industry_type
         print("This is the classification", private_classification)
         job = Job.objects.get(pk=jobid)
         ml_model = MLModel.objects.get(model_name=job.industry_type.model_name)  # CHECK can use .get

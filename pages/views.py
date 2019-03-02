@@ -111,11 +111,17 @@ def make_application(request, jobid):
         cv = CV.objects.get(owner=userid).cvData
         dictCv = json.loads(cv)
         dictCv['Answer Percent'] = request.session['success']
-        private_classification = predict("demo", dictCv) #TODO change demo model to industry_type
-        print("This is the classification", private_classification)
         job = Job.objects.get(pk=jobid)
-        ml_model = MLModel.objects.get(model_name=job.industry_type.model_name)  # CHECK can use .get
-        ml_cv = MLcv(model=ml_model,cv=cv)  # Add cv to dataset for that ML model
+
+        # Don't predict until MLModel dataset is > 20 cvs
+        model = MLModel.objects.get(model_name=job.industry_type)
+        model_cvs = MLcv.objects.filter(model=model)
+
+        if len(model_cvs) > 20 or True:
+            private_classification = predict(job.industry_type.model_name, dictCv)[0] #TODO change demo model to industry_type
+            print("This is the classification", private_classification)
+        else:
+            private_classification = "not_set"
         application = Application(userid=user, jobid=job, status='Applied', classification=private_classification, answer_percent=request.session['success'])
         application.save()
         request.session['success'] = None
@@ -178,6 +184,7 @@ def cv(request):
             return render(request, 'applicantportal/cv.html', context)
     else:
         return HttpResponseForbidden()
+
 
 def logout(request):
     request.session.flush()
@@ -339,30 +346,33 @@ def applicant_settings(request):
         return render(request, 'applicantportal/applicant_settings.html')
 
 
-def employer_index(request, user_id):
-        userType = AppUser.objects.get(id=user_id).userType
-        if userType == 'Employer':
-            job_list = Job.objects.all()
-            context = {'job_list': job_list, 'userid': user_id}
-            return render(request, 'employerportal/index.html', context)
-        else:
-            return HttpResponseForbidden()
+def employer_index(request):
+    # if 'id' in request.session:
+    #     user = AppUser.objects.get(id=request.session['id'])
+    #     if user.userType == 'Employer':
+    user = check_employer(request)
+    if user is not None:
+        job_list = Job.objects.all()
+        context = {'job_list': job_list, 'userid': user.id}
+        return render(request, 'employerportal/index.html', context)
+    else:
+        return HttpResponseForbidden()
 
 
-def employer_job(request, user_id, job_id):
-    userType = AppUser.objects.get(id=user_id).userType
-    if userType == 'Employer':
+def employer_job(request, job_id):
+    user = check_employer(request)
+    if user is not None:
         job = Job.objects.get(id=job_id)
         application_list = Application.objects.filter(jobid=job)
-        context = {'job': job, 'application_list': application_list}
+        context = {'user': user, 'job': job, 'application_list': application_list}
         return render(request, 'employerportal/job.html', context)
     else:
         return HttpResponseForbidden()
 
 
-def employer_job_applicant(request, user_id, job_id, applicant_id):
-    userType = AppUser.objects.get(id=user_id).userType
-    if userType == 'Employer':
+def employer_job_applicant(request, job_id, applicant_id):
+    user = check_employer(request)
+    if user is not None:
         applicant = AppUser.objects.get(id=applicant_id)
         cv = CV.objects.get(owner=applicant)
         context = {'applicant': applicant, 'cv': cv}
@@ -371,38 +381,66 @@ def employer_job_applicant(request, user_id, job_id, applicant_id):
         return HttpResponseForbidden()
 
 
-def applicant_feedback(request, user_id, job_id, applicant_id):
-    if request.method == 'POST':
-        classification = request.POST['classification']
-        ml_model = Job.objects.get(id=job_id).industry_type
-        cv_user = AppUser.objects.get(id=applicant_id)
-        cv = CV.objects.get(owner=cv_user).cvData  # Get applicant's CV
-        json_cv = json.loads(cv)
-        json_cv['classification'] = classification  # Append classification to CV
-        new_mlcv = MLcv.objects.create(model=ml_model, cv=json_cv)  # Add modified cv to ML data
-        return redirect('../.')
+def applicant_feedback(request, job_id, applicant_id):
+    user = check_employer(request)
+    if user is not None:
+        if request.method == 'POST':
+            classification = request.POST['classification']
+            ml_model = Job.objects.get(id=job_id).industry_type
+            cv_user = AppUser.objects.get(id=applicant_id)
+            user_application = Application.objects.get(userid=cv_user, jobid=job_id)
+            user_application.classification = classification
+            user_application.save()
+            cv = CV.objects.get(owner=cv_user).cvData  # Get applicant's CV
+            json_cv = json.loads(cv)
+            json_cv['Classification'] = classification  # Append classification to CV
+            new_mlcv = MLcv.objects.create(model=ml_model, cv=json_cv)  # Add modified cv to ML data
+            return redirect('../.')
+    else:
+        return HttpResponseForbidden()
 
 
-def train_cv(request, model_name):
-    # TODO Should only be able to be done by an employer
-    if 'id' in request.session:
-        userType = AppUser.objects.get(id=request.session['id']).userType
-        if userType == 'Employer':
-            model = MLModel.objects.filter(model_name=model_name)
+def train_model(request):
+    user = check_employer(request)
+    if user is not None:
+        if request.method == 'POST':
+            model_name = request.POST['model']
+            model = MLModel.objects.get(model_name=model_name)
             cvs = MLcv.objects.filter(model=model)
             training_data = []
             for i in cvs:
                 training_data.append(i.cv)
             train(model_name, training_data)
-            return render()  # TODO Where does this return?
+            return redirect('./index/')
+    else:
+        return HttpResponseForbidden()
     # Create new model of same name from MLEngine
 
 
-def create_new_model(request):
+# def create_new_model(request):
+#     if 'id' in request.session:
+#         userType = AppUser.objects.get(id=request.session['id']).userType
+#         if userType == 'Employer':
+#             if request.method == 'POST':
+#                 model_name = request.POST['model_name']  # TODO Make form for creating new model
+#                 new_model = MLModel.objects.create(model_name=model_name)
+#                 return redirect('/admin/index')
+#                 # TODO Where does this return?
+
+
+# def new_model(request):
+#     if 'id' in request.session:
+#         userType = AppUser.objects.get(id=request.session['id']).userType
+#         if userType == 'Employer':
+#             return render(request, 'employerportal/new_model.html')
+#     else:
+#         return HttpResponseForbidden()
+
+
+def check_employer(request):
     if 'id' in request.session:
-        userType = AppUser.objects.get(id=request.session['id']).userType
-        if userType == 'Employer':
-            if request.method == 'POST':
-                model_name = request.POST['model_name']  # TODO Make form for creating new model
-                new_model = MLModel(model_name=model_name)
-                # TODO Where does this return?
+        user = AppUser.objects.get(id=request.session['id'])
+        if user.userType == 'Employer':
+            return user
+    else:
+        return None

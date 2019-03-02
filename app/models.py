@@ -8,6 +8,9 @@ class MLModel(models.Model):  # TODO Make Job.industry_type a foreign key of mod
     def __unicode__(self):
         return self.model_name
 
+    def __str__(self):
+        return self.model_name
+
 
 class MLcv (models.Model):
     model = models.ForeignKey(MLModel, on_delete=models.CASCADE)
@@ -23,11 +26,15 @@ class Organisation(models.Model):
 
 class Job(models.Model):
     organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE)
-    job_title = models.CharField(max_length=50)
-    job_desc = models.CharField(max_length=500)
+    job_title = models.CharField(max_length=50 ,verbose_name="Job Title")
+    job_desc = models.CharField(max_length=500,verbose_name="Job Description")
     # keywords = JSONField(null=True)
+<<<<<<< HEAD
+    industry_type = models.CharField(max_length=50,verbose_name="Industry Type")
+=======
     industry_type = models.ForeignKey(MLModel, default=1, on_delete=models.CASCADE)
     #industry_type_text = models.CharField(max_length=100, default="Software")
+>>>>>>> 6063683f94da47edf568e7a441676e2eadbe976c
     deadline = models.DateTimeField(blank=True)
 
     class Meta:

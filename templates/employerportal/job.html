@@ -1,4 +1,5 @@
 {% extends "employerportal/base.html" %}
+{% load crispy_forms_tags %}
 {% block content %}
 <br>
    {% if job %}
@@ -13,11 +14,25 @@
       {% if application_list %}
       <h4>List of applicants:</h4>
             {% for i in application_list %}
-            <a style="color: blue" href="./{{i.userid.id}}">{{i.userid}}</a><br>
+
+               {% if i.classification == "not_set" %}
+                  <a style="color: blue" href="./{{i.userid.id}}">{{i.userid}}</a><p style="color:red; display: inline;"> &emsp; Please classify this applicant</p><br>
+               {% else %}
+                  <a style="color: blue" href="./{{i.userid.id}}">{{i.userid}}</a><p style="display: inline;"> &emsp; This applicant has been given the classification "{{i.classification}}"</p><br>
+               {% endif %}
             {% endfor %}
+            <br>
+      <form action="../../train" method="post">
+         {% csrf_token %}
+         {{ form|crispy }}
+         <!--<input type="submit" name="model" value="Train model ({{job.industry_type.model_name}})" />-->
+         <button name="model" value="{{job.industry_type.model_name}}">Train model ({{job.industry_type.model_name}})</button>
+      </form>
       {% else %}
-      <h2>There are currently no applicants to this job</h2>
+      <h3>There are currently no applicants to this job</h3>
       {% endif %}
+
+
    </div>
    {% else %}
       <h2>There is no job to show</h2>

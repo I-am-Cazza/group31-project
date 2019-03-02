@@ -11,5 +11,3 @@ class JobFilter(django_filters.FilterSet):
             'job_desc': ['icontains'],
             'industry_type__model_name': ['icontains'],
         }
-
-

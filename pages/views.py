@@ -111,11 +111,17 @@ def make_application(request, jobid):
         cv = CV.objects.get(owner=userid).cvData
         dictCv = json.loads(cv)
         dictCv['Answer Percent'] = request.session['success']
-        private_classification = predict("demo", dictCv)[0] #TODO change demo model to industry_type
-        print("This is the classification", private_classification)
         job = Job.objects.get(pk=jobid)
-        ml_model = MLModel.objects.get(model_name=job.industry_type.model_name)  # CHECK can use .get
-        ml_cv = MLcv(model=ml_model,cv=cv)  # Add cv to dataset for that ML model
+
+        # Don't predict until MLModel dataset is > 20 cvs
+        model = MLModel.objects.get(model_name=job.industry_type)
+        model_cvs = MLcv.objects.filter(model=model)
+
+        if len(model_cvs) > 20:
+            private_classification = predict(job.industry_type, dictCv)[0] #TODO change demo model to industry_type
+            print("This is the classification", private_classification)
+        else:
+            private_classification = "not_set"
         application = Application(userid=user, jobid=job, status='Applied', classification=private_classification, answer_percent=request.session['success'])
         application.save()
         request.session['success'] = None
@@ -376,25 +382,34 @@ def applicant_feedback(request, user_id, job_id, applicant_id):
         classification = request.POST['classification']
         ml_model = Job.objects.get(id=job_id).industry_type
         cv_user = AppUser.objects.get(id=applicant_id)
+        user_application = Application.objects.get(userid=cv_user, jobid=job_id)
+        user_application.classification = classification
+        user_application.save()
         cv = CV.objects.get(owner=cv_user).cvData  # Get applicant's CV
         json_cv = json.loads(cv)
-        json_cv['classification'] = classification  # Append classification to CV
+        json_cv['Classification'] = classification  # Append classification to CV
         new_mlcv = MLcv.objects.create(model=ml_model, cv=json_cv)  # Add modified cv to ML data
         return redirect('../.')
 
 
-def train_cv(request, model_name):
+def train_model(request):
     # TODO Should only be able to be done by an employer
     if 'id' in request.session:
         userType = AppUser.objects.get(id=request.session['id']).userType
         if userType == 'Employer':
-            model = MLModel.objects.filter(model_name=model_name)
-            cvs = MLcv.objects.filter(model=model)
-            training_data = []
-            for i in cvs:
-                training_data.append(i.cv)
-            train(model_name, training_data)
-            return render()  # TODO Where does this return?
+            if request.method == 'POST':
+                model_name = request.POST['model']
+                model = MLModel.objects.get(model_name=model_name)
+                cvs = MLcv.objects.filter(model=model)
+                training_data = []
+                for i in cvs:
+                    training_data.append(i.cv)
+                train(model_name, training_data)
+                return redirect('')  # TODO Where does this return?
+            else:
+                return HttpResponseForbidden()
+        else:
+            return HttpResponseForbidden()
     # Create new model of same name from MLEngine
 
 
@@ -406,3 +421,4 @@ def create_new_model(request):
                 model_name = request.POST['model_name']  # TODO Make form for creating new model
                 new_model = MLModel(model_name=model_name)
                 # TODO Where does this return?
+

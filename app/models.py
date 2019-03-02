@@ -8,6 +8,9 @@ class MLModel(models.Model):  # TODO Make Job.industry_type a foreign key of mod
     def __unicode__(self):
         return self.model_name
 
+    def __str__(self):
+        return self.model_name
+
 
 class MLcv (models.Model):
     model = models.ForeignKey(MLModel, on_delete=models.CASCADE)

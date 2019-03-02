@@ -13,11 +13,24 @@
       {% if application_list %}
       <h4>List of applicants:</h4>
             {% for i in application_list %}
-            <a style="color: blue" href="./{{i.userid.id}}">{{i.userid}}</a><br>
+
+               {% if i.classification == "not_set" %}
+                  <a style="color: blue" href="./{{i.userid.id}}">{{i.userid}}</a><p style="color:red; display: inline;"> &emsp; Please classify this applicant</p><br>
+               {% else %}
+                  <a style="color: blue" href="./{{i.userid.id}}">{{i.userid}}</a><br>
+               {% endif %}
             {% endfor %}
       {% else %}
       <h2>There are currently no applicants to this job</h2>
       {% endif %}
+
+      <br>
+      <form action="../../../train" method="post">
+         {% csrf_token %}
+         <!--<input type="submit" name="model" value="Train model ({{job.industry_type.model_name}})" />-->
+         <button name="model" value="{{job.industry_type.model_name}}">Train model ({{job.industry_type.model_name}})</button>
+      </form>
+
    </div>
    {% else %}
       <h2>There is no job to show</h2>

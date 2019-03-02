@@ -19,13 +19,15 @@
       <p>{{job.industry_type.model_name}}</p>
       <h4>Job Deadline</h4>
       <p id="deadline">{{job.deadline}}</p>
-      <a style="color: blue" href="./{{userid}}/{{job.id}}/">View Applications</a>
+      <a style="color: blue" href="./{{job.id}}/">View Applications</a>
    </div>
    {% endfor %}
 </div>
 {% else %}
 <p>No jobs are available.</p>
 {% endif %}
+
+
 <script>
     $( "#accordion" ).accordion({
         collapsible: true

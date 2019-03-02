@@ -25,6 +25,12 @@
       <p>{{job.industry_type}}</p>
       <h4>Job Deadline</h4>
       <p id="deadline">{{job.deadline}}</p>
+      <form action="{% url 'aaron_login' %}">
+                <div class="form-group">
+      <button id ="apply" class="btn btn-success">Apply</button>
+          </div>
+    </form>
+
    </div>
    {% endfor %}
 </div>

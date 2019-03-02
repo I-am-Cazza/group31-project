@@ -11,10 +11,10 @@ class Organisation(models.Model):
 
 class Job(models.Model):
     organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE)
-    job_title = models.CharField(max_length=50)
-    job_desc = models.CharField(max_length=500)
+    job_title = models.CharField(max_length=50 ,verbose_name="Job Title")
+    job_desc = models.CharField(max_length=500,verbose_name="Job Description")
     # keywords = JSONField(null=True)
-    industry_type = models.CharField(max_length=50)
+    industry_type = models.CharField(max_length=50,verbose_name="Industry Type")
     deadline = models.DateTimeField(blank=True)
 
     class Meta:

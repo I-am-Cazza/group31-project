@@ -191,8 +191,8 @@ def aaron_signup(request):
             email = form.cleaned_data['email']  # TODO check email is unique, only store unique emails
             password = form.cleaned_data['password']
             check_password = form.cleaned_data['confirm_password']
-            # first_name= form.cleaned_data['first_name']
-            # last_name=form.cleaned_data['last_name']
+            first_name= form.cleaned_data['first_name']
+            last_name=form.cleaned_data['last_name']
             if AppUser.objects.filter(email=email).exists():
                 context= {'form': form, 'signup_page': 'active','error_message':'<p style="color:red">This email already exsists.</p>'}
                 return render(request,'applicantportal/signup.html',context )

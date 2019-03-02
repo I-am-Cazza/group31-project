@@ -19,6 +19,16 @@
       {{ form|crispy }}
     {% csrf_token %}
 
+    <div id='skills'>
+    </div>
+    <div id='languages'>
+    </div>
+    <div id='hobbies'>
+    </div>
+    <div id='qualifications'>
+    </div>
+    <div id='jobs'>
+    </div>
     </div>
 
     <br>
@@ -72,22 +82,22 @@ $("#add-another-skill").click(function() {
     element = $('<label>Skill:</label>');
     element.attr('name', 'extra_charfield_' + form_count);
     element.attr('id', 'extra_field_skill' + form_count)
-    $("#forms").append(element);
+    $("#skills").append(element);
     element = $('<input type="text"/>');
     element.attr('name', 'extra_charfield_' + form_count);
     element.attr('id', 'extra_field_text' + form_count);
     element.attr('class', 'form-control')
-    $("#forms").append(element);
+    $("#skills").append(element);
     element = $('<label>Expertise:</label>');
     element.attr('name', 'extra_intfield_' + form_count);
     element.attr('id', 'extra_field_expertise' + form_count)
-    $("#forms").append(element);
+    $("#skills").append(element);
     element = $('<input type="number"/>');
     element.attr('name', 'extra_intfield_' + form_count);
     element.attr('id', 'extra_field_number' + form_count)
     element.attr('class', 'form-control')
-    $("#forms").append(element);
-    $("#forms").append("<br>");
+    $("#skills").append(element);
+    $("#skills").append("<br>");
 
     // build element and append it to our forms container
 
@@ -112,21 +122,21 @@ $("#add-another-language").click(function() {
     element = $('<label>Language:</label>');
     element.attr('name', 'extra_charfield_lang_' + language_count);
     element.attr('id', 'extra_field_lang_' + language_count)
-    $("#forms").append(element);
+    $("#languages").append(element);
     element = $('<input type="text"/>');
     element.attr('name', 'extra_charfield_lang_' + language_count);
     element.attr('id', 'extra_field_text_lang_' + language_count);
     element.attr('class', 'form-control')
-    $("#forms").append(element);
+    $("#languages").append(element);
     element = $('<label>Expertise:</label>');
     element.attr('name', 'extra_intfield_lang_' + language_count);
     element.attr('id', 'extra_field_expertise_lang_' + language_count)
-    $("#forms").append(element);
+    $("#languages").append(element);
     element = $('<input type="number"/>');
     element.attr('name', 'extra_intfield_lang_' + language_count);
     element.attr('id', 'extra_field_number_lang_' + language_count)
     element.attr('class', 'form-control')
-    $("#forms").append(element);
+    $("#languages").append(element);
 
     $("[name=extra_language_count]").val(language_count);
 
@@ -148,21 +158,21 @@ $("#add-another-hobby").click(function() {
     element = $('<label>Hobby:</label>');
     element.attr('name', 'extra_charfield_hobby_' + hobby_count);
     element.attr('id', 'extra_field_hobby_' + hobby_count)
-    $("#forms").append(element);
+    $("#hobbies").append(element);
     element = $('<input type="text"/>');
     element.attr('name', 'extra_charfield_hobby_' + hobby_count);
     element.attr('id', 'extra_field_text_hobby_' + hobby_count);
     element.attr('class', 'form-control')
-    $("#forms").append(element);
+    $("#hobbies").append(element);
     element = $('<label>Interest:</label>');
     element.attr('name', 'extra_intfield_hobby_' + hobby_count);
     element.attr('id', 'extra_field_expertise_hobby_' + hobby_count)
-    $("#forms").append(element);
+    $("#hobbies").append(element);
     element = $('<input type="number"/>');
     element.attr('name', 'extra_intfield_hobby_' + hobby_count);
     element.attr('id', 'extra_field_number_hobby_' + hobby_count)
     element.attr('class', 'form-control')
-    $("#forms").append(element);
+    $("#hobbies").append(element);
 
     $("[name=extra_hobby_count]").val(hobby_count);
 })
@@ -184,21 +194,21 @@ $("#add-another-qual").click(function() {
     element = $('<label>Qualification:</label>');
     element.attr('name', 'extra_charfield_qual_' + qual_count);
     element.attr('id', 'extra_field_qual_' + qual_count)
-    $("#forms").append(element);
+    $("#qualifications").append(element);
     element = $('<input type="text"/>');
     element.attr('name', 'extra_charfield_qual_' + qual_count);
     element.attr('id', 'extra_field_text_qual_' + qual_count);
     element.attr('class', 'form-control')
-    $("#forms").append(element);
+    $("#qualifications").append(element);
     element = $('<label>Grade:</label>');
     element.attr('name', 'extra_intfield_qual_' + qual_count);
     element.attr('id', 'extra_field_expertise_qual_' + qual_count)
-    $("#forms").append(element);
+    $("#qualifications").append(element);
     element = $('<input type="text"/>');
     element.attr('name', 'extra_intfield_qual_' + qual_count);
     element.attr('id', 'extra_field_number_qual_' + qual_count)
     element.attr('class', 'form-control')
-    $("#forms").append(element);
+    $("#qualifications").append(element);
 
     $("[name=extra_qual_count]").val(qual_count);
 })
@@ -220,30 +230,30 @@ $("#add-another-job").click(function() {
     element = $('<label>Company:</label>');
     element.attr('name', 'extra_charfield_job_' + job_count);
     element.attr('id', 'extra_field_job_' + job_count)
-    $("#forms").append(element);
+    $("#jobs").append(element);
     element = $('<input type="text"/>');
     element.attr('name', 'extra_charfield_job_' + job_count);
     element.attr('id', 'extra_field_text_job_' + job_count);
     element.attr('class', 'form-control')
-    $("#forms").append(element);
+    $("#jobs").append(element);
     element = $('<label>Position:</label>');
     element.attr('name', 'extra_intfield_job_' + job_count);
     element.attr('id', 'extra_field_expertise_job_' + job_count)
-    $("#forms").append(element);
+    $("#jobs").append(element);
     element = $('<input type="text"/>');
     element.attr('name', 'extra_intfield_job_' + job_count);
     element.attr('id', 'extra_field_number_job_' + job_count)
     element.attr('class', 'form-control')
-    $("#forms").append(element);
+    $("#jobs").append(element);
     element = $('<label>Length of employment in months:</label>');
     element.attr('name', 'extra_lenfield_job_' + job_count);
     element.attr('id', 'extra_field_len_job_label_' + job_count)
-    $("#forms").append(element);
+    $("#jobs").append(element);
     element = $('<input type="text" onkeypress="check(this);"/>');
     element.attr('name', 'extra_lenfield_job_' + job_count);
     element.attr('id', 'extra_field_len_job_' + job_count)
     element.attr('class', 'form-control')
-    $("#forms").append(element);
+    $("#jobs").append(element);
 
     $("[name=extra_job_count]").val(job_count);
 })

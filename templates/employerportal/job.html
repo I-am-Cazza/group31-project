@@ -1,40 +1,63 @@
 {% extends "employerportal/base.html" %}
-{% load crispy_forms_tags %}
 {% block content %}
 <br>
-   {% if job %}
-   <div>
-      <h4> Description</h4>
-      <p>{{job.job_desc}}</p>
-      <!-- <p>{{job.organisation.organisation_name}}</p> -->
-      <h4> Type of job</h4>
-      <p>{{job.industry_type.model_name}}</p>
-      <h4>Job Deadline</h4>
-      <p id="deadline">{{job.deadline}}</p>
-      {% if application_list %}
-      <h4>List of applicants:</h4>
-            {% for i in application_list %}
-
-               {% if i.classification == "not_set" %}
-                  <a style="color: blue" href="./{{i.userid.id}}">{{i.userid}}</a><p style="color:red; display: inline;"> &emsp; Please classify this applicant</p><br>
-               {% else %}
-                  <a style="color: blue" href="./{{i.userid.id}}">{{i.userid}}</a><p style="display: inline;"> &emsp; This applicant has been given the classification "{{i.classification}}"</p><br>
-               {% endif %}
-            {% endfor %}
-            <br>
-      <form action="../../train" method="post">
-         {% csrf_token %}
-         {{ form|crispy }}
-         <!--<input type="submit" name="model" value="Train model ({{job.industry_type.model_name}})" />-->
-         <button name="model" value="{{job.industry_type.model_name}}">Train model ({{job.industry_type.model_name}})</button>
-      </form>
-      {% else %}
-      <h3>There are currently no applicants to this job</h3>
-      {% endif %}
-
-
+{% if job %}
+<div class="card">
+   <div class="card-body">
+      <h5 class="card-title">Description</h5>
+      <p class="card-text">{{job.job_desc}}</p>
    </div>
-   {% else %}
-      <h2>There is no job to show</h2>
-   {% endif %}
+</div>
+<br>
+<div class="card">
+   <div class="card-body">
+      <h5 class="card-title">Type of Job/Model Name</h5>
+      <p class="card-text">{{job.industry_type.model_name}}</p>
+   </div>
+</div>
+<br>
+<div class="card">
+   <div class="card-body">
+      <h5 class="card-title">Job Deadline</h5>
+      <p class="card-text">{{job.deadline}}</p>
+   </div>
+</div>
+<br>
+<div class="card">
+   <div class="card-body">
+      <h5 class="card-title">List of applicants</h5>
+      {% if application_list %}
+      <div class="list-group">
+         {% for i in application_list %}
+         <a href="{% url 'employer_job_applicant' job.id i.userid.id %}" class="list-group-item py-2 list-group-item-action ">
+            <div class="d-flex w-100 justify-content-between">
+               <h5 class="mb-1">Applicant: {{i.userid}} </h5>
+            </div>
+            {% if i.classification == "not_set" %}
+            <p class="mb-1">Please classify this applicant</p>
+            {% else %}
+            <p class="mb-1"> This applicant has been given the classification "{{i.classification}}."</p>
+            {% endif %}
+         </a>
+         <br>
+         {% endfor%}
+      </div>
+      {% else %}
+      <p class="card-text">There are currently no applicants to this job</p>
+      {% endif %}
+   </div>
+</div>
+<br>
+<form action="{% url 'train_model' %}" method="post">
+   {% csrf_token %}
+   <div class="form-group">
+      <!--<input type="submit" name="model" value="Train model ({{job.industry_type.model_name}})" />-->
+      <button name="model"  class="btn btn-dark" value="{{job.industry_type.model_name}}">Train model ({{job.industry_type.model_name}})</button>
+   </div>
+</form>
+{% else %}
+<p>There are no Jobs Available</p>
+{% endif %}
+<br>
+<br>
 {% endblock %}

@@ -1,42 +1,56 @@
 {% extends "employerportal/base.html" %}
-{% load crispy_forms_tags %}
 {% block content %}
 <br>
-   {% if applicant %}
-   <div>
-      <h4>First Name:</h4>
-      <p>{{applicant.first_name}}</p>
-      <h4>Last Name:</h4>
-      <p>{{applicant.last_name}}</p>
-      <h4>Email:</h4>
-      <p>{{applicant.email}}</p>
-      {% if cv %}
-      <h4>CV:</h4>
-      <p>{{cv.cvData}}</p>
-      {% else %}
-      <h4>There is no CV to show</h4>
-      {% endif %}
-      <br>
-      <form method="POST" action="./{{applicant.id}}/feedback">
-         {% csrf_token %}
-         <!--<label style="font-size:16px;font-weight:bold;">Please enter how suitable the applicant is for the job:</label>-->
-         <!--<select name="classification">-->
-            <!--<option value="Very suitable">Very suitable</option>-->
-            <!--<option value="Acceptable">Acceptable</option>-->
-            <!--<option value="Unacceptable">Unacceptable</option>-->
-            <!--<option value="Not suitable at all">Not suitable at all</option>-->
-         {{ form|crispy }}
-         <label style="font-size:16px;font-weight:bold;">Please enter how suitable the applicant is for the job:</label>
-         <select name="classification">
-            <option value="In person interview">In person interview</option>
-            <option value="Phone interview">Phone interview</option>
-            <option value="Further testing">Further testing</option>
-            <option value="Reject applicant">Reject applicant</option>
-         </select>
-         <input type="submit" value="Submit">
-      </form>
+{% if applicant %}
+<h2> Applicant Details</h2>
+<br>
+<div class="card">
+   <div class="card-body">
+      <h5 class="card-title">First Name:</h5>
+      <p class="card-text">{{applicant.first_name}}</p>
    </div>
-   {% else %}
-      <h2>This applicant does not exist</h2>
-   {% endif %}
+</div>
+<br>
+<div class="card">
+   <div class="card-body">
+      <h5 class="card-title">Last Name</h5>
+      <p class="card-text">{{applicant.last_name}}</p>
+   </div>
+</div>
+<br>
+<div class="card">
+   <div class="card-body">
+      <h5 class="card-title">Email</h5>
+      <p class="card-text">{{applicant.email}}</p>
+   </div>
+</div>
+<br>
+{% if cv %}
+<div class="card">
+   <div class="card-body">
+      <h5 class="card-title">CV:</h5>
+      <p class="card-text">{{cv.cvData}}</p>
+   </div>
+</div>
+{% else %}
+<h4>There is no CV to show</h4>
+{% endif %}
+<br>
+<form class="form-inline" method="post" action="{% url 'applicant_feedback' job_id applicant.id %}">
+   {% csrf_token %}
+   <label class="my-1 mr-2" for="classification">Please enter how suitable the applicant is for the job:</label>
+   <select class="custom-select my-1 ml-2 mr-lg-3" style="width:50%;" id="classification">
+      <option value="In person interview">In person interview</option>
+      <option value="Phone interview">Phone interview</option>
+      <option value="Further testing">Further testing</option>
+      <option value="Reject applicant">Reject applicant</option>
+   </select>
+   <button type="submit" class="btn btn-primary my-1">Confirm</button>
+</form>
+<br>
+<br>
+<br>
+{% else %}
+<h2>This applicant does not exist</h2>
+{% endif %}
 {% endblock %}

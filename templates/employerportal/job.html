@@ -29,9 +29,9 @@
       {% if application_list %}
       <div class="list-group">
          {% for i in application_list %}
-         <a href="{% url 'employer_job_applicant' job.id i.userid.id %}" class="list-group-item py-2 list-group-item-action ">
+         <a href="{% url 'employer_job_applicant' job.id i.user.id %}" class="list-group-item py-2 list-group-item-action ">
             <div class="d-flex w-100 justify-content-between">
-               <h5 class="mb-1">Applicant: {{i.userid}} </h5>
+               <h5 class="mb-1">Applicant: {{i.user}} </h5>
             </div>
             {% if i.classification == "not_set" %}
             <p class="mb-1" style="color:red;">Please classify this applicant</p>

@@ -11,10 +11,16 @@ class MLModel(models.Model):  # TODO Make Job.industry_type a foreign key of mod
     def __str__(self):
         return self.model_name
 
+    class Meta:
+        verbose_name = 'Machine Learning Model'
+
 
 class MLcv (models.Model):
     model = models.ForeignKey(MLModel, on_delete=models.CASCADE)
     cv = JSONField()
+
+    class Meta:
+        verbose_name = 'Machine Learning CV'
 
 
 class Organisation(models.Model):
@@ -23,12 +29,19 @@ class Organisation(models.Model):
     contact_email = models.CharField(max_length=50, default="group31@gmail.com")
     contact_number = models.CharField(max_length=11, default="0800970970")
 
+    def __str__(self):
+        return self.organisation_name
+
 
 class Job(models.Model):
     organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE)
     job_title = models.CharField(max_length=50 ,verbose_name="Job Title")
     job_desc = models.CharField(max_length=500,verbose_name="Job Description")
+<<<<<<< HEAD
     # industry_type = models.ForeignKey(MLModel, default=1, on_delete=models.CASCADE)
+=======
+    industry_type = models.ForeignKey(MLModel, default=1, on_delete=models.CASCADE)
+>>>>>>> 77aee62ab8e0a3889ccad18173fef6782e9a2cdd
     deadline = models.DateTimeField(blank=True)
 
     class Meta:
@@ -43,6 +56,9 @@ class TestQuestions(models.Model):
     question_answer = models.CharField(max_length=500)
     question_type = models.CharField(max_length=500)  # MultipleChoice, LongAnswer, ShortAnswer, etc.
     question_industry = models.CharField(max_length=50)  # Computing questions only asked to computing applicants, etc.
+
+    class Meta:
+        verbose_name = 'Test Question'
 
 
 class AppUser(models.Model):
@@ -83,3 +99,6 @@ class TestAnswers(models.Model):
     applicationid = models.ForeignKey(Application, on_delete=models.CASCADE) # Which application the answers belong to
     questionid = models.ForeignKey(TestQuestions, on_delete=models.CASCADE)
     answer_text = models.CharField(max_length=500)
+
+    class Meta:
+        verbose_name = 'Test Answer'

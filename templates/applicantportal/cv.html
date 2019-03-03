@@ -295,7 +295,7 @@ $("#add-another-job").click(function() {
     element.attr('name', 'extra_lenfield_job_' + job_count);
     element.attr('id', 'extra_field_len_job_label_' + job_count)
     $("#jobs").append(element);
-    element = $('<input type="text" onkeypress="check(this);"/>');
+    element = $('<input type="text" onkeyup="check(this);"/>');
     element.attr('name', 'extra_lenfield_job_' + job_count);
     element.attr('id', 'extra_field_len_job_' + job_count)
     element.attr('class', 'form-control')

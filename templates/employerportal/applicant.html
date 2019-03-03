@@ -36,10 +36,10 @@
 <h4>There is no CV to show</h4>
 {% endif %}
 <br>
-<form class="form-inline" method="post" action="{% url 'applicant_feedback' job_id applicant.id %}">
+<form class="form-inline" method="POST" action="{% url 'applicant_feedback' job_id applicant.id %}">
    {% csrf_token %}
-   <label class="my-1 mr-2" for="classification">Please enter how suitable the applicant is for the job:</label>
-   <select class="custom-select my-1 ml-2 mr-lg-3" style="width:50%;" id="classification">
+   <label class="my-1 mr-2" for="classify">Please enter how suitable the applicant is for the job:</label>
+   <select class="custom-select my-1 ml-2 mr-lg-3" style="width:50%;" name="classification" id="classify" >
       <option value="In person interview">In person interview</option>
       <option value="Phone interview">Phone interview</option>
       <option value="Further testing">Further testing</option>

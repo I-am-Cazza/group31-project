@@ -23,7 +23,21 @@
       <h4>Job Deadline</h4>
       <p id="deadline">{{i.0.deadline}}</p>
       <h4>Application Status</h4>
-      <p style="color:green">{{i.1}}</p>
+      {% ifequal i.2 "not_set" %}
+        <p style="color:green">{{i.1}}</p>
+      {% endifequal %}
+      {% ifequal i.2 "phone interview" %}
+        <p style="color:green">You have been selected for a phone interview, a recruiter will contact you shortly</p>
+        {% endifequal %}
+      {% ifequal i.2 "in person interview" %}
+        <p style="color:green">You have been selected for an in person interview, a recruiter will contact you shortly</p>
+        {% endifequal %}
+      {% ifequal i.2 "further testing" %}
+        <p style="color:green">You have been selected to undergo further testing, a recruiter will contact you shortly</p>
+        {% endifequal %}
+      {% ifequal i.2 "reject applicant" %}
+        <p style="color:red">Unfortunately, you do not meet the requirements for this job at the current time.</p>
+      {% endifequal %}
    </div>
    {% endfor %}
 </div>

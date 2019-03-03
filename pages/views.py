@@ -165,7 +165,7 @@ def cv(request):
                     joblist.append({"Company" : form.cleaned_data['extra_charfield_job_' + str(i+1)], "Position" : form.cleaned_data['extra_intfield_job_' + str(i+1)], "Length of Employment" : form.cleaned_data['extra_lenfield_job_'+ str(i+1)]})
                 Languages = "Languages Known"
                 Employment = "Previous Employment"
-                finalobject = {"Name" : formname, "Degree" : formdegree, "Level" : formlevel, "University" : formuniversity, "Skills" :skillslist, "Languages Known" : langlist, "Hobbies":hobbylist, "Qualifications" : quallist, "Previous Employment" : joblist}
+                finalobject = {"Name" : formname, "Degree Qualification" : formdegree, "Degree Level" : formlevel, "University Attended" : formuniversity, "Skills" :skillslist, "Languages Known" : langlist, "Hobbies":hobbylist, "Qualifications" : quallist, "Previous Employment" : joblist}
                 jsonobject = json.dumps(finalobject)
                 if completedCv:
                     oldCV = CV.objects.get(owner=AppUser.objects.get(id=request.session['id']))

@@ -7,7 +7,7 @@
 <hr>
 <br>
    <div>
-      <h4> Description</h4>
+      <h4>Description</h4>
       <p>{{job.job_desc}}</p>
       <!-- <p>{{job.organisation.organisation_name}}</p> -->
       <h4> Type of job</h4>
@@ -15,6 +15,8 @@
       <h4>Job Deadline</h4>
       <p id="deadline">{{job.deadline}}</p>
       <!--<a href="{% url 'apply' job.id %}">Apply</a>-->
+
+
       {% if has_applied %}
       <p style="color:red">You've already applied for this job</p>
       <a href="applied_jobs">See application</a>
@@ -23,8 +25,23 @@
          <p style="color:red;">You can't apply for jobs until you have uploaded your CV</p>
          <a href="cv">Upload your CV</a>
          {% else %}
-         <a href="{% url 'test' job.id %}">Apply</a>
+         <a style="font-size:20px;" href="{% url 'test' job.id %}">Apply</a>
          {% endif %}
       {% endif %}
+
+      <br><br>
+      {% if organisation.include_details %}
+          <h4>Name of organisation: <span style="font-size:16px;">&nbsp; {{organisation.name}}</span></h4>
+
+         {% if organisation.contact_email %}
+            <h5>Contact Email: <span style="font-size:16px;">&nbsp; {{organisation.contact_email}}</span></h5>
+         {% endif %}
+
+         {% if organisation.contact_number %}
+         <h5>Contact Number <span style="font-size:16px;">&nbsp; {{organisation.contact_number}}</span></h5>
+         {% endif %}
+
+      {% endif %}
+
    </div>
 {% endblock %}

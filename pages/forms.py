@@ -5,6 +5,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 
+
 class SignUpForm(UserCreationForm):
     username = forms.CharField(max_length=20, required=True, help_text="*")
     first_name = forms.CharField(max_length=20, required=True, help_text='*')
@@ -24,7 +25,7 @@ class AddUserForm(ModelForm):
 
     class Meta:
         model = AppUser
-        fields = ['email','first_name','last_name']
+        fields = ['email', 'first_name', 'last_name']
 
 
 class LoginUserForm(ModelForm):
@@ -34,6 +35,7 @@ class LoginUserForm(ModelForm):
         model = AppUser
         fields = ['email', 'password']
 
+
 class SettingsForm(ModelForm):
     old_password=forms.CharField(label='Old Password',widget=forms.PasswordInput(), max_length=50,required=False)
     password = forms.CharField(label='New Password',widget=forms.PasswordInput(), max_length=50,required=False)
@@ -41,6 +43,7 @@ class SettingsForm(ModelForm):
     class Meta:
         model= AppUser
         fields=['email','first_name','last_name']
+
 
 class CvCreationForm(forms.Form):
     name = forms.CharField(label='Name', max_length=50, required=True)
@@ -52,6 +55,7 @@ class CvCreationForm(forms.Form):
     extra_hobby_count = forms.CharField(widget=forms.HiddenInput())
     extra_qual_count = forms.CharField(widget=forms.HiddenInput())
     extra_job_count = forms.CharField(widget=forms.HiddenInput())
+
     def __init__(self, *args, **kwargs):
         extra_fields = kwargs.pop('extraskills', 0)
         extra_language = kwargs.pop('extralang', 0)
@@ -82,8 +86,10 @@ class CvCreationForm(forms.Form):
             self.fields['extra_intfield_job_{index}'.format(index=index+1)] =  forms.CharField(label='Position', required=False)
             self.fields['extra_lenfield_job_{index}'.format(index=index+1)] =  forms.CharField(label='Length of employment in months', required=False)
 
+
 class TestForm(forms.Form):
     extra_question_count = forms.CharField(widget=forms.HiddenInput())
+
     def __init__(self, *args, **kwargs):
         extra_questions = kwargs.pop('extraquestion', 0)
         extra_names = kwargs.pop('extranames', [])

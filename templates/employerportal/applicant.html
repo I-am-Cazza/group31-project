@@ -28,8 +28,27 @@
 {% if cv %}
 <div class="card">
    <div class="card-body">
-      <h5 class="card-title">CV:</h5>
-      <p class="card-text">{{cv.cvData}}</p>
+      <h5 class="card-title">University Education</h5>
+      <p id="deg_qualification" class="card-text"></p>
+      <p id="deg_level" class="card-text"></p>
+      <p id="uni" class="card-text"></p>
+   </div>
+</div>
+<br>
+<div class="card">
+   <div class="card-body">
+      <h5  class="card-title">Skills, Languages, and Hobbies</h5>
+      <p id="skills" class="card-text">Skills:</p>
+      <p id="lang" class="card-text">Languages:</p>
+      <p id="hobbies" class="card-text">Hobbies:</p>
+   </div>
+</div>
+<br>
+<div class="card">
+   <div class="card-body">
+      <h5 class="card-title">Qualifications and Work Experiences</h5>
+      <p id="a_level" class="card-text">A-Level Qualifications:</p>
+      <p id="prev_employ" class="card-text">Previous Employment:</p>
    </div>
 </div>
 {% else %}
@@ -39,7 +58,7 @@
 <form class="form-inline" method="POST" action="{% url 'applicant_feedback' job_id applicant.id %}">
    {% csrf_token %}
    <label class="my-1 mr-2" for="classify">Please enter how suitable the applicant is for the job:</label>
-   <select class="custom-select my-1 ml-2 mr-lg-3" style="width:50%;" name="classification" id="classify" >
+   <select class="custom-select my-1 ml-2 mr-lg-3" style="width:40%;" name="classification" id="classify" >
       <option value="In person interview">In person interview</option>
       <option value="Phone interview">Phone interview</option>
       <option value="Further testing">Further testing</option>
@@ -53,4 +72,47 @@
 {% else %}
 <h2>This applicant does not exist</h2>
 {% endif %}
+<script>
+    $( document ).ready(function() {
+    $('#hello1').val="ok";
+    cv_data={{cv.cvData|safe}};
+
+    $('#deg_qualification').text('Degree Qualification:'+' ' + cv_data["Degree Qualification"]);
+    $('#deg_level').text('Degree Level:'+' ' + cv_data["Degree Level"]);
+    $('#uni').text('University Attended:'+' ' + cv_data["University Attended"]);
+    console.log(cv_data.Skills[0].skill);
+    var skills=" ";
+    for(var i =0; i<cv_data.Skills.length;i++){
+    skills+= cv_data.Skills[i].Skill+'('+cv_data.Skills[i].Expertise+')'+','+" ";
+    }
+    skills= skills.substring(0,skills.length-2);
+    $('#skills').append(skills);
+    var languages=" ";
+    for(var i=0; i<cv_data["Languages Known"].length;i++){
+        languages+= ' '+cv_data["Languages Known"][i].Language+'('+cv_data["Languages Known"][i].Expertise+')'+','+" ";
+    }
+    languages= languages.substring(0,languages.length-2);
+    $('#lang').append(languages);
+    var hobbies=" ";
+    for(var i=0; i<cv_data.Hobbies.length;i++){
+        hobbies+= ' '+cv_data.Hobbies[i].Name+'('+cv_data.Hobbies[i].Interest+')'+','+" ";
+    }
+    hobbies= hobbies.substring(0,hobbies.length-2);
+    $('#hobbies').append(hobbies);
+    var a_level=" ";
+    for(var i=0; i<cv_data["A-Level Qualifications"].length;i++){
+        a_level+= ' '+cv_data["A-Level Qualifications"][i].Qualification+'('+cv_data["A-Level Qualifications"][i].Grade+')'+','+" ";
+    }
+    a_level= a_level.substring(0,a_level.length-2);
+    $('#a_level').append(a_level);
+    var prev_employ=" ";
+    for(var i=0; i<cv_data["Previous Employment"].length;i++){
+        prev_employ+=' '+cv_data["Previous Employment"][i].Company+'('+cv_data["Previous Employment"][i].Position+','+cv_data["Previous Employment"][i]["Length of Employment"]+')'+','+" ";
+    }
+    prev_employ= prev_employ.substring(0,prev_employ.length-2);
+    $('#prev_employ').append(prev_employ);
+});
+
+
+</script>
 {% endblock %}

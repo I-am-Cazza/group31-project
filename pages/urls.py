@@ -19,8 +19,8 @@ urlpatterns = [
     path('admin/train', views.train_model, name='train_model'),
     path('admin/create_new_model', views.create_new_model, name='create_new_model'),
     path('admin/new_model/', views.new_model, name='new_model'),
-    path('admin/new_model/<str:model_name>/<int:cv_index>', views.new_model_data, name='new_model_data'),
-    path('admin/index/<int:job_id>/<int:applicant_id>/feedback', views.applicant_feedback, name='applicant_feedback'),
-    path('admin/index/<int:job_id>/<int:applicant_id>', views.employer_job_applicant, name='employer_job_applicant'),
+    path('admin/new_model/<str:model_name>/<int:cv_index>/', views.new_model_data, name='new_model_data'),
+    path('admin/index/<int:job_id>/<int:applicant_id>/feedback/', views.applicant_feedback, name='applicant_feedback'),
+    path('admin/index/<int:job_id>/<int:applicant_id>/', views.employer_job_applicant, name='employer_job_applicant'),
     path('admin/index/<int:job_id>/', views.employer_job, name='employer_job'),
 ]

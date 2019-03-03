@@ -27,11 +27,7 @@
   <!-- Content here -->
 
         <h1> Employer Center</h1>
-         <ul class="nav nav-tabs">
-            <li class="nav-item">
-                <a class="nav-link {{ home_page }}" id="pills-home-tab" data-toggle="pill" href="/admin/index" role="tab" aria-controls="pills-home" aria-selected="true">Home</a>
-            </li>
-         </ul>
+        {% include 'employerportal/navigation.html' %}
     {% block content %}{% endblock %}
 
 </div>

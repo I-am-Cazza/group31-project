@@ -28,13 +28,7 @@ class Job(models.Model):
     organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE)
     job_title = models.CharField(max_length=50 ,verbose_name="Job Title")
     job_desc = models.CharField(max_length=500,verbose_name="Job Description")
-    # keywords = JSONField(null=True)
-<<<<<<< HEAD
-    industry_type = models.CharField(max_length=50,verbose_name="Industry Type")
-=======
     industry_type = models.ForeignKey(MLModel, default=1, on_delete=models.CASCADE)
-    #industry_type_text = models.CharField(max_length=100, default="Software")
->>>>>>> 6063683f94da47edf568e7a441676e2eadbe976c
     deadline = models.DateTimeField(blank=True)
 
     class Meta:

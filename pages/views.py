@@ -256,6 +256,13 @@ def aaron_login(request):
                 context= {'form': form, 'login_page': 'active','error_message':'<p style="color:red">Email is not registered.</p>'}
                 return render(request,'applicantportal/login.html',context )
             password_hash = AppUser.objects.get(email=email).password
+            # user = check_employer(request)
+            user = AppUser.objects.get(email=email)
+            if user.userType == 'Employer':
+                if user is not None:
+                    if user.password==password:
+                        request.session['id'] = user.id
+                        return employer_index(request)
             if check_password(password, password_hash)==False:
                 context= {'form': form, 'login_page': 'active','error_message':'<p style="color:red">Password is incorrect.</p>'}
                 return render(request,'applicantportal/login.html',context )
@@ -298,7 +305,6 @@ def applicant_settings(request):
         if request.method == 'POST':
             form = SettingsForm(request.POST)
             if form.is_valid():
-                print(user.id)
                 product = AppUser.objects.get(id=user.id)
                 product.email=form.cleaned_data.get('email')
                 product.first_name=form.cleaned_data.get('first_name')
@@ -316,11 +322,7 @@ def applicant_settings(request):
                     if check_password(old_password_form, password_hash)==True:
                         new_password=form.cleaned_data.get('password')
                         confirm_password=form.cleaned_data.get('confirm_password')
-                        print(new_password)
-                        print(confirm_password)
                         if new_password==confirm_password:
-                            print(new_password)
-                            print(confirm_password)
                             if len(new_password)<8:
                                 context= {'form': form, 'applicant_settings': 'active','error_message':'<p style="color:red">Password length is too short. Password must be greater than 8 characters.</p>'}
                                 return render(request,'applicantportal/applicant_settings.html',context )
@@ -347,13 +349,10 @@ def applicant_settings(request):
 
 
 def employer_index(request):
-    # if 'id' in request.session:
-    #     user = AppUser.objects.get(id=request.session['id'])
-    #     if user.userType == 'Employer':
     user = check_employer(request)
     if user is not None:
         job_list = Job.objects.all()
-        context = {'job_list': job_list, 'userid': user.id}
+        context = {'job_list': job_list, 'userid': user.id, 'home_page':'active'}
         return render(request, 'employerportal/index.html', context)
     else:
         return HttpResponseForbidden()
@@ -375,7 +374,7 @@ def employer_job_applicant(request, job_id, applicant_id):
     if user is not None:
         applicant = AppUser.objects.get(id=applicant_id)
         cv = CV.objects.get(owner=applicant)
-        context = {'applicant': applicant, 'cv': cv}
+        context = {'applicant': applicant, 'cv': cv,"job_id":job_id}
         return render(request, 'employerportal/applicant.html', context)
     else:
         return HttpResponseForbidden()

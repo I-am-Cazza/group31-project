@@ -165,7 +165,7 @@ def cv(request):
                     joblist.append({"Company" : form.cleaned_data['extra_charfield_job_' + str(i+1)], "Position" : form.cleaned_data['extra_intfield_job_' + str(i+1)], "Length of Employment" : form.cleaned_data['extra_lenfield_job_'+ str(i+1)]})
                 Languages = "Languages Known"
                 Employment = "Previous Employment"
-                finalobject = {"Name" : formname, "Degree Qualification" : formdegree, "Degree Level" : formlevel, "University Attended" : formuniversity, "Skills" :skillslist, "Languages Known" : langlist, "Hobbies":hobbylist, "Qualifications" : quallist, "Previous Employment" : joblist}
+                finalobject = {"Name" : formname, "Degree Qualification" : formdegree, "Degree Level" : formlevel, "University Attended" : formuniversity, "Skills" :skillslist, "Languages Known" : langlist, "Hobbies":hobbylist, "A-Level Qualifications": quallist, "Previous Employment" : joblist}
                 jsonobject = json.dumps(finalobject)
                 if completedCv:
                     oldCV = CV.objects.get(owner=AppUser.objects.get(id=request.session['id']))
@@ -266,7 +266,10 @@ def aaron_login(request):
             if check_password(password, password_hash)==False:
                 context= {'form': form, 'login_page': 'active','error_message':'<p style="color:red">Password is incorrect.</p>'}
                 return render(request,'applicantportal/login.html',context )
-            request.session['id'] = AppUser.objects.get(email=email).id
+            user = AppUser.objects.get(email=email)
+            request.session['id'] = user.id
+            if user.userType == 'Employer':
+                return redirect('/admin/index')
             return applicant_jobs(request)
         else:
             return login(request)
@@ -352,7 +355,7 @@ def employer_index(request):
     user = check_employer(request)
     if user is not None:
         job_list = Job.objects.all()
-        context = {'job_list': job_list, 'userid': user.id, 'home_page':'active'}
+        context = {'job_list': job_list, 'userid': user.id, 'home_page': 'active'}
         return render(request, 'employerportal/index.html', context)
     else:
         return HttpResponseForbidden()
@@ -416,24 +419,42 @@ def train_model(request):
     # Create new model of same name from MLEngine
 
 
-# def create_new_model(request):
-#     if 'id' in request.session:
-#         userType = AppUser.objects.get(id=request.session['id']).userType
-#         if userType == 'Employer':
-#             if request.method == 'POST':
-#                 model_name = request.POST['model_name']  # TODO Make form for creating new model
-#                 new_model = MLModel.objects.create(model_name=model_name)
-#                 return redirect('/admin/index')
-#                 # TODO Where does this return?
+def create_new_model(request):
+    user = check_employer(request)
+    if user is not None:
+        if request.method == 'POST':
+            model_name = request.POST['model_name']
+            if MLModel.objects.filter(model_name=model_name).exists():
+                context = {'new_model_page': 'active', 'error_message': '<p style="color:red">That is already a model name. Please choose a different name</p>'}
+                return render(request, 'employerportal/new_model.html', context)
+            new_model = MLModel.objects.create(model_name=model_name)
+            return redirect('/admin/new_model/' + model_name + '/0')
 
 
-# def new_model(request):
-#     if 'id' in request.session:
-#         userType = AppUser.objects.get(id=request.session['id']).userType
-#         if userType == 'Employer':
-#             return render(request, 'employerportal/new_model.html')
-#     else:
-#         return HttpResponseForbidden()
+def new_model(request):
+    user = check_employer(request)
+    if user is not None:
+        context = {'new_model_page': 'active'}
+        return render(request, 'employerportal/new_model.html', context)
+    else:
+        return HttpResponseForbidden()
+
+
+def new_model_data(request, model_name, cv_index):
+    user = check_employer(request)
+    if user is not None:
+        f = open("./app/mlengine/100cvDataset" + ".json", "r")
+        dataset = json.loads(f.read())
+        if request.method == 'POST':
+            # Add classifcation to cv in model
+            model = MLModel.objects.get(model_name=model_name)
+            classified_cv = dataset[cv_index-1]
+            classified_cv['Classification'] = request.POST['classification']
+            MLcv.objects.create(model=model, cv=classified_cv)
+        context = {'cv': dataset[cv_index], 'next_index': cv_index+1}
+        return render(request, 'employerportal/classify_cv.html', context)
+    else:
+        return HttpResponseForbidden()
 
 
 def check_employer(request):

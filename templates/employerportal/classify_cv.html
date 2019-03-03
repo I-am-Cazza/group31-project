@@ -1,0 +1,26 @@
+{% extends "employerportal/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<br>
+
+{% if cv %}
+
+<p>{{cv}}</p>
+
+{% endif %}
+
+<form method="POST" action="./{{next_index}}">
+         {% csrf_token %}
+         {{ form|crispy }}
+         <label style="font-size:16px;font-weight:bold;">Please enter how suitable the applicant is for the job:</label>
+         <select name="classification">
+            <option value="In person interview">In person interview</option>
+            <option value="Phone interview">Phone interview</option>
+            <option value="Further testing">Further testing</option>
+            <option value="Reject applicant">Reject applicant</option>
+         </select>
+         <input type="submit" value="Submit">
+      </form>
+
+{% endblock %}

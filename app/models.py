@@ -11,10 +11,16 @@ class MLModel(models.Model):  # TODO Make Job.industry_type a foreign key of mod
     def __str__(self):
         return self.model_name
 
+    class Meta:
+        verbose_name = 'Machine Learning Model'
+
 
 class MLcv (models.Model):
     model = models.ForeignKey(MLModel, on_delete=models.CASCADE)
     cv = JSONField()
+
+    class Meta:
+        verbose_name = 'Machine Learning CV'
 
 
 class Organisation(models.Model):
@@ -22,6 +28,9 @@ class Organisation(models.Model):
     industry_type = models.CharField(max_length=50)
     contact_email = models.CharField(max_length=50, default="group31@gmail.com")
     contact_number = models.CharField(max_length=11, default="0800970970")
+
+    def __str__(self):
+        return self.organisation_name
 
 
 class Job(models.Model):
@@ -46,6 +55,9 @@ class TestQuestions(models.Model):
     question_answer = models.CharField(max_length=500)
     question_type = models.CharField(max_length=500)  # MultipleChoice, LongAnswer, ShortAnswer, etc.
     question_industry = models.CharField(max_length=50)  # Computing questions only asked to computing applicants, etc.
+
+    class Meta:
+        verbose_name = 'Test Question'
 
 
 class AppUser(models.Model):
@@ -86,3 +98,7 @@ class TestAnswers(models.Model):
     applicationid = models.ForeignKey(Application, on_delete=models.CASCADE) # Which application the answers belong to
     questionid = models.ForeignKey(TestQuestions, on_delete=models.CASCADE)
     answer_text = models.CharField(max_length=500)
+
+    class Meta:
+        verbose_name = 'Test Answer'
+

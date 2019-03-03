@@ -1,8 +1,5 @@
 {% extends "employerportal/base.html" %}
-<<<<<<< HEAD
-=======
 {% load crispy_forms_tags %}
->>>>>>> 6063683f94da47edf568e7a441676e2eadbe976c
 {% block content %}
 <br>
    {% if applicant %}
@@ -22,14 +19,12 @@
       <br>
       <form method="POST" action="./{{applicant.id}}/feedback">
          {% csrf_token %}
-<<<<<<< HEAD
-         <label style="font-size:16px;font-weight:bold;">Please enter how suitable the applicant is for the job:</label>
-         <select name="classification">
-            <option value="Very suitable">Very suitable</option>
-            <option value="Acceptable">Acceptable</option>
-            <option value="Unacceptable">Unacceptable</option>
-            <option value="Not suitable at all">Not suitable at all</option>
-=======
+         <!--<label style="font-size:16px;font-weight:bold;">Please enter how suitable the applicant is for the job:</label>-->
+         <!--<select name="classification">-->
+            <!--<option value="Very suitable">Very suitable</option>-->
+            <!--<option value="Acceptable">Acceptable</option>-->
+            <!--<option value="Unacceptable">Unacceptable</option>-->
+            <!--<option value="Not suitable at all">Not suitable at all</option>-->
          {{ form|crispy }}
          <label style="font-size:16px;font-weight:bold;">Please enter how suitable the applicant is for the job:</label>
          <select name="classification">
@@ -37,7 +32,6 @@
             <option value="Phone interview">Phone interview</option>
             <option value="Further testing">Further testing</option>
             <option value="Reject applicant">Reject applicant</option>
->>>>>>> 6063683f94da47edf568e7a441676e2eadbe976c
          </select>
          <input type="submit" value="Submit">
       </form>

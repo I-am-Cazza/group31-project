@@ -57,8 +57,13 @@
 <br>
 <form class="form-inline" method="POST" action="{% url 'applicant_feedback' job_id applicant.id %}">
    {% csrf_token %}
+<<<<<<< HEAD
    <label class="my-1 mr-2" for="classify">Please enter how suitable the applicant is for the job:</label>
    <select class="custom-select my-1 ml-2 mr-lg-3" style="width:40%;" name="classification" id="classify" >
+=======
+   <label class="my-1 mr-2" for="classify">Please enter what classification this applicant should receive:</label>
+   <select class="custom-select my-1 ml-2 mr-lg-3" style="width:50%;" name="classification" id="classify" >
+>>>>>>> d93ea3ab0bf66aa6abdb5034438a21b767c5daed
       <option value="In person interview">In person interview</option>
       <option value="Phone interview">Phone interview</option>
       <option value="Further testing">Further testing</option>

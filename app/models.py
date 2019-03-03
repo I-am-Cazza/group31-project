@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.postgres.fields import JSONField
 
 
-class MLModel(models.Model):  # TODO Make Job.industry_type a foreign key of model_name?
+class MLModel(models.Model):
     model_name = models.CharField(max_length=128, unique=True)
 
     def __unicode__(self):
@@ -24,24 +24,20 @@ class MLcv (models.Model):
 
 
 class Organisation(models.Model):
-    organisation_name = models.CharField(max_length=50)
-    industry_type = models.CharField(max_length=50)
+    name = models.CharField(max_length=50)
+    include_details = models.BooleanField(default=False)
     contact_email = models.CharField(max_length=50, default="group31@gmail.com")
     contact_number = models.CharField(max_length=11, default="0800970970")
 
     def __str__(self):
-        return self.organisation_name
+        return self.name
 
 
 class Job(models.Model):
     organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE)
-    job_title = models.CharField(max_length=50 ,verbose_name="Job Title")
-    job_desc = models.CharField(max_length=500,verbose_name="Job Description")
-<<<<<<< HEAD
-    # industry_type = models.ForeignKey(MLModel, default=1, on_delete=models.CASCADE)
-=======
     industry_type = models.ForeignKey(MLModel, default=1, on_delete=models.CASCADE)
->>>>>>> 77aee62ab8e0a3889ccad18173fef6782e9a2cdd
+    job_title = models.CharField(max_length=50, verbose_name="Job Title")
+    job_desc = models.CharField(max_length=500, verbose_name="Job Description")
     deadline = models.DateTimeField(blank=True)
 
     class Meta:
@@ -66,8 +62,8 @@ class AppUser(models.Model):
     password = models.CharField(max_length=500)  # Includes salt, iterations, hashing alg and hash
     userType = models.CharField(max_length=16)  # 'Applicant', etc
     cvComplete = models.BooleanField(default=False)
-    first_name=models.CharField(max_length=50,null=True)
-    last_name=models.CharField(max_length=50,null=True)
+    first_name = models.CharField(max_length=50,null=True)
+    last_name = models.CharField(max_length=50,null=True)
     # country=models.CharField(max_length=20,null=True)
     # city=models.CharField(max_length=20,null=True)
     # address_line_1=models.CharField(max_length=80,null=True)
@@ -85,14 +81,14 @@ class CV(models.Model):
 
 
 class Application(models.Model):
-    userid = models.ForeignKey(AppUser, on_delete=models.CASCADE)
-    jobid = models.ForeignKey(Job, on_delete=models.CASCADE)
+    user = models.ForeignKey(AppUser, on_delete=models.CASCADE)
+    job = models.ForeignKey(Job, on_delete=models.CASCADE)
     status = models.CharField(max_length=128)
     classification = models.CharField(max_length=128, default="Testmodel")
     answer_percent = models.FloatField(default=50.0)
 
     def __str__(self):
-        return "User: " + str(self.userid) + " Job Title: " + str(self.jobid)
+        return "User: " + str(self.user) + " Job Title: " + str(self.job)
 
 
 class TestAnswers(models.Model):

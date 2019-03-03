@@ -34,7 +34,7 @@
                <h5 class="mb-1">Applicant: {{i.userid}} </h5>
             </div>
             {% if i.classification == "not_set" %}
-            <p class="mb-1">Please classify this applicant</p>
+            <p class="mb-1" style="color:red;">Please classify this applicant</p>
             {% else %}
             <p class="mb-1"> This applicant has been given the classification "{{i.classification}}."</p>
             {% endif %}

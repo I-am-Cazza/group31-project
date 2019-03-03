@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.contrib.auth import login as auth_login, authenticate
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.forms import UserCreationForm
-from app.models import Job, AppUser, TestQuestions, Application, CV, TestAnswers, MLModel, MLcv
+from app.models import Job, AppUser, TestQuestions, Application, CV, TestAnswers, MLModel, MLcv, Organisation
 from .forms import AddUserForm, LoginUserForm, SignUpForm, CvCreationForm, TestForm, SettingsForm
 from app.mlengine.mlengine import train, predict
 from django.http import HttpResponseForbidden
@@ -46,9 +46,10 @@ def job(request, job_id):
         user = AppUser.objects.get(id=request.session['id'])
         useremail = user.email
         requested_job = Job.objects.get(id=job_id)
+        organisation = requested_job.organisation
         completedCv = user.cvComplete
-        context = {"email": useremail, "job": requested_job, 'cv': completedCv}
-        if Application.objects.filter(userid=user, jobid=requested_job).exists():
+        context = {"email": useremail, "job": requested_job, 'cv': completedCv, 'organisation': organisation}
+        if Application.objects.filter(user=user, job=requested_job).exists():
             context['has_applied'] = True
         return render(request, 'applicantportal/job.html', context)
     else:
@@ -71,8 +72,7 @@ def test(request, job_id):
                 for question in valid_questions:
                     question_id_list.append(int(question.id))
                 for i in range(len(valid_questions)):
-                    question_answer_list.append(form.cleaned_data['extra_questionfield_' +str(i)])
-                # TODO store test results in database
+                    question_answer_list.append(form.cleaned_data['extra_questionfield_' + str(i)])
                 return apply(request, job_id, question_id_list, question_answer_list)
             else:
                 context = {"email": useremail, "job": requested_job, "questions": valid_questions, "form": form, "error": True}
@@ -116,16 +116,15 @@ def make_application(request, jobid):
         dictCv['Answer Percentage'] = request.session['success']
         job = Job.objects.get(pk=jobid)
 
-        # Don't predict until MLModel dataset is > 20 cvs
         model = MLModel.objects.get(model_name=job.industry_type)
         model_cvs = MLcv.objects.filter(model=model)
 
-        if len(model_cvs) > 20:
-            private_classification = predict(job.industry_type.model_name, dictCv) #TODO change demo model to industry_type
+        if len(model_cvs) > 20:  # Don't predict until MLModel dataset is > 20 cvs
+            private_classification = predict(job.industry_type.model_name, dictCv)
             print("This is the classification", private_classification)
         else:
             private_classification = "not_set"
-        application = Application(userid=user, jobid=job, status='Applied', classification=private_classification, answer_percent=request.session['success'])
+        application = Application(user=user, job=job, status='Applied', classification=private_classification, answer_percent=request.session['success'])
         application.save()
         request.session['success'] = None
         return True
@@ -284,10 +283,10 @@ def applied_jobs(request):
     if 'id' in request.session:
         id = request.session['id']
         user = AppUser.objects.get(id=id)
-        applications = Application.objects.filter(userid=user)
+        applications = Application.objects.filter(user=user)
         jobs = []
         for i in applications:
-            jobs.append([i.jobid, i.status, i.classification.lower()])
+            jobs.append([i.job, i.status, i.classification.lower()])
             #jobs.append
         useremail = user.email
         completedCv = user.cvComplete
@@ -368,7 +367,7 @@ def employer_job(request, job_id):
     user = check_employer(request)
     if user is not None:
         job = Job.objects.get(id=job_id)
-        application_list = Application.objects.filter(jobid=job)
+        application_list = Application.objects.filter(job=job)
         context = {'user': user, 'job': job, 'application_list': application_list}
         return render(request, 'employerportal/job.html', context)
     else:
@@ -393,11 +392,12 @@ def applicant_feedback(request, job_id, applicant_id):
             classification = request.POST['classification']
             ml_model = Job.objects.get(id=job_id).industry_type
             cv_user = AppUser.objects.get(id=applicant_id)
-            user_application = Application.objects.get(userid=cv_user, jobid=job_id)
+            user_application = Application.objects.get(user=cv_user, job=job_id)
             user_application.classification = classification
             user_application.save()
             cv = CV.objects.get(owner=cv_user).cvData  # Get applicant's CV
             json_cv = json.loads(cv)
+            json_cv['Answer Percentage'] = user_application.answer_percent
             json_cv['Classification'] = classification  # Append classification to CV
             new_mlcv = MLcv.objects.create(model=ml_model, cv=json_cv)  # Add modified cv to ML data
             return redirect('../.')

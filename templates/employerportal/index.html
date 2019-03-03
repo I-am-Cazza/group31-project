@@ -2,18 +2,14 @@
 {% block content %}
 {% load crispy_forms_tags %}
 <br>
-
 <h2>All jobs:</h2>
-
 <br>
-
 {% if job_list %}
 <div id="accordion">
    {% for job in job_list %}
    <h3>{{job.job_title}}</h3>
    <div>
       <h4> Description</h4>
-
       <p>{{job.job_desc}}</p>
       <!-- <p>{{job.organisation.organisation_name}}</p> -->
       <h4> Type of job</h4>
@@ -21,9 +17,9 @@
       <h4>Job Deadline</h4>
       <p id="deadline">{{job.deadline}}</p>
       <form action="{% url 'employer_job' job.id %}">
-                <div class="form-group">
-      <button id ="view_applications" class="btn btn-outline-dark btn-sm btn-block">View Applications</button>
-          </div>
+         <div class="form-group">
+            <button id ="view_applications" class="btn btn-outline-dark btn-sm btn-block">View Applications</button>
+         </div>
       </form>
    </div>
    {% endfor %}
@@ -31,11 +27,9 @@
 {% else %}
 <p>No jobs are available.</p>
 {% endif %}
-
-
 <script>
-    $( "#accordion" ).accordion({
-        collapsible: true
-    });
-    </script>
+   $( "#accordion" ).accordion({
+       collapsible: true
+   });
+</script>
 {% endblock %}

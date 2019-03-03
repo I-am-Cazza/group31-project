@@ -110,15 +110,15 @@ def make_application(request, jobid):
         user = AppUser.objects.get(pk=userid)
         cv = CV.objects.get(owner=userid).cvData
         dictCv = json.loads(cv)
-        dictCv['Answer Percent'] = request.session['success']
+        dictCv['Answer Percentage'] = request.session['success']
         job = Job.objects.get(pk=jobid)
 
         # Don't predict until MLModel dataset is > 20 cvs
         model = MLModel.objects.get(model_name=job.industry_type)
         model_cvs = MLcv.objects.filter(model=model)
 
-        if len(model_cvs) > 20 or True:
-            private_classification = predict(job.industry_type.model_name, dictCv)[0] #TODO change demo model to industry_type
+        if len(model_cvs) > 20:
+            private_classification = predict(job.industry_type.model_name, dictCv) #TODO change demo model to industry_type
             print("This is the classification", private_classification)
         else:
             private_classification = "not_set"
@@ -281,8 +281,8 @@ def applied_jobs(request):
         applications = Application.objects.filter(userid=user)
         jobs = []
         for i in applications:
-            jobs.append([i.jobid, i.status])
-            jobs.append
+            jobs.append([i.jobid, i.status, i.classification.lower()])
+            #jobs.append
         useremail = user.email
         completedCv = user.cvComplete
         context = {"applied_jobs":"active",'job_list': jobs, 'user': user, 'email': useremail, 'cv': completedCv}

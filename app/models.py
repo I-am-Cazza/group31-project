@@ -81,14 +81,14 @@ class CV(models.Model):
 
 
 class Application(models.Model):
-    userid = models.ForeignKey(AppUser, on_delete=models.CASCADE)
-    jobid = models.ForeignKey(Job, on_delete=models.CASCADE)
+    user = models.ForeignKey(AppUser, on_delete=models.CASCADE)
+    job = models.ForeignKey(Job, on_delete=models.CASCADE)
     status = models.CharField(max_length=128)
     classification = models.CharField(max_length=128, default="Testmodel")
     answer_percent = models.FloatField(default=50.0)
 
     def __str__(self):
-        return "User: " + str(self.userid) + " Job Title: " + str(self.jobid)
+        return "User: " + str(self.user) + " Job Title: " + str(self.job)
 
 
 class TestAnswers(models.Model):

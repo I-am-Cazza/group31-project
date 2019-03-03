@@ -46,7 +46,7 @@ def job(request, job_id):
         organisation = requested_job.organisation
         completedCv = user.cvComplete
         context = {"email": useremail, "job": requested_job, 'cv': completedCv, 'organisation': organisation}
-        if Application.objects.filter(userid=user, jobid=requested_job).exists():
+        if Application.objects.filter(user=user, job=requested_job).exists():
             context['has_applied'] = True
         return render(request, 'applicantportal/job.html', context)
     else:
@@ -121,7 +121,7 @@ def make_application(request, jobid):
             print("This is the classification", private_classification)
         else:
             private_classification = "not_set"
-        application = Application(userid=user, jobid=job, status='Applied', classification=private_classification, answer_percent=request.session['success'])
+        application = Application(user=user, job=job, status='Applied', classification=private_classification, answer_percent=request.session['success'])
         application.save()
         request.session['success'] = None
         return True
@@ -280,10 +280,10 @@ def applied_jobs(request):
     if 'id' in request.session:
         id = request.session['id']
         user = AppUser.objects.get(id=id)
-        applications = Application.objects.filter(userid=user)
+        applications = Application.objects.filter(user=user)
         jobs = []
         for i in applications:
-            jobs.append([i.jobid, i.status, i.classification.lower()])
+            jobs.append([i.job, i.status, i.classification.lower()])
             #jobs.append
         useremail = user.email
         completedCv = user.cvComplete
@@ -364,7 +364,7 @@ def employer_job(request, job_id):
     user = check_employer(request)
     if user is not None:
         job = Job.objects.get(id=job_id)
-        application_list = Application.objects.filter(jobid=job)
+        application_list = Application.objects.filter(job=job)
         context = {'user': user, 'job': job, 'application_list': application_list}
         return render(request, 'employerportal/job.html', context)
     else:
@@ -389,7 +389,7 @@ def applicant_feedback(request, job_id, applicant_id):
             classification = request.POST['classification']
             ml_model = Job.objects.get(id=job_id).industry_type
             cv_user = AppUser.objects.get(id=applicant_id)
-            user_application = Application.objects.get(userid=cv_user, jobid=job_id)
+            user_application = Application.objects.get(user=cv_user, job=job_id)
             user_application.classification = classification
             user_application.save()
             cv = CV.objects.get(owner=cv_user).cvData  # Get applicant's CV

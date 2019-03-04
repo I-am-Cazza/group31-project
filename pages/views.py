@@ -13,7 +13,10 @@ import json
 
 def index(request):
     if 'id' in request.session:
-        return applicant_jobs(request)
+        if (AppUser.objects.get(id=request.session['id']).userType)=='Employer':
+            return employer_index(request)
+        else:
+            return applicant_jobs(request)
     else:
         job_filter = search(request)
         context = {"home_page": "active", "job_list": Job.objects.all(), 'filter': job_filter}

@@ -98,7 +98,7 @@ def apply(request, job_id, question_id_list, question_answer_list):
         if make_application(request, job_id):
             recent_application = Application.objects.all().order_by('-id')[0]
             for i in range(len(question_id_list)):
-                answer = TestAnswers(applicationid = recent_application, questionid = TestQuestions.objects.get(id=question_id_list[i]), answer_text = question_answer_list[i])
+                answer = TestAnswers(application = recent_application, question = TestQuestions.objects.get(id=question_id_list[i]), answer_text = question_answer_list[i])
                 answer.save()
             return redirect('applied_jobs')
             # TODO Success message for adding application

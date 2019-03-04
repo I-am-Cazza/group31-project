@@ -92,8 +92,8 @@ class Application(models.Model):
 
 
 class TestAnswers(models.Model):
-    applicationid = models.ForeignKey(Application, on_delete=models.CASCADE) # Which application the answers belong to
-    questionid = models.ForeignKey(TestQuestions, on_delete=models.CASCADE)
+    application = models.ForeignKey(Application, on_delete=models.CASCADE) # Which application the answers belong to
+    question = models.ForeignKey(TestQuestions, on_delete=models.CASCADE)
     answer_text = models.CharField(max_length=500)
 
     class Meta:

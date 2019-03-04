@@ -50,8 +50,8 @@ class Job(models.Model):
 class TestQuestions(models.Model):
     question_text = models.CharField(max_length=500)
     question_answer = models.CharField(max_length=500)
-    question_type = models.CharField(max_length=500)  # MultipleChoice, LongAnswer, ShortAnswer, etc.
-    question_industry = models.CharField(max_length=50)  # Computing questions only asked to computing applicants, etc.
+    # question_type = models.CharField(max_length=500)  # MultipleChoice, LongAnswer, ShortAnswer, etc.
+    question_industry = models.ForeignKey(MLModel, on_delete=models.CASCADE)  # Computing questions only asked to computing applicants, etc.
 
     class Meta:
         verbose_name = 'Test Question'

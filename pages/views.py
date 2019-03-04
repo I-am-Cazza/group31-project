@@ -57,7 +57,7 @@ def test(request, job_id):
     if 'id' in request.session:
         useremail = AppUser.objects.get(id=request.session['id']).email
         requested_job = Job.objects.get(id=job_id)
-        valid_questions = TestQuestions.objects.filter(question_industry=requested_job.industry_type.model_name)
+        valid_questions = TestQuestions.objects.filter(question_industry=requested_job.industry_type)
         question_text_list = []
         for question in valid_questions:
             question_text_list.append(question.question_text)

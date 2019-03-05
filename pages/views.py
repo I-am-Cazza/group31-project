@@ -9,6 +9,7 @@ from app.mlengine.mlengine import train, predict
 from django.http import HttpResponseForbidden
 from app.views import search
 import json
+from .permissions import mlmodel_add_permission, job_view_permission, application_view_permission
 
 
 def index(request):
@@ -356,22 +357,22 @@ def applicant_settings(request):
 def employer_index(request):
     user = check_employer(request)
     if user is not None:
-        job_list = Job.objects.all()
-        context = {'job_list': job_list, 'userid': user.id, 'home_page': 'active'}
-        return render(request, 'employerportal/index.html', context)
-    else:
-        return HttpResponseForbidden()
+        if job_view_permission(request):
+            job_list = Job.objects.all()
+            context = {'job_list': job_list, 'userid': user.pk, 'home_page': 'active'}
+            return render(request, 'employerportal/index.html', context)
+    return HttpResponseForbidden()
 
 
 def employer_job(request, job_id):
     user = check_employer(request)
     if user is not None:
-        job = Job.objects.get(id=job_id)
-        application_list = Application.objects.filter(job=job)
-        context = {'user': user, 'job': job, 'application_list': application_list}
-        return render(request, 'employerportal/job.html', context)
-    else:
-        return HttpResponseForbidden()
+        if application_view_permission(request):
+            job = Job.objects.get(id=job_id)
+            application_list = Application.objects.filter(job=job)
+            context = {'user': user, 'job': job, 'application_list': application_list}
+            return render(request, 'employerportal/job.html', context)
+    return HttpResponseForbidden()
 
 
 def employer_job_applicant(request, job_id, applicant_id):
@@ -425,45 +426,53 @@ def train_model(request):
 def create_new_model(request):
     user = check_employer(request)
     if user is not None:
-        if request.method == 'POST':
-            model_name = request.POST['model_name']
-            if MLModel.objects.filter(model_name=model_name).exists():
-                context = {'new_model_page': 'active', 'error_message': '<p style="color:red">That is already a model name. Please choose a different name</p>'}
-                return render(request, 'employerportal/new_model.html', context)
-            new_model = MLModel.objects.create(model_name=model_name)
-            return redirect('/admin/new_model/' + model_name + '/0')
+        if mlmodel_add_permission(request):
+            if request.method == 'POST':
+                model_name = request.POST['model_name']
+                if MLModel.objects.filter(model_name=model_name).exists():
+                    context = {'new_model_page': 'active', 'error_message': '<p style="color:red">That is already a model name. Please choose a different name</p>'}
+                    return render(request, 'employerportal/new_model.html', context)
+                new_model = MLModel.objects.create(model_name=model_name)
+                return redirect('/admin/new_model/' + model_name + '/0')
+            return redirect('/admin/new_model')
+    return HttpResponseForbidden()
 
 
 def new_model(request):
     user = check_employer(request)
     if user is not None:
-        context = {'new_model_page': 'active'}
-        return render(request, 'employerportal/new_model.html', context)
-    else:
-        return HttpResponseForbidden()
+        if mlmodel_add_permission(request):
+            context = {'new_model_page': 'active'}
+            return render(request, 'employerportal/new_model.html', context)
+    return HttpResponseForbidden()
 
 
 def new_model_data(request, model_name, cv_index):
     user = check_employer(request)
     if user is not None:
-        f = open("./app/mlengine/100cvDataset" + ".json", "r")
-        dataset = json.loads(f.read())
-        if request.method == 'POST':
-            # Add classifcation to cv in model
-            model = MLModel.objects.get(model_name=model_name)
-            classified_cv = dataset[cv_index-1]
-            classified_cv['Classification'] = request.POST['classification']
-            MLcv.objects.create(model=model, cv=classified_cv)
-        context = {'cv': dataset[cv_index], 'next_index': cv_index+1}
-        return render(request, 'employerportal/classify_cv.html', context)
-    else:
-        return HttpResponseForbidden()
+        if mlmodel_add_permission(request):
+            f = open("./app/mlengine/100cvDataset" + ".json", "r")
+            dataset = json.loads(f.read())
+            if request.method == 'POST':
+                # Add classifcation to cv in model
+                model = MLModel.objects.get(model_name=model_name)
+                classified_cv = dataset[cv_index-1]
+                classified_cv['Classification'] = request.POST['classification']
+                MLcv.objects.create(model=model, cv=classified_cv)
+            context = {'cv': dataset[cv_index], 'next_index': cv_index+1}
+            return render(request, 'employerportal/classify_cv.html', context)
+    return HttpResponseForbidden()
 
 
 def check_employer(request):
+    if request.user:
+        user = request.user
+        if user.is_authenticated:
+            return user
     if 'id' in request.session:
         user = AppUser.objects.get(id=request.session['id'])
         if user.userType == 'Employer':
             return user
     else:
         return None
+

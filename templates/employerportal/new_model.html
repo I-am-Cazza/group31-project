@@ -1,18 +1,16 @@
 {% extends "employerportal/base.html" %}
 {% block content %}
-{% load crispy_forms_tags %}
 <br>
 
 <h2>Create a new model:</h2>
 
-{{error_message|safe}}
-
 <form method="POST" action="/admin/create_new_model">
     {% csrf_token %}
-    {{ form|crispy }}
-    <label>Name of new model:</label>
-    <input type="text" name="model_name">
-    <input type="submit" value="Submit">
+    <div class="form-group">
+    <label for="model_name">Name of new model:</label>
+    <input type="text" class="form-control" id="model_name" name="model_name" placeholder="Enter Model Name">
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 
 {% endblock %}

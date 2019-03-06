@@ -262,17 +262,16 @@ def aaron_login(request):
             # user = check_employer(request)
             user = AppUser.objects.get(email=email)
             if user.userType == 'Employer':
-                if user is not None:
-                    if user.password==password:
-                        request.session['id'] = user.id
-                        return employer_index(request)
+                if user.password==password:
+                    request.session['id'] = user.id
+                    return employer_index(request)
             if check_password(password, password_hash)==False:
                 context= {'form': form, 'login_page': 'active','error_message':'<p style="color:red">Password is incorrect.</p>'}
                 return render(request,'applicantportal/login.html',context )
             user = AppUser.objects.get(email=email)
             request.session['id'] = user.id
-            if user.userType == 'Employer':
-                return redirect('/admin/index')
+            #if user.userType == 'Employer':
+            #    return redirect('/admin/index')
             return applicant_jobs(request)
         else:
             return login(request)
@@ -361,7 +360,8 @@ def employer_index(request):
             job_list = Job.objects.all()
             context = {'job_list': job_list, 'userid': user.pk, 'home_page': 'active'}
             return render(request, 'employerportal/index.html', context)
-    return HttpResponseForbidden()
+    else:
+        return HttpResponseForbidden()
 
 
 def employer_job(request, job_id):
@@ -475,4 +475,3 @@ def check_employer(request):
             return user
     else:
         return None
-

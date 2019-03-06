@@ -227,8 +227,6 @@ def aaron_signup(request):
 
 def signup(request):
     form = SignUpForm()
-    # context = {'form': form}
-    # return render(request, 'pages/layouts/signup.html', context)
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
@@ -259,7 +257,6 @@ def aaron_login(request):
                 context= {'form': form, 'login_page': 'active','error_message':'<p style="color:red">Email is not registered.</p>'}
                 return render(request,'applicantportal/login.html',context )
             password_hash = AppUser.objects.get(email=email).password
-            # user = check_employer(request)
             user = AppUser.objects.get(email=email)
             if user.userType == 'Employer':
                 if user is not None:
@@ -302,12 +299,6 @@ def applicant_settings(request):
         email=user.email
         first_name=user.first_name
         last_name=user.last_name
-        # country=user.country
-        # city=user.city
-        # address_line_1=user.address_line_1
-        # address_line_2=user.address_line_2
-        # postal_code=user.postal_code
-        # phone_number=user.phone_number
         if request.method == 'POST':
             form = SettingsForm(request.POST)
             if form.is_valid():
@@ -315,12 +306,6 @@ def applicant_settings(request):
                 product.email=form.cleaned_data.get('email')
                 product.first_name=form.cleaned_data.get('first_name')
                 product.last_name=form.cleaned_data.get('last_name')
-                # product.country=form.cleaned_data.get('country')
-                # product.city=form.cleaned_data.get('city')
-                # product.address_line_1=form.cleaned_data.get('address_line_1')
-                # product.address_line_2=form.cleaned_data.get('address_line_2')
-                # product.postal_code=form.cleaned_data.get('postal_code')
-                # product.phone_number=form.cleaned_data.get('phone_number')
                 product.save()
                 password_hash = user.password
                 old_password_form=form.cleaned_data.get('old_password')

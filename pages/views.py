@@ -165,7 +165,7 @@ def cv(request):
                     quallist.append(dict(Qualification = form.cleaned_data['extra_charfield_qual_' + str(i+1)], Grade = form.cleaned_data['extra_intfield_qual_' + str(i+1)]))
                 for i in range(int(jobsnumber)):
                     Length = "Length of Employment"
-                    joblist.append({"Company" : form.cleaned_data['extra_charfield_job_' + str(i+1)], "Position" : form.cleaned_data['extra_intfield_job_' + str(i+1)], "Length of Employment" : form.cleaned_data['extra_lenfield_job_'+ str(i+1)]})
+                    joblist.append({"Company" : form.cleaned_data['extra_charfield_job_' + str(i+1)], "Position" : form.cleaned_data['extra_intfield_job_' + str(i+1)], "Length of Employment" : int(form.cleaned_data['extra_lenfield_job_'+ str(i+1)])})
                 Languages = "Languages Known"
                 Employment = "Previous Employment"
                 finalobject = {"Name" : formname, "Degree Qualification" : formdegree, "Degree Level" : formlevel, "University Attended" : formuniversity, "Skills" :skillslist, "Languages Known" : langlist, "Hobbies":hobbylist, "A-Level Qualifications": quallist, "Previous Employment" : joblist}
@@ -259,17 +259,16 @@ def aaron_login(request):
             password_hash = AppUser.objects.get(email=email).password
             user = AppUser.objects.get(email=email)
             if user.userType == 'Employer':
-                if user is not None:
-                    if user.password==password:
-                        request.session['id'] = user.id
-                        return employer_index(request)
+                if user.password==password:
+                    request.session['id'] = user.id
+                    return employer_index(request)
             if check_password(password, password_hash)==False:
                 context= {'form': form, 'login_page': 'active','error_message':'<p style="color:red">Password is incorrect.</p>'}
                 return render(request,'applicantportal/login.html',context )
             user = AppUser.objects.get(email=email)
             request.session['id'] = user.id
-            if user.userType == 'Employer':
-                return redirect('/admin/index')
+            #if user.userType == 'Employer':
+            #    return redirect('/admin/index')
             return applicant_jobs(request)
         else:
             return login(request)
@@ -346,7 +345,8 @@ def employer_index(request):
             job_list = Job.objects.all()
             context = {'job_list': job_list, 'userid': user.pk, 'home_page': 'active'}
             return render(request, 'employerportal/index.html', context)
-    return HttpResponseForbidden()
+    else:
+        return HttpResponseForbidden()
 
 
 def employer_job(request, job_id):

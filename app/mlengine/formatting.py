@@ -34,10 +34,10 @@ def convert_format(cv: any, encodings, is_training: bool):
     formatted_cv[custom_indices["A Levels Total"]] = a_level_total
 
     degree = cv["Degree Qualification"]
-    if degree in uni_encodings:
+    if degree in degree_encodings:
         formatted_cv[custom_indices["Degree Qualification"]] = degree_encodings[degree]
     elif is_training:
-        uni_encodings[degree] = len(uni_encodings)
+        degree_encodings[degree] = len(degree_encodings)
         formatted_cv[custom_indices["Degree Qualification"]] = degree_encodings[degree]
     else:
         formatted_cv[custom_indices["Degree Qualification"]] = 0

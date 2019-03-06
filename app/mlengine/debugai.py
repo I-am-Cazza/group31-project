@@ -9,7 +9,7 @@ def test_run(dataset: str, model: str, n_test_count: int):
     print("Retrieving data")
     training_data = list()
     testing_data = list()
-    f = open(dataset + ".json", "r")
+    f = open("./app/mlengine/" + dataset + ".json", "r")
     raw_data = json.loads(f.read())
 
     # Adds the last n_test_count elements to the testing data, and each other record to training_data in the correct format
@@ -32,6 +32,7 @@ def test_run(dataset: str, model: str, n_test_count: int):
     print("Training model")
     train(model, training_data)
 
+    print("Making predictions")
     for i in testing_data:
         predicted_class = predict(model, i)
         print("\nActual class:", i["Classification"], "\nPredicted class:", predicted_class)

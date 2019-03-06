@@ -165,7 +165,7 @@ def cv(request):
                     quallist.append(dict(Qualification = form.cleaned_data['extra_charfield_qual_' + str(i+1)], Grade = form.cleaned_data['extra_intfield_qual_' + str(i+1)]))
                 for i in range(int(jobsnumber)):
                     Length = "Length of Employment"
-                    joblist.append({"Company" : form.cleaned_data['extra_charfield_job_' + str(i+1)], "Position" : form.cleaned_data['extra_intfield_job_' + str(i+1)], "Length of Employment" : form.cleaned_data['extra_lenfield_job_'+ str(i+1)]})
+                    joblist.append({"Company" : form.cleaned_data['extra_charfield_job_' + str(i+1)], "Position" : form.cleaned_data['extra_intfield_job_' + str(i+1)], "Length of Employment" : int(form.cleaned_data['extra_lenfield_job_'+ str(i+1)])})
                 Languages = "Languages Known"
                 Employment = "Previous Employment"
                 finalobject = {"Name" : formname, "Degree Qualification" : formdegree, "Degree Level" : formlevel, "University Attended" : formuniversity, "Skills" :skillslist, "Languages Known" : langlist, "Hobbies":hobbylist, "A-Level Qualifications": quallist, "Previous Employment" : joblist}

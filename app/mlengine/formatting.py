@@ -2,7 +2,7 @@ from .encodings import Encodings
 
 
 # Converts a json format cv into a list in a usable format. Updates the custom_indices as it discovers new features if is_training.
-def convert_format(cv: any, encodings, is_training: bool):
+def convert_format(cv: any, encodings, is_training: bool) -> list:
     custom_indices = encodings.custom_indices
     uni_encodings = encodings.uni_encodings
     degree_encodings = encodings.degree_encodings
@@ -55,7 +55,7 @@ def convert_format(cv: any, encodings, is_training: bool):
 
 
 # Gets the total level for a feature (skills, hobbies etc) and adds missing columns as it goes.
-def sum_value(custom_indices: dict, is_training, formatted_cv, feature_list, feature_name, feature_value):
+def sum_value(custom_indices: dict, is_training: bool, formatted_cv: list, feature_list: list, feature_name: str, feature_value: str) -> int:
     grade_to_int = {"A*": 6, "A": 5, "B": 4, "C": 3, "D": 2, "E": 1}
     feature_total = 0
 

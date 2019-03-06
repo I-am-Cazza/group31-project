@@ -1,41 +1,46 @@
 from .mlengine import train, predict
 import json
 import random
+import pickle
 
 
 # Train the 'model' on the majority of the data in 'dataset', then test with the last 'n_test_count' records. Returns the classification and probability of the last 'n_test_count' records
-# test_run("100cvDataset", "demo", 10)
+# test_run("10000cvDataset", "demo", 10)
 def test_run(dataset: str, model: str, n_test_count: int):
-    print("Retrieving data")
+    print("\nRetrieving data")
     training_data = list()
     testing_data = list()
     f = open("./app/mlengine/" + dataset + ".json", "r")
     raw_data = json.loads(f.read())
 
     # Adds the last n_test_count elements to the testing data, and each other record to training_data in the correct format
-    print("Classifying and adding to datasets")
+    print("\nClassifying and adding to datasets")
     i = 0
     size = len(raw_data)
     for cv in raw_data:
-        if len(cv["Languages Known"]) > 10:
-            cv["Classification"] = "Good"
-        elif len(cv["Languages Known"]) > 5:
-            cv["Classification"] = "Average"
-        else:
-            cv["Classification"] = "Bad"
+        cv["Classification"] = classify(cv)
         i += 1
         if i > size - n_test_count:
             testing_data.append(cv)
         else:
             training_data.append(cv)
 
-    print("Training model")
+    print("\nTraining model")
     train(model, training_data)
 
-    print("Making predictions")
+    print("\nMaking predictions")
     for i in testing_data:
         predicted_class = predict(model, i)
         print("\nActual class:", i["Classification"], "\nPredicted class:", predicted_class)
+
+    print("\nReading model from file")
+    with open("./app/mlengine/classifiers/" + model + ".ai", "rb") as file:
+        classifier, encodings = pickle.load(file)
+    print("\nEvaluating Importance")
+    for feature in encodings.custom_indices:
+        significance = classifier.feature_importances_[encodings.custom_indices[feature]]
+        if significance > 0.01:
+            print(feature+":", str(round(significance*100, 2))+"%")
 
 
 # To convert the 100,000 record cvDataset.json to a 100 record 100cvDataset.json, run reduce_dataset(cvDataset, 100)
@@ -78,3 +83,31 @@ def years_to_months(time):  # time is in the format "1 year 5 months"
     else:
         total = int(breakdown[0])
     return total
+
+
+def classify(cv: any) -> str:
+    score = 0
+    for language in cv["Languages Known"]:
+        if language["Expertise"] >= 7:
+            score += 10
+    for skill in cv["Skills"]:
+        if skill["Expertise"] >= 5:
+            score += 5
+    for hobby in cv["Hobbies"]:
+        if hobby["Interest"] >= 5:
+            score += 2
+
+    if cv["University Attended"] == "University of Warwick":
+        score += 50
+
+    if cv["Degree Qualification"] == "Computer Science, BSc" or cv["Degree Qualification"] == "Computer Science, MSc" or cv["Degree Qualification"] == "Computer Science, MEng":
+        score += 50
+
+    if score < 50:
+        return "Bad"
+    elif score < 100:
+        return "Average"
+    elif score < 150:
+        return "Good"
+    else:
+        return "Excellent"

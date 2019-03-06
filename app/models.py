@@ -58,18 +58,17 @@ class TestQuestions(models.Model):
 
 
 class AppUser(models.Model):
+
+    userType_CHOICES = (
+        ('Applicant', 'Applicant'),
+        ('Employer', 'Employer'),
+    )
     email = models.EmailField(max_length=64)
     password = models.CharField(max_length=500)  # Includes salt, iterations, hashing alg and hash
-    userType = models.CharField(max_length=16)  # 'Applicant', etc
+    userType = models.CharField(max_length=16, choices=userType_CHOICES)  # 'Applicant', etc
     cvComplete = models.BooleanField(default=False)
     first_name = models.CharField(max_length=50,null=True)
     last_name = models.CharField(max_length=50,null=True)
-    # country=models.CharField(max_length=20,null=True)
-    # city=models.CharField(max_length=20,null=True)
-    # address_line_1=models.CharField(max_length=80,null=True)
-    # address_line_2=models.CharField(max_length=80,null=True)
-    # postal_code=models.CharField(max_length=30,null=True)
-    # phone_number=models.CharField(max_length=30,null=True)
 
     def __str__(self):
         return self.email

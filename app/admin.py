@@ -15,7 +15,14 @@ admin.site.register(Job)
 admin.site.register(TestQuestions)
 admin.site.register(TestAnswers)
 admin.site.register(CV)
-admin.site.register(AppUser)
 admin.site.register(Application)
-admin.site.register(MLModel)
 admin.site.register(MLcv)
+admin.site.register(AppUser)
+
+
+class MLModelAdmin(admin.ModelAdmin):
+    change_list_template = 'employerportal/new_model.html'
+
+
+admin.site.register(MLModel, MLModelAdmin)
+

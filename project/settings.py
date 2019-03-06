@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+from django.contrib.admin import AdminSite
+
+AdminSite.site_url = './index'
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -32,8 +35,8 @@ ALLOWED_HOSTS = ['206.189.29.12', '127.0.0.1', 'localhost']
 # Application definition
 
 INSTALLED_APPS = [
-    'pages',
     'app',
+    'pages',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

@@ -475,4 +475,3 @@ def check_employer(request):
             return user
     else:
         return None
-

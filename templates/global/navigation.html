@@ -1,32 +1,34 @@
 {% block content %}
+<div role="tablist">
   <ul class="nav nav-tabs">
   <li class="nav-item">
-    <a class="nav-link {{ home_page }}" id="pills-home-tab" data-toggle="pill" href="{% url 'index' %}" role="tablist" aria-controls="pills-home-tab" aria-selected="true">Home</a>
+    <a class="nav-link {{ home_page }}" id="pills-home-tab" data-toggle="pill" href="{% url 'index' %}" role="tab" aria-controls="pills-home-tab" aria-selected="true">Home</a>
   </li>
   {% if email is not None %}
     <li class="nav-item ml-auto">
-      <a class="nav-link {{ cv }}" id="pills-cv-tab" data-toggle="pill" href="{% url 'cv' %}" aria-controls="pills-cv-tab" aria-selected="false">CV management</a>
+      <a class="nav-link {{ cv }}" id="pills-cv-tab" data-toggle="pill" href="{% url 'cv' %}" role="tab" aria-controls="pills-cv-tab" aria-selected="false">CV management</a>
     </li>
     <li class="nav-item ml-auto">
-      <a class="nav-link {{ applied_jobs }}" id="pills-current_appl-tab" data-toggle="pill" href="{% url 'applied_jobs' %}" aria-controls="pills-current_appl-tab" aria-selected="false">Current Applications</a>
+      <a class="nav-link {{ applied_jobs }}" id="pills-current_appl-tab" data-toggle="pill" href="{% url 'applied_jobs' %}" role="tab" aria-controls="pills-current_appl-tab" aria-selected="false">Current Applications</a>
     </li>
     <li class="nav-item ml-auto">
-      <a class="nav-link {{ applicant_settings }}" id="pills-settings-tab" data-toggle="pill" href="{% url 'applicant_settings' %}" aria-controls="pills-settings-tab" aria-selected="false">Settings</a>
+      <a class="nav-link {{ applicant_settings }}" id="pills-settings-tab" data-toggle="pill" href="{% url 'applicant_settings' %}" role="tab" aria-controls="pills-settings-tab" aria-selected="false">Settings</a>
     </li>
     {% endif %}
   {% if email is None %}
     <li class="nav-item ml-auto">
-      <a class="nav-link {{ signup_page }}" id="pills-signup-tab" data-toggle="pill" href="{% url 'aaron_signup' %}" aria-controls="pills-signup-tab" aria-selected="false">Signup</a>
+      <a class="nav-link {{ signup_page }}" id="pills-signup-tab" data-toggle="pill" href="{% url 'aaron_signup' %}" role="tab"  aria-controls="pills-signup-tab" aria-selected="false">Signup</a>
     </li>
   {% endif %}
   {% if email is None %}
     <li class="nav-item">
-      <a class="nav-link {{ login_page }}" id="pills-login-tab" data-toggle="pill" href="{% url 'aaron_login' %}" aria-controls="pills-login-tab" aria-selected="false">Login</a>
+      <a class="nav-link {{ login_page }}" id="pills-login-tab" data-toggle="pill" href="{% url 'aaron_login' %}" role="tab" aria-controls="pills-login-tab" aria-selected="false">Login</a>
     </li>
   {% else %}
     <li class="nav-item ml-auto">
-      <a class="nav-link {{ logout_page }}" id="pills-logout-tab" data-toggle="pill" href="{% url 'logout' %}" aria-controls="pills-logout-tab" aria-selected="false">Logout</a>
+      <a class="nav-link {{ logout_page }}" id="pills-logout-tab" data-toggle="pill" href="{% url 'logout' %}" role="tab" aria-controls="pills-logout-tab" aria-selected="false">Logout</a>
     </li>
   {% endif %}
 </ul>
+</div>
 {% endblock %}

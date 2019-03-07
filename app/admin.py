@@ -21,7 +21,7 @@ admin.site.register(AppUser)
 
 
 class MLModelAdmin(admin.ModelAdmin):
-    change_list_template = 'employerportal/new_model.html'
+    add_form_template = 'employerportal/new_model.html'
 
 
 admin.site.register(MLModel, MLModelAdmin)

@@ -1,7 +1,7 @@
 # Machine Learning Engine
 ## Overview
 The machine learning implementation we are using is a [random forest][randomforest], handled by the [scikit-learn][scikit] package.\
-A [random forest][randomforest] works by taking a random subset of the data, and building a decision tree that determines the classification of any given datum in that subset. Each node in the tree splits in whatever way seperates the most data with different classifications, and the leaf nodes are the classification of data with attributes which reach that leaf when processed by the decision tree. It then repeats that tree generation process on different random subsets of the data creating many trees, hence forest.\
+A [random forest][randomforest] works by taking a random subset of the data, and building a decision tree that determines the classification of any given datum in that subset. Each node in the tree splits in whatever way separates the most data with different classifications, and the leaf nodes are the classification of data with attributes which reach that leaf when processed by the decision tree. It then repeats that tree generation process on different random subsets of the data creating many trees, hence forest.\
 To determine the classification of a new piece of data, it is processed by each tree individually, then the predicted classification is obtained by having all the trees vote on a classification.\
 Our implementation of this is the one in the [scikit-learn][scikit] package. The input must be formatted as a matrix, in which each row is a CV, and each column in an attribute.
 
@@ -9,21 +9,21 @@ Our implementation of this is the one in the [scikit-learn][scikit] package. The
 All operations of the Machine Learning Engine can be accessed through `mlengine.py`.
 ### mlengine.train
 ``` python
-mlengine.train(model_name: str, training_data: Any) -> None
+mlengine.train(classifier_name: str, training_data: Any) -> None
 ```
 
 | Parameters    |                                   |
 | ------------- | --------------------------------- |
-| model_name    | The name of the model to train    |
+| classifier_name    | The name of the classifier to train    |
 | training_data | A JSON containing an array of CVs |
 
 #### Description
-Trains a random forest model based only on the data given in `training_data`, and saves the new model as a file under the name given in `model_name`. If [`model_name`] is already a saved model, then it will overwrite that model.\
+Trains a random forest classifier based only on the data given in `training_data`, and saves the new classifier as a file under the name given in `classifier_name`. If [`classifier_name`] is already a saved classifier, then it will overwrite that classifier.\
 The training data should be a single JSON object containing an array of CVs. Each CV should contain the following information:
 
 - Degree Qualification --- The type of degree the applicant has, i.e.: Computer Science, BSc
 
-- Degree level --- The level of degree awarded, i.e.: 1:1, 2:1
+- Degree Level --- The level of degree awarded, i.e.: 1:1, 2:1
 
 - University Attended --- The University the applicant attended
 
@@ -45,17 +45,17 @@ This differes from the standard CV format given in three ways. First, there is n
 
 ### mlengine.predict
 ``` python
-mlengine.predict(model_name: str, cv: Any) -> str
+mlengine.predict(classifier_name: str, cv: Any) -> str
 ```
 
 | Parameters |                                                     |
 | ---------- | --------------------------------------------------- |
-| model_name | The name of the model that will make the prediction |
+| classifier_name | The name of the classifier that will make the prediction |
 | cv         | The CV to assess, in JSON format                    |
 
 | Returns   |                                                                        |
 | --------- | ---------------------------------------------------------------------- |
-| **str**   | The predicted classification given by the model                        |
+| **str**   | The predicted classification given by the classifier                        |
 
 #### Description
 Gives a prediction of what classification the CV should fall under e.g. "interview" or "reject". The available classifications are determined by the classifications given in the training data.
@@ -73,8 +73,8 @@ The Python packages are most easily installed together as `scikit-learn[alldeps]
 For training data, this matrix will contain many rows, as many CVs are needed to train on. For predictions, there will only be one row, the CV being tested.
 
 ### Data Format
-The first three columns are `totalSkill`, `totalLanguages`, and `totalHobbies`. Each of these is calculated by summing the proficiencies in their catagory, e.g. somebody with Java at level 8 and Python at level 5 has `totalLanguages` of 13. The fourth column, `totalALevels` is calculated in a similar way, but the letter scores are converted to numbers first. A* is 6, A is 5, B is 4, C is 3, D is 2, and E is 1. The fith column, `totalExperience` is the summed number of months they have worked as listed under Previous Employment on their CV.\
- Each skill, language, hobby, and A-Level is programmatically assigned its own column. When a new skill, language, hobby, or A-Level is discovered in the training data, a new column is added to the matrix for it. The value in this column shows the proficiency or numeric A-Level grade that row's CV has for that column's feature. CVs lacking that feature will recieve a 0 in that column.
+The first three columns are `totalSkill`, `totalLanguages`, and `totalHobbies`. Each of these is calculated by summing the proficiencies in their category, e.g. somebody with Java at level 8 and Python at level 5 has `totalLanguages` of 13. The fourth column, `totalALevels` is calculated in a similar way, but the letter scores are converted to numbers first. A* is 6, A is 5, B is 4, C is 3, D is 2, and E is 1. The fifth column, `totalExperience` is the summed number of months they have worked as listed under Previous Employment on their CV.\
+ Each skill, language, hobby, and A-Level is programmatically assigned its own column. When a new skill, language, hobby, or A-Level is discovered in the training data, a new column is added to the matrix for it. The value in this column shows the proficiency or numeric A-Level grade that row's CV has for that column's feature. CVs lacking that feature will receive a 0 in that column.
 
  ### Unknown Features in Non-Training Data
  It is likely that CVs sent to the Machine Learning Engine for predictions will sometimes have features not found in the training data, such as new or obscure languages and skills. These will be added to the `totalSkill`, `totalLanguages` and other total variables, but will not be given their own column. This means that the additional skills will be valued as a general increase in skill, but will not be weighted on their own, so will probably be less favoured than those that were already in the training data.

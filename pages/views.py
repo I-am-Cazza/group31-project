@@ -126,7 +126,7 @@ def make_application(request, jobid):
         model = MLModel.objects.get(model_name=job.industry_type)
         model_cvs = MLcv.objects.filter(model=model)
 
-        if len(model_cvs) > 20:  # Don't predict until MLModel dataset is > 20 cvs
+        if len(model_cvs) > 100:  # Don't predict until MLModel dataset is > 20 cvs
             private_classification = predict(job.industry_type.model_name, dictCv)
             print("This is the classification", private_classification)
         else:

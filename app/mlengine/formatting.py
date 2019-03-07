@@ -25,7 +25,7 @@ def convert_format(cv: any, encodings, is_training: bool) -> list:
     other_skill_total = sum_value(custom_indices, is_training, formatted_cv, cv["Skills"], "Skill", "Expertise")
     experience_total = sum_value(custom_indices, is_training, formatted_cv, cv["Previous Employment"], "Position", "Length of Employment")
     hobby_total = sum_value(custom_indices, is_training, formatted_cv, cv["Hobbies"], "Name", "Interest")
-    a_level_total = sum_value(custom_indices, is_training, formatted_cv, cv["A-Level Qualifications"], "Subject", "Grade")
+    a_level_total = sum_value(custom_indices, is_training, formatted_cv, cv["A-Level Qualifications"], "Qualification", "Grade")
 
     formatted_cv[custom_indices["Language Skill Total"]] = language_skill_total
     formatted_cv[custom_indices["Other Skill Total"]] = other_skill_total

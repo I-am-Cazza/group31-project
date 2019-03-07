@@ -1,7 +1,7 @@
 {% block content %}
   <ul class="nav nav-tabs">
   <li class="nav-item">
-    <a class="nav-link {{ home_page }}" id="pills-home-tab" data-toggle="pill" href="{% url 'index' %}" aria-controls="pills-home-tab" aria-selected="true">Home</a>
+    <a class="nav-link {{ home_page }}" id="pills-home-tab" data-toggle="pill" href="{% url 'index' %}" role="tab" aria-controls="pills-home-tab" aria-selected="true">Home</a>
   </li>
   {% if email is not None %}
     <li class="nav-item ml-auto">

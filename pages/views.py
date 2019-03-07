@@ -162,7 +162,7 @@ def cv(request):
                 for i in range(int(hobbiesnumber)):
                     hobbylist.append(dict(Name = form.cleaned_data['extra_charfield_hobby_' + str(i+1)], Interest = form.cleaned_data['extra_intfield_hobby_' + str(i+1)]))
                 for i in range(int(qualificationsnumber)):
-                    quallist.append(dict(Qualification = form.cleaned_data['extra_charfield_qual_' + str(i+1)], Grade = form.cleaned_data['extra_intfield_qual_' + str(i+1)]))
+                    quallist.append(dict(Subject = form.cleaned_data['extra_charfield_qual_' + str(i+1)], Grade = form.cleaned_data['extra_intfield_qual_' + str(i+1)]))
                 for i in range(int(jobsnumber)):
                     Length = "Length of Employment"
                     joblist.append({"Company" : form.cleaned_data['extra_charfield_job_' + str(i+1)], "Position" : form.cleaned_data['extra_intfield_job_' + str(i+1)], "Length of Employment" : int(form.cleaned_data['extra_lenfield_job_'+ str(i+1)])})

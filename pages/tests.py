@@ -1,5 +1,5 @@
 from django.test import TestCase
-from app.models import CV, AppUser
+from app.models import CV, AppUser, TestQuestions, TestAnswers, MLModel, Organisation, Job
 import json
 
 
@@ -15,7 +15,7 @@ class UserCreationTestCase(TestCase):
         response = self.client.post('/signup/', data)
         self.assertEqual(200, response.status_code)
         newUser = AppUser.objects.get(id=1)
-        self.assertNotEqual("Apassword73", password)
+        self.assertNotEqual("Apassword73", newUser.password)
 
 class JSONTestCase(TestCase):
 
@@ -66,3 +66,34 @@ class JSONTestCase(TestCase):
             self.assertEqual("testhobby"+str(i+1), hobbies[i]["Name"])
             self.assertEqual("testqual"+str(i+1), qualifications[i]["Qualification"])
             self.assertEqual("testjob"+str(i+1), jobs[i]["Company"])
+
+class QuestionTestCase(TestCase):
+    def test_questions_evaluated_correctly(self):
+        s = self.client.session
+        newUser = AppUser(100000, "example@email.com", "notapassword", "Applicant", False, "Firstname", "Lastname")
+        newUser.save()
+        s.update({
+            "id": 100000,
+        })
+        s.save()
+        data = dict()
+        testML = MLModel(1, "TestModel")
+        testML.save()
+        testOrganisation = Organisation(1, "TestOrg", True, "testemail@email.com", "01234567890")
+        testOrganisation.save()
+        testJob = Job(1, 1, 1, "TestJob", "TestDesc", "2019-03-15")
+        testJob.save()
+        test_question_one = TestQuestions(1, "What is 5 + 3?", "8", 1)
+        test_question_one.save()
+        test_question_two = TestQuestions(2, "What is 9 + 5?", "14", 1)
+        test_question_two.save()
+        test_question_three = TestQuestions(3, "What is 12 + 4?", "16", 1)
+        test_question_three.save()
+        test_question_four = TestQuestions(4, "What is 15 + 16?", "31", 1)
+        test_question_four.save()
+        data['extra_questionfield_0'] = "8"
+        data['extra_questionfield_1'] = "14"
+        data['extra_questionfield_2'] = "16"
+        data['extra_questionfield_3'] = "73"
+        self.client.post('/applicant/test/1/', data)
+        

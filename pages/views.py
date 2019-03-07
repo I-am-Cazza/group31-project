@@ -13,6 +13,7 @@ from .permissions import mlmodel_add_permission, job_view_permission, applicatio
 
 
 def index(request):
+    #This view provides the jobs for the index page, or redirects the user if they are an employer
     if 'id' in request.session:
         if (AppUser.objects.get(id=request.session['id']).userType)=='Employer':
             return employer_index(request)
@@ -25,6 +26,7 @@ def index(request):
 
 
 def filtered_index(request):
+    #This job applies any filters that have been set by the user
     useremail = AppUser.objects.get(id=request.session['id']).email
     job_filter = search(request)
     context = {"home_page": "active", "job_list": job_filter, 'filter': job_filter, "email": useremail}
@@ -32,6 +34,7 @@ def filtered_index(request):
 
 
 def applicant_jobs(request):
+    #This view provides a list of jobs for users who have logged in
     if 'id' in request.session:
         useremail = AppUser.objects.get(id=request.session['id']).email
         completedCv = AppUser.objects.get(id=request.session['id']).cvComplete
@@ -43,6 +46,7 @@ def applicant_jobs(request):
 
 
 def job(request, job_id):
+    #This view provides a more detailed breakdown of a job
     if 'id' in request.session:
         user = AppUser.objects.get(id=request.session['id'])
         useremail = user.email
@@ -58,6 +62,7 @@ def job(request, job_id):
 
 
 def test(request, job_id):
+    #This view pulls relevant test questions from the database and shows them to the user, and then processes the answers
     if 'id' in request.session:
         useremail = AppUser.objects.get(id=request.session['id']).email
         requested_job = Job.objects.get(id=job_id)
@@ -87,6 +92,7 @@ def test(request, job_id):
 
 
 def apply(request, job_id, question_id_list, question_answer_list):
+    #This view inserts the application into the database for processing by the classifier (MLEngine or Human)
     if 'id' in request.session:
         id = request.session['id']
         correct_answer_count = 0
@@ -110,6 +116,7 @@ def apply(request, job_id, question_id_list, question_answer_list):
 
 
 def make_application(request, jobid):
+    #This function constructs an application from the CV data and the question answers
         userid = request.session['id']
         user = AppUser.objects.get(pk=userid)
         cv = CV.objects.get(owner=userid).cvData
@@ -132,6 +139,7 @@ def make_application(request, jobid):
 
 
 def cv(request):
+    #This view renders the CV input page and then processes the data inserted into the form
     if 'id' in request.session:
         if 'skills' not in request.session:
             request.session['skills'] = 0
@@ -190,11 +198,13 @@ def cv(request):
 
 
 def logout(request):
+    #This function ends the session
     request.session.flush()
     return redirect('index')
 
 
 def aaron_signup(request):
+    #This function creates a new user from the data entered into the sign up form
     form = AddUserForm()
     context = {'form': form, 'signup_page': 'active'}
     if request.method == 'POST':
@@ -242,12 +252,14 @@ def signup(request):
 
 
 def login(request):
+    #This view renders the form to allow users to log in
     form = LoginUserForm()
     context = {'form': form, 'login_page': 'active'}
     return render(request, 'applicantportal/login.html', context)
 
 
 def aaron_login(request):
+    #This function checks that the user login details are valid, and then redirects them to the appropriate portal
     if request.method == 'POST':
         form = LoginUserForm(request.POST)
         if form.is_valid():
@@ -277,6 +289,7 @@ def aaron_login(request):
 
 
 def applied_jobs(request):
+    #This view renders a list of jobs that are user has applied to
     if 'id' in request.session:
         id = request.session['id']
         user = AppUser.objects.get(id=id)
@@ -293,6 +306,7 @@ def applied_jobs(request):
         return HttpResponseForbidden()
 
 def applicant_settings(request):
+    #This view renders a settings page that the user can use to change their password and change other details.
     if 'id' in request.session:
         user=AppUser.objects.get(id=request.session['id'])
         email=user.email
@@ -339,6 +353,7 @@ def applicant_settings(request):
 
 
 def employer_index(request):
+    #This view renders the employer portal index
     user = check_employer(request)
     if user is not None:
         if job_view_permission(request):
@@ -350,6 +365,7 @@ def employer_index(request):
 
 
 def employer_job(request, job_id):
+    #This view gives a detailed breakdown of a job from an employer point of view, including a list of all applicants
     user = check_employer(request)
     if user is not None:
         if application_view_permission(request):
@@ -361,6 +377,7 @@ def employer_job(request, job_id):
 
 
 def employer_job_applicant(request, job_id, applicant_id):
+    #This view gives a detailed breakdown of a certain applicant for a job
     user = check_employer(request)
     if user is not None:
         applicant = AppUser.objects.get(id=applicant_id)
@@ -372,6 +389,7 @@ def employer_job_applicant(request, job_id, applicant_id):
 
 
 def applicant_feedback(request, job_id, applicant_id):
+    #This function processes the change in classification of an applicant and updates the database
     user = check_employer(request)
     if user is not None:
         if request.method == 'POST':
@@ -392,6 +410,7 @@ def applicant_feedback(request, job_id, applicant_id):
 
 
 def train_model(request):
+    #This function retrains the machine learning model to incorporate any changes to the training data
     user = check_employer(request)
     if user is not None:
         if request.method == 'POST':
@@ -409,6 +428,7 @@ def train_model(request):
 
 
 def create_new_model(request):
+    #This view allows employers to create a new machine learning model
     user = check_employer(request)
     if user is not None:
         if mlmodel_add_permission(request):
@@ -450,6 +470,7 @@ def new_model_data(request, model_name, cv_index):
 
 
 def check_employer(request):
+    #This function checks that a user is an employer before returning an employer only webpage
     if request.user:
         user = request.user
         if user.is_authenticated:

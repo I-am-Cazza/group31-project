@@ -24,7 +24,7 @@
       <h4> Type of job</h4>
       <p>{{job.industry_type.model_name}}</p>
       <h4>Job Deadline</h4>
-      <p id="deadline">{{job.deadline}}</p>
+      <p class="deadline">{{job.deadline}}</p>
       {% if email %}
       <a style="color: blue" href="{% url 'job' job.id %}">More info</a>
       {% endif %}

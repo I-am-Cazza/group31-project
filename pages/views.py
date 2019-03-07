@@ -102,9 +102,8 @@ def apply(request, job_id, question_id_list, question_answer_list):
                 answer = TestAnswers(application = recent_application, question = TestQuestions.objects.get(id=question_id_list[i]), answer_text = question_answer_list[i])
                 answer.save()
             return redirect('applied_jobs')
-            # TODO Success message for adding application
         else:
-            return redirect('../../')  # TODO Error message for application not made...
+            return redirect('../../')
     else:
         return HttpResponseForbidden()
 
@@ -436,7 +435,7 @@ def new_model_data(request, model_name, cv_index):
     user = check_employer(request)
     if user is not None:
         if mlmodel_add_permission(request):
-            f = open("./app/mlengine/100cvDataset" + ".json", "r")
+            f = open("./app/mlengine/1000cvDataset" + ".json", "r")
             dataset = json.loads(f.read())
             if request.method == 'POST':
                 # Add classifcation to cv in model

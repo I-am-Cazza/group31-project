@@ -15,7 +15,7 @@
       <h4> Type of job</h4>
       <p>{{job.industry_type.model_name}}</p>
       <h4>Job Deadline</h4>
-      <p id="deadline">{{job.deadline}}</p>
+      <p class="deadline">{{job.deadline}}</p>
       <form action="{% url 'employer_job' job.id %}">
          <div class="form-group">
             <button id ="view_applications" class="btn btn-outline-dark btn-sm btn-block">View Applications</button>

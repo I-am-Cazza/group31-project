@@ -13,3 +13,7 @@ Ensure you have Python version 3.7.* installed (Ideally 3.7.2)
 5. Run `python manage.py makemigrations` followed by `python manage.py migrate` (again, substitute `python` for `python3` if you aren’t using a virtual environment). This will create the database schema and apply it to the database.
 6. Run `python manage.py runserver 8000`. Go to https://127.0.0.1:8000/ and view the web app.
 
+Alternatively, you can view the web page at http://206.189.29.12:8000, as this contains a fully functional version of the web application, with a pre-configured database and example data. 
+To gain access to the administrator portal on the website, the details are:
+	Username: admin
+	Password: cs261abcgrr

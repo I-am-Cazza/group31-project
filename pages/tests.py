@@ -3,10 +3,24 @@ from app.models import CV, AppUser
 import json
 
 
+class UserCreationTestCase(TestCase):
+
+    def test_user_created_correctly(self):
+        data = dict()
+        data['email'] = "testuser@email.com"
+        data['password'] = "Apassword73"
+        data['confirm_password'] = "Apassword73"
+        data['first_name'] = "Test"
+        data['last_name'] = "User"
+        response = self.client.post('/signup/', data)
+        self.assertEqual(200, response.status_code)
+        newUser = AppUser.objects.get(id=1)
+        self.assertNotEqual("Apassword73", password)
+
 class JSONTestCase(TestCase):
 
     def test_JSON_formatted_correctly(self):
-        #This article tests that data from the CV form is correctly inserted into the database in a format
+        #This function tests that data from the CV form is correctly inserted into the database in a format
         #that will be accepted by the machine learning
         s = self.client.session
         newUser = AppUser(100000, "example@email.com", "notapassword", "Applicant", False, "Firstname", "Lastname")
@@ -52,4 +66,3 @@ class JSONTestCase(TestCase):
             self.assertEqual("testhobby"+str(i+1), hobbies[i]["Name"])
             self.assertEqual("testqual"+str(i+1), qualifications[i]["Qualification"])
             self.assertEqual("testjob"+str(i+1), jobs[i]["Company"])
-# Create your tests here.

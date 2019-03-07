@@ -1,5 +1,5 @@
 from django.test import TestCase
-from app.models import CV, AppUser, TestQuestions, TestAnswers, MLModel, Organisation, Job
+from app.models import CV, AppUser, TestQuestions, TestAnswers, MLModel, Organisation, Job, Application
 import json
 
 
@@ -37,7 +37,7 @@ class JSONTestCase(TestCase):
         data['extra_job_count'] = 10
         data['name'] = "testname"
         data['degree'] = "testdegree"
-        data['degree_level'] = "testlevel"
+        #data['degree_level'] = "1st"
         data['university'] = "testuniversity"
         for i in range(10):
             data['extra_charfield_' + str(i+1)] = "testchar"+str(i+1)
@@ -54,7 +54,7 @@ class JSONTestCase(TestCase):
 
         response = self.client.post('/applicant/cv/', data)
         self.assertEqual(200, response.status_code)
-        testCv = json.loads(CV.objects.get(pk=1).cvData)
+        testCv = json.loads(CV.objects.get(pk=0).cvData)
         skill = testCv['Skills']
         language = testCv['Languages Known']
         hobbies = testCv['Hobbies']
@@ -83,6 +83,8 @@ class QuestionTestCase(TestCase):
         testOrganisation.save()
         testJob = Job(1, 1, 1, "TestJob", "TestDesc", "2019-03-15")
         testJob.save()
+
+        testCV = CV(1, 1, '{"Name": "Bill", "Degree Qualification": "Computer Science BSc", "Degree Level": "1st", "University Attended": "University of Warwick", "Skills": [{"Skill": "Server setup", "Expertise": 10}, {"Skill": "Database Management", "Expertise": 10}], "Languages Known": [{"Language": "Python", "Expertise": 10}, {"Language": "Java", "Expertise": 10}, {"Language": "C#", "Expertise": 10}], "Hobbies": [{"Name": "Gaming", "Interest": 10}], "A-Level Qualifications": [{"Subject": "Computer Science", "Grade": "A"}, {"Subject": "Chemistry", "Grade": "A"}], "Previous Employment": [{"Company": "Microsoft", "Position": "CEO", "Length of Employment": 120}]}')
         test_question_one = TestQuestions(1, "What is 5 + 3?", "8", 1)
         test_question_one.save()
         test_question_two = TestQuestions(2, "What is 9 + 5?", "14", 1)
@@ -95,5 +97,7 @@ class QuestionTestCase(TestCase):
         data['extra_questionfield_1'] = "14"
         data['extra_questionfield_2'] = "16"
         data['extra_questionfield_3'] = "73"
-        self.client.post('/applicant/test/1/', data)
-        
+        response = self.client.post('/applicant/test/1/', data)
+        self.assertEqual(200, response.status_code)
+        newApplication = Application.objects.get(id=1)
+        self.assertEqual(75.0, newApplication.answer_percent)

@@ -39,7 +39,7 @@ def train(classifier_name: str, data: any) -> None:
         pickle.dump([classifier, encodings], file, pickle.HIGHEST_PROTOCOL)
 
 
-# Returns the classification of 'cv' according to 'classifier_name'.
+# Returns the classification of 'cv' according to the model 'classifier_name'.
 def predict(classifier_name: str, cv: any) -> str:
     with open("./app/mlengine/classifiers/" + classifier_name + ".ai", "rb") as file:
         classifier, encodings = pickle.load(file)

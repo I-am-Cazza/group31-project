@@ -27,7 +27,8 @@ def index(request):
 
 def filtered_index(request):
     #This job applies any filters that have been set by the user
-    useremail = AppUser.objects.get(id=request.session['id']).email
+    if 'id' in request.session:
+        useremail = AppUser.objects.get(id=request.session['id']).email
     job_filter = search(request)
     context = {"home_page": "active", "job_list": job_filter, 'filter': job_filter, "email": useremail}
     return render(request, 'global/filter_index.html', context)
